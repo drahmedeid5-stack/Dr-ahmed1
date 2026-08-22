@@ -1,5 +1,5 @@
 // =============================================
-// الكود الصحيح لـ booking.html (جافاسكريبت)
+// الكود بتاع booking.html (في جافاسكريبت)
 // =============================================
 
 // رابط API بتاعك (نفس الرابط اللي خدته من Apps Script)
@@ -17,7 +17,7 @@ async function getSchedule() {
   }
 }
 
-// ===== دالة تحديث قائمة الأيام والمواعيد حسب الفرع =====
+// ===== دالة تحديث قائمة الأيام والمواعيد حسب الفرع المختار =====
 async function updateAvailableSlots(branchName) {
   const daySelect = document.getElementById('day');
   const timeSelect = document.getElementById('time');
@@ -70,8 +70,14 @@ async function updateAvailableSlots(branchName) {
     }
   });
   
-  // إضافة المواعيد للقائمة المنسدلة
-  function updateTimes() {
+  // إضافة المواعيد للقائمة المنسدلة (تظهر عند اختيار اليوم)
+  daySelect.addEventListener('change', function() {
+    const selectedDay = this.value;
+    if (!selectedDay) {
+      timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
+      return;
+    }
+    
     timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
     timesList.forEach(time => {
       if (time) {
@@ -81,18 +87,16 @@ async function updateAvailableSlots(branchName) {
         timeSelect.appendChild(option);
       }
     });
+  });
+  
+  // لو اختير اليوم الأول بشكل تلقائي، نظهر مواعيده
+  if (daysList.length > 0) {
+    // نضبط حدث تغيير اليوم
+    daySelect.dispatchEvent(new Event('change'));
   }
-  
-  // أول مرة تظهر المواعيد مع أول يوم
-  updateTimes();
-  
-  // عند تغيير اليوم، نظهر المواعيد تاني (نفسها)
-  daySelect.onchange = function() {
-    updateTimes();
-  };
 }
 
-// ===== دالة إرسال الحجز =====
+// ===== تعديل دالة submitBooking =====
 async function submitBooking(e) {
   e.preventDefault();
 
@@ -110,11 +114,15 @@ async function submitBooking(e) {
     return;
   }
 
+  // تنسيق التاريخ والوقت
+  const formattedDate = day;
+  const formattedTime = time;
+
   // إرسال البيانات إلى Google Sheets
   const bookingData = {
     branch: branchName,
-    date: day,
-    time: time,
+    date: formattedDate,
+    time: formattedTime,
     name: name,
     phone: phone,
     notes: notes
@@ -134,8 +142,8 @@ async function submitBooking(e) {
 
   // فتح واتساب
   let message = `مرحباً، أريد حجز موعد في فرع ${branchName}:\n`;
-  message += `📅 اليوم: ${day}\n`;
-  message += `⏰ الوقت: ${time}\n`;
+  message += `📅 اليوم: ${formattedDate}\n`;
+  message += `⏰ الوقت: ${formattedTime}\n`;
   message += `👤 الاسم: ${name}\n`;
   message += `📞 رقم الهاتف: ${phone}\n`;
   if (notes) {
@@ -150,9 +158,11 @@ async function submitBooking(e) {
   alert('✅ تم تسجيل حجزك وإرسال رسالة إلى واتساب.');
 }
 
-// ===== ربط الأحداث عند تحميل الصفحة =====
+// ===== ربط الأحداث عند تغيير الفرع =====
 document.addEventListener('DOMContentLoaded', function() {
   const branchSelect = document.getElementById('branch');
+  const daySelect = document.getElementById('day');
+  const timeSelect = document.getElementById('time');
   
   // عند تغيير الفرع، نجيب المواعيد الخاصة به
   branchSelect.addEventListener('change', function() {
@@ -160,8 +170,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (branchName) {
       updateAvailableSlots(branchName);
     } else {
-      document.getElementById('day').innerHTML = '<option value="">-- اختر اليوم --</option>';
-      document.getElementById('time').innerHTML = '<option value="">-- اختر الوقت --</option>';
+      daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
+      timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
     }
   });
 });
