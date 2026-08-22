@@ -1,409 +1,189 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>حجز موعد - عيادة دكتور أحمد عبد الرفاعي</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: #f5f6f8;
-            color: #1e2a3a;
-            line-height: 1.8;
-            direction: rtl;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+const SITE_SHEET_ID = '1P_LzY7B8RSPE21I9UC0SazphUqnQJzI0YjlgyGzzO4A';
+const BOOKINGS_SHEET_NAME = 'الحجوزات'; // اسم تاب الحجوزات
+
+// بيحول رقم مصري محلي (01xxxxxxxxx) لصيغة دولية صحيحة لواتساب (20xxxxxxxxx)
+function toWhatsAppFormat(phone) {
+  let p = String(phone).replace(/\D/g, ''); // يمسح أي حاجة مش رقم (مسافات، +، إلخ)
+  if (p.startsWith('0')) {
+    p = '20' + p.substring(1); // يشيل الصفر ويحط كود مصر
+  } else if (!p.startsWith('20')) {
+    p = '20' + p; // لو مكتوب من غير صفر ومن غير كود دولة أصلاً
+  }
+  return p;
+}
+
+function getBookingsSheet() {
+  const ss = SpreadsheetApp.openById(SITE_SHEET_ID);
+  const sheet = ss.getSheetByName(BOOKINGS_SHEET_NAME);
+  if (!sheet) throw new Error('تاب "' + BOOKINGS_SHEET_NAME + '" غير موجود');
+  return sheet;
+}
+
+function getSchedule() {
+  try {
+    const ss = SpreadsheetApp.openById(SITE_SHEET_ID);
+    const sheet = ss.getSheetByName('مواعيد_العيادة');
+    if (!sheet) return { error: 'تاب مواعيد_العيادة غير موجود' };
+
+    const data = sheet.getDataRange().getValues();
+    const headers = data[0];
+    const colOct = headers.indexOf('فرع اكتوبر');
+    const colFai = headers.indexOf('فرع فيصل');
+
+    let scheduleList = [];
+    for (let i = 1; i < data.length; i++) {
+      const day = data[i][0];
+      const octTime = data[i][colOct];
+      const faiTime = data[i][colFai];
+
+      if (day) {
+        if (octTime && octTime !== 'مغلق' && octTime !== '') {
+          scheduleList.push({ branch: "أكتوبر", day: day, time: octTime, status: "مفتوح" });
         }
-        .booking-card {
-            background: #ffffff;
-            max-width: 650px;
-            width: 100%;
-            padding: 40px 35px;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
-            border: 1px solid rgba(201, 154, 43, 0.15);
+        if (faiTime && faiTime !== 'مغلق' && faiTime !== '') {
+          scheduleList.push({ branch: "فيصل", day: day, time: faiTime, status: "مفتوح" });
         }
-        .booking-card h1 {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #1a3a60;
-            text-align: center;
-            margin-bottom: 6px;
-        }
-        .booking-card h1 i { color: #c99a2b; margin-left: 10px; }
-        .booking-card .sub { text-align: center; color: #5a6a7a; font-size: 1rem; margin-bottom: 30px; }
-        .form-group { margin-bottom: 22px; }
-        .form-group label {
-            display: block;
-            font-weight: 700;
-            color: #1a3a60;
-            margin-bottom: 6px;
-            font-size: 1rem;
-        }
-        .form-group label i { color: #c99a2b; margin-left: 8px; width: 20px; }
-        .form-group select,
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e0e4e8;
-            border-radius: 12px;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1rem;
-            background: #f5f6f8;
-            transition: 0.3s ease;
-        }
-        .form-group select:focus,
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #c99a2b;
-            outline: none;
-            background: #fff;
-            box-shadow: 0 0 0 4px rgba(201, 154, 43, 0.1);
-        }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .branch-phone-display {
-            background: #f5f6f8;
-            padding: 10px 16px;
-            border-radius: 12px;
-            margin-top: 6px;
-            font-weight: 600;
-            color: #1a3a60;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-right: 4px solid #c99a2b;
-        }
-        .branch-phone-display i { color: #25d366; font-size: 1.2rem; }
-        .btn-submit {
-            display: block;
-            width: 100%;
-            background: #c99a2b;
-            color: #fff;
-            padding: 16px;
-            border: none;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: 0.3s ease;
-            box-shadow: 0 6px 20px rgba(201, 154, 43, 0.35);
-            margin-top: 10px;
-        }
-        .btn-submit:hover {
-            background: #b0861f;
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5);
-        }
-        .btn-submit i { margin-left: 12px; }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #5a6a7a; font-weight: 600; }
-        .back-link a { color: #2a4a7a; text-decoration: none; }
-        .back-link a:hover { color: #c99a2b; }
-        .note-msg {
-            background: #fff9e6;
-            padding: 12px 18px;
-            border-radius: 12px;
-            border-right: 4px solid #c99a2b;
-            font-size: 0.9rem;
-            color: #5a6a7a;
-            margin-bottom: 20px;
-        }
-        .note-msg i { color: #c99a2b; margin-left: 8px; }
-    </style>
-</head>
-<body>
-    <div class="booking-card">
-        <h1><i class="fas fa-calendar-check"></i> حجز موعد</h1>
-        <p class="sub">اختر الفرع والموعد المناسب لك</p>
-        <div class="note-msg">
-            <i class="fas fa-info-circle"></i> سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد. 
-        </div>
-        <form id="bookingForm" onsubmit="submitBooking(event)">
-            <!-- اختيار الفرع -->
-            <div class="form-group">
-                <label><i class="fas fa-store"></i> اختر الفرع</label>
-                <select id="branch" required>
-                    <option value="">-- اختر --</option>
-                    <option value="أكتوبر" data-phone="201061119615">فرع أكتوبر</option>
-                    <option value="فيصل" data-phone="201032444727">فرع فيصل</option>
-                </select>
-                <div id="branchPhoneDisplay" class="branch-phone-display" style="display:none;">
-                    <i class="fas fa-phone"></i>
-                    <span>رقم الفرع: <span id="phoneNumberDisplay"></span></span>
-                </div>
-            </div>
+      }
+    }
+    return { status: "OK", data: scheduleList };
+  } catch (e) {
+    return { error: e.toString() };
+  }
+}
 
-            <!-- اليوم -->
-            <div class="form-group">
-                <label><i class="fas fa-calendar-day"></i> يوم العمل بالعيادة</label>
-                <select id="day" required disabled>
-                    <option value="">-- اختر الفرع أولاً --</option>
-                </select>
-            </div>
+function generateBookingNumber(sheet, targetDate) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow <= 1) return '001';
 
-            <!-- تاريخ الحجز -->
-            <div class="form-group">
-                <label><i class="fas fa-calendar-alt"></i> تاريخ الحجز</label>
-                <select id="bookingDate" required disabled>
-                    <option value="">-- اختر يوم العمل أولاً --</option>
-                </select>
-            </div>
+  const allData = sheet.getRange(2, 1, lastRow - 1, 10).getValues();
+  let maxNum = 0;
 
-            <!-- الوقت -->
-            <div class="form-group">
-                <label><i class="fas fa-clock"></i> الوقت</label>
-                <select id="time" required disabled>
-                    <option value="">-- اختر تاريخ الحجز أولاً --</option>
-                </select>
-            </div>
+  for (let i = 0; i < allData.length; i++) {
+    const rowDate = allData[i][2]; // عمود C (التاريخ)
+    const rowNum = allData[i][8];  // عمود I (رقم الحجز)
 
-            <!-- باقي الحقول -->
-            <div class="form-group">
-                <label><i class="fas fa-user"></i> الاسم الكامل</label>
-                <input type="text" id="name" placeholder="أدخل اسمك ثلاثي" required />
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-phone"></i> رقم التليفون (واتساب)</label>
-                <input type="tel" id="phone" placeholder="مثال: 01012345678" required />
-            </div>
-            <div class="form-group">
-                <label><i class="fas fa-pen"></i> ملاحظات (اختياري)</label>
-                <textarea id="notes" placeholder="أي تفاصيل إضافية تريد إخبارنا بها"></textarea>
-            </div>
+    if (rowDate && rowDate.toString().includes(targetDate)) {
+      const parsedNum = parseInt(rowNum);
+      if (!isNaN(parsedNum) && parsedNum > maxNum) {
+        maxNum = parsedNum;
+      }
+    }
+  }
 
-            <button type="submit" class="btn-submit">
-                <i class="fab fa-whatsapp"></i> تأكيد الحجز عبر واتساب
-            </button>
-        </form>
-        <div class="back-link">
-            <a href="index.html"><i class="fas fa-arrow-right"></i> العودة إلى الصفحة الرئيسية</a>
-        </div>
-    </div>
+  const nextNum = maxNum + 1;
+  return String(nextNum).padStart(3, '0');
+}
 
-    <script>
-        const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbzUHh_JfDAR6P9KxKxS9yNTuFPu7eRDarHV5ojwNwI7dPUj3hOFNsm7PZZwz0ywu1RITQ/exec';
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    const sheet = getBookingsSheet(); // <-- بقى بيفتح تاب "الحجوزات" بالاسم دايمًا، مش أي تاب نشط
+    const now = new Date();
+    const bookingTime = Utilities.formatDate(now, 'Africa/Cairo', 'yyyy-MM-dd HH:mm:ss');
+    const lastRow = sheet.getLastRow();
 
-        let branchDays = {};      
-        let branchTimes = {};     
+    const rawDate = data.date || '';
+    const matchDate = rawDate.match(/\d{4}-\d{2}-\d{2}/);
+    const targetDateStr = matchDate ? matchDate[0] : rawDate;
+    const bookingNumber = generateBookingNumber(sheet, targetDateStr);
 
-        async function loadWorkingHours() {
-            try {
-                const response = await fetch(SITE_API_URL + '?action=getSchedule');
-                const result = await response.json();
+    // ترتيب الأعمدة: A=رقم, B=الفرع, C=التاريخ, D=الوقت, E=الإسم, F=رقم الهاتف, G=الملاحظات, H=وقت الحجز, I=رقم الحجز, J=حالة الحجز, K=تاريخ التأكيد
+    const newRow = [];
+    newRow[0] = lastRow;                  // A: رقم
+    newRow[1] = data.branch || '';        // B: الفرع
+    newRow[2] = data.date || '';          // C: التاريخ
+    newRow[3] = data.time || '';          // D: الوقت
+    newRow[4] = data.name || '';          // E: الإسم
+    newRow[5] = data.phone || '';         // F: رقم الهاتف
+    newRow[6] = data.notes || '';         // G: الملاحظات
+    newRow[7] = bookingTime;              // H: وقت الحجز
+    newRow[8] = bookingNumber;            // I: رقم الحجز
+    newRow[9] = 'انتظار';                 // J: حالة الحجز
+    // K (تاريخ التأكيد) بتفضل فاضية لحد ما يتم التأكيد
 
-                if (result && result.status === "OK" && result.data) {
-                    const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-                    
-                    branchDays = {};
-                    branchTimes = {};
+    const newRowIndex = lastRow + 1;
+    // نحدد عمود F (رقم الهاتف) كنص Text الأول عشان الصفر اللي في الأول ميتمسحش
+    sheet.getRange(newRowIndex, 6).setNumberFormat('@');
+    sheet.getRange(newRowIndex, 1, 1, newRow.length).setValues([newRow]);
+    return ContentService.createTextOutput(JSON.stringify({ success: true, bookingNumber: bookingNumber }));
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: error.toString() }));
+  }
+}
 
-                    result.data.forEach(item => {
-                        const branch = item.branch;
-                        const day = item.day;
-                        const time = item.time;
+function doGet(e) {
+  const action = e && e.parameter ? e.parameter.action : null;
+  if (action === 'getSchedule') {
+    return ContentService.createTextOutput(JSON.stringify(getSchedule())).setMimeType(ContentService.MimeType.JSON);
+  }
+  return ContentService.createTextOutput(JSON.stringify({ status: 'OK' })).setMimeType(ContentService.MimeType.JSON);
+}
 
-                        if (!branchDays[branch]) branchDays[branch] = [];
-                        if (!branchDays[branch].includes(day)) branchDays[branch].push(day);
+function onEdit(e) {
+  const sheet = e.source.getActiveSheet();
 
-                        if (!branchTimes[branch]) branchTimes[branch] = {};
-                        branchTimes[branch][day] = time;
-                    });
+  // لازم نتأكد إن التعديل حصل في تاب الحجوزات نفسه، مش أي تاب تاني
+  if (sheet.getName() !== BOOKINGS_SHEET_NAME) return;
 
-                    for (let branch in branchDays) {
-                        branchDays[branch].sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
-                    }
-                } else {
-                    setupDefaultData();
-                }
-                document.getElementById('branch').disabled = false;
-            } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل:', error);
-                setupDefaultData();
-                document.getElementById('branch').disabled = false;
-            }
-        }
+  const range = e.range;
+  const row = range.getRow();
+  const col = range.getColumn();
 
-        function setupDefaultData() {
-            branchDays = {
-                "أكتوبر": ["السبت", "الإثنين", "الثلاثاء", "الخميس"],
-                "فيصل": ["السبت", "الإثنين", "الثلاثاء", "الخميس"]
-            };
-            branchTimes = {
-                "أكتوبر": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" },
-                "فيصل": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" }
-            };
-        }
+  // العمود العاشر (J) هو عمود حالة الحجز
+  if (col !== 10 || row < 2) return;
 
-        function getDayIndex(dayName) {
-            const map = { 'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
-            return map[dayName];
-        }
+  const newStatus = range.getValue();
+  if (newStatus === 'انتظار' || newStatus === '') return;
 
-        function generateUpcomingDates(dayName) {
-            const dates = [];
-            const targetDayIndex = getDayIndex(dayName);
-            let currentDate = new Date();
-            
-            for (let i = 0; i < 60; i++) {
-                if (currentDate.getDay() === targetDayIndex) {
-                    const formatted = currentDate.toISOString().split('T')[0];
-                    const displayFormatted = `${dayName} (${formatted})`;
-                    dates.push({ value: displayFormatted, text: displayFormatted });
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-            return dates;
-        }
+  const rowData = sheet.getRange(row, 1, 1, 10).getValues()[0];
+  const branch = rowData[1] || '';       // B: الفرع
+  const date = rowData[2] || '';         // C: التاريخ
+  const time = rowData[3] || '';         // D: الوقت
+  const name = rowData[4] || '';         // E: الإسم
+  const phone = rowData[5] || '';        // F: رقم الهاتف
+  const bookingNumber = rowData[8] || ''; // I: رقم الحجز
 
-        document.getElementById('branch').addEventListener('change', function() {
-            const branch = this.value;
-            const daySelect = document.getElementById('day');
-            const dateSelect = document.getElementById('bookingDate');
-            const timeSelect = document.getElementById('time');
-            const phoneDisplay = document.getElementById('branchPhoneDisplay');
-            const phoneSpan = document.getElementById('phoneNumberDisplay');
+  let message = '';
+  if (newStatus === 'تأكيد الحجز') {
+    // كتابة تاريخ التأكيد في عمود K
+    const confirmTime = Utilities.formatDate(new Date(), 'Africa/Cairo', 'yyyy-MM-dd HH:mm:ss');
+    sheet.getRange(row, 11).setValue(confirmTime); // K: تاريخ التأكيد
 
-            const selected = this.options[this.selectedIndex];
-            const phone = selected.getAttribute('data-phone');
-            if (phone) {
-                phoneSpan.textContent = phone;
-                phoneDisplay.style.display = 'flex';
-            } else {
-                phoneDisplay.style.display = 'none';
-            }
+    message = `✅ تم تأكيد حجزك في عيادة دكتور أحمد عبد الرفاعي\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔹 رقم الحجز: #${bookingNumber}\n`;
+    message += `🏥 الفرع: ${branch}\n`;
+    message += `📅 التاريخ: ${date}\n`;
+    message += `⏰ الوقت: ${time}\n`;
+    message += `👤 الاسم: ${name}\n`;
+    message += `📞 رقم الهاتف: ${phone}\n`;
+    message += `📌 يرجى الحضور في الموعد المحدد.`;
+  } else if (newStatus === 'إلغاء الحجز') {
+    message = `❌ تم إلغاء حجزك في عيادة دكتور أحمد عبد الرفاعي\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `🔹 رقم الحجز: #${bookingNumber}\n`;
+    message += `🏥 الفرع: ${branch}\n`;
+    message += `📅 التاريخ: ${date}\n`;
+    message += `⏰ الوقت: ${time}\n`;
+    message += `👤 الاسم: ${name}\n`;
+    message += `📞 رقم الهاتف: ${phone}\n`;
+    message += `📌 يمكنك حجز موعد جديد في أي وقت.`;
+  } else {
+    return; // أي قيمة تانية في عمود الحالة، تجاهلها
+  }
 
-            daySelect.innerHTML = '<option value="">-- اختر اليوم أولاً --</option>';
-            daySelect.disabled = true;
-            dateSelect.innerHTML = '<option value="">-- اختر يوم العمل أولاً --</option>';
-            dateSelect.disabled = true;
-            timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
-            timeSelect.disabled = true;
+  const encodedMsg = encodeURIComponent(message);
+  const url = `https://wa.me/${toWhatsAppFormat(phone)}?text=${encodedMsg}`;
 
-            if (!branch || !branchDays[branch]) return;
+  const html = `<div style="font-family: Cairo, sans-serif; text-align: center; padding: 20px; direction: rtl;">
+    <h3>جاهز لإرسال الواتساب للمريض: ${name}</h3>
+    <p>رقم الحجز: <b># ${bookingNumber}</b></p>
+    <br>
+    <a href="${url}" target="_blank" style="background: #25d366; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">اضغط هنا لفتح رسالة الواتساب</a>
+    <br><br>
+    <small style="color: #666;">يمكنك إغلاق هذه النافذة بعد الإرسال.</small>
+  </div>`;
 
-            const days = branchDays[branch];
-            if (days.length === 0) return;
-
-            daySelect.disabled = false;
-            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
-            days.forEach(day => {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = day;
-                daySelect.appendChild(option);
-            });
-        });
-
-        document.getElementById('day').addEventListener('change', function() {
-            const day = this.value;
-            const dateSelect = document.getElementById('bookingDate');
-            const timeSelect = document.getElementById('time');
-
-            dateSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز --</option>';
-            dateSelect.disabled = true;
-            timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
-            timeSelect.disabled = true;
-
-            if (!day) return;
-
-            const upcomingDates = generateUpcomingDates(day);
-            dateSelect.disabled = false;
-            upcomingDates.forEach(d => {
-                const option = document.createElement('option');
-                option.value = d.value;
-                option.textContent = d.text;
-                dateSelect.appendChild(option);
-            });
-        });
-
-        document.getElementById('bookingDate').addEventListener('change', function() {
-            const branch = document.getElementById('branch').value;
-            const day = document.getElementById('day').value;
-            const timeSelect = document.getElementById('time');
-
-            timeSelect.innerHTML = '';
-            timeSelect.disabled = true;
-
-            if (!branch || !day || !branchTimes[branch] || !branchTimes[branch][day]) return;
-
-            const timeStr = branchTimes[branch][day];
-            timeSelect.disabled = false;
-            
-            const option = document.createElement('option');
-            option.value = timeStr;
-            option.textContent = timeStr;
-            timeSelect.appendChild(option);
-        });
-
-        async function submitBooking(e) {
-            e.preventDefault();
-
-            const branch = document.getElementById('branch');
-            const branchName = branch.value;
-            const branchPhone = branch.options[branch.selectedIndex].getAttribute('data-phone');
-            const bookingDate = document.getElementById('bookingDate').value;
-            const timeStr = document.getElementById('time').value;
-            const name = document.getElementById('name').value.trim();
-            const phone = document.getElementById('phone').value.trim();
-            const notes = document.getElementById('notes').value.trim();
-
-            if (!branchName || !bookingDate || !timeStr || !name || !phone) {
-                alert('يرجى ملء جميع الحقول المطلوبة.');
-                return;
-            }
-
-            const bookingData = {
-                branch: branchName,
-                date: bookingDate, 
-                time: timeStr,
-                name: name,
-                phone: phone,
-                notes: notes
-            };
-
-            try {
-                await fetch(SITE_API_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(bookingData)
-                });
-            } catch (error) {
-                console.error('خطأ:', error);
-            }
-
-            let message = `مرحباً، أريد تسجيل حجز موعد في فرع ${branchName}:\n`;
-            message += `📅 التاريخ: ${bookingDate}\n`;
-            message += `⏰ الوقت: ${timeStr}\n`;
-            message += `👤 الاسم: ${name}\n`;
-            message += `📞 رقم الهاتف: ${phone}\n`;
-            if (notes) message += `📝 ملاحظات: ${notes}\n`;
-            message += `\nأرجو تأكيد الحجز برقم الحجز الخاص بي، شكراً!`;
-
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/${branchPhone}?text=${encodedMessage}`;
-            window.open(whatsappUrl, '_blank');
-
-            alert('✅ تم تحويلك للواتساب وإرسال بيانات حجزك بنجاح.');
-            document.getElementById('bookingForm').reset();
-            document.getElementById('day').disabled = true;
-            document.getElementById('bookingDate').disabled = true;
-            document.getElementById('time').disabled = true;
-            document.getElementById('branchPhoneDisplay').style.display = 'none';
-        }
-
-        window.onload = function() {
-            document.getElementById('branch').disabled = true;
-            loadWorkingHours();
-        };
-    </script>
-</body>
-</html>
+  const htmlOutput = HtmlService.createHtmlOutput(html).setWidth(400).setHeight(250);
+  SpreadsheetApp.getUi().showModalDialog(htmlOutput, 'إرسال رسالة واتساب');
+}
