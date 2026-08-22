@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
+        /* نفس الستايلات القديمة (زي ما هي) */
         * {
             margin: 0;
             padding: 0;
@@ -202,7 +203,6 @@
                 </div>
             </div>
 
-            <!-- قائمة الأيام (تظهر تلقائياً عند اختيار الفرع) -->
             <div class="form-group">
                 <label><i class="fas fa-calendar-day"></i> اليوم</label>
                 <select id="day" required>
@@ -210,7 +210,6 @@
                 </select>
             </div>
 
-            <!-- قائمة المواعيد (تظهر تلقائياً عند اختيار اليوم) -->
             <div class="form-group">
                 <label><i class="fas fa-clock"></i> الوقت</label>
                 <select id="time" required>
@@ -245,9 +244,8 @@
 
     <script>
         // ============================================================
-        // 1. الرابط الثابت بتاع الـ API
+        // 1. الرابط الثابت بتاع الـ API (من جوجل شيت)
         // ============================================================
-        // ⚠️ مهم: غير الرابط ده بالرابط اللي خدته من Apps Script
         const API_URL = 'https://script.google.com/macros/s/AKfycbzUHh_JfDAR6P9KxKxS9yNTuFPu7eRDarHV5ojwNwI7dPUj3hOFNsm7PZZwz0ywu1RITQ/exec';
 
         // ============================================================
@@ -272,15 +270,10 @@
         async function getSchedule() {
             try {
                 const response = await fetch(`${API_URL}?action=getSchedule`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
                 const data = await response.json();
-                console.log('✅ البيانات القادمة من الشيت:', data);
                 return data;
             } catch (error) {
-                console.error('❌ خطأ في جلب المواعيد:', error);
-                alert('⚠️ لا يمكن جلب مواعيد العمل. تأكد من الاتصال بالشيت.\n' + error.message);
+                console.error('خطأ في جلب المواعيد:', error);
                 return null;
             }
         }
@@ -289,12 +282,12 @@
             const daySelect = document.getElementById('day');
             const timeSelect = document.getElementById('time');
 
-            daySelect.innerHTML = '<option value="">-- جاري التحميل --</option>';
+            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
             timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
 
             const schedule = await getSchedule();
             if (!schedule) {
-                daySelect.innerHTML = '<option value="">خطأ في جلب البيانات</option>';
+                alert('لا يمكن جلب مواعيد العمل. تأكد من الاتصال بالشيت.');
                 return;
             }
 
@@ -308,62 +301,56 @@
                 daysKey = 'days_faisal';
                 timesKey = 'times_faisal';
             } else {
-                daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
                 return;
             }
 
             const daysValue = schedule[daysKey] || '';
             const timesValue = schedule[timesKey] || '';
 
-            console.log(`📅 أيام ${branchName}:`, daysValue);
-            console.log(`⏰ مواعيد ${branchName}:`, timesValue);
-
-            if (!daysValue || daysValue.toLowerCase().includes('مغلق')) {
-                daySelect.innerHTML = '<option value="">الفرع مغلق حالياً</option>';
-                timeSelect.innerHTML = '<option value="">-- لا توجد مواعيد --</option>';
-                return;
-            }
-
-            // تقسيم الأيام والمواعيد (بفرض أنهم مفصولين بفاصلة)
-            const daysList = daysValue.split(',').map(item => item.trim()).filter(item => item);
-            const timesList = timesValue.split(',').map(item => item.trim()).filter(item => item);
-
-            if (daysList.length === 0) {
+            // لو مفيش أيام مكتوبة، نظهر رسالة للمستخدم
+            if (!daysValue) {
                 daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>';
                 return;
             }
 
-            // إضافة الأيام للقائمة المنسدلة
-            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
-            daysList.forEach(day => {
-                const option = document.createElement('option');
-                option.value = day;
-                option.textContent = day;
-                daySelect.appendChild(option);
-            });
-
-            // دالة تحديث قائمة المواعيد عند اختيار اليوم
-            function updateTimes() {
-                timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
-                if (timesList.length === 0) {
-                    timeSelect.innerHTML = '<option value="">لا توجد مواعيد</option>';
-                    return;
-                }
-                timesList.forEach(time => {
-                    const option = document.createElement('option');
-                    option.value = time;
-                    option.textContent = time;
-                    timeSelect.appendChild(option);
-                });
+            // لو مكتوب "مغلق"، نظهر رسالة للمستخدم
+            if (daysValue.toLowerCase().includes('مغلق')) {
+                daySelect.innerHTML = '<option value="">الفرع مغلق حالياً</option>';
+                return;
             }
 
-            // تحديث المواعيد أول مرة
-            updateTimes();
+            // تقسيم الأيام والمواعيد
+            const daysList = daysValue.split(',').map(item => item.trim());
+            const timesList = timesValue.split(',').map(item => item.trim());
 
-            // عند تغيير اليوم، نعيد تحديث المواعيد (نفسها)
+            // إضافة الأيام للقائمة
+            daysList.forEach(day => {
+                if (day) {
+                    const option = document.createElement('option');
+                    option.value = day;
+                    option.textContent = day;
+                    daySelect.appendChild(option);
+                }
+            });
+
+            // عند اختيار يوم، نظهر المواعيد
             daySelect.onchange = function() {
-                updateTimes();
+                timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
+                timesList.forEach(time => {
+                    if (time) {
+                        const option = document.createElement('option');
+                        option.value = time;
+                        option.textContent = time;
+                        timeSelect.appendChild(option);
+                    }
+                });
             };
+
+            // لو فيه أيام، نختار أول يوم تلقائياً ونظهر مواعيده
+            if (daysList.length > 0) {
+                daySelect.value = daysList[0];
+                daySelect.dispatchEvent(new Event('change'));
+            }
         }
 
         // ربط تغيير الفرع بتحديث المواعيد
@@ -423,16 +410,12 @@
                     console.log('✅ تم تسجيل الحجز، رقم الحجز:', bookingNumber);
                 } else {
                     console.error('❌ خطأ في التسجيل:', result.error);
-                    alert('⚠️ حدث خطأ في تسجيل الحجز: ' + result.error);
-                    return;
                 }
             } catch (error) {
                 console.error('❌ خطأ في الإرسال إلى Google Sheets:', error);
-                alert('⚠️ حدث خطأ في الإرسال: ' + error.message);
-                return;
             }
 
-            // ===== رسالة واتساب مع رقم الحجز =====
+            // رسالة واتساب مع رقم الحجز
             let message = `✅ تم تأكيد حجزك في عيادة دكتور أحمد عبد الرفاعي\n`;
             message += `━━━━━━━━━━━━━━━━━━━━━━\n`;
             message += `🔹 رقم الحجز: #${bookingNumber}\n`;
