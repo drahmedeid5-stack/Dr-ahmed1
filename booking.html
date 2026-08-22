@@ -232,7 +232,7 @@
         </div>
     </div>
     <script>
-        // عرض رقم الفرع عند الاختيار
+        // ===== عرض رقم الفرع عند الاختيار =====
         document.getElementById('branch').addEventListener('change', function() {
             const selected = this.options[this.selectedIndex];
             const phone = selected.getAttribute('data-phone');
@@ -246,9 +246,10 @@
             }
         });
 
-        // رابط API بتاع Google Sheets (غير الرابط ده بالرابط اللي خدته من Apps Script)
-       const API_URL_BOOKING = 'https://script.google.com/macros/s/رابط_شيت_الحجوزات/exec';
-// باقي الكود زي ما هو...
+        // ===== رابط API بتاع Google Sheets (هتحط الرابط اللي خدته من Apps Script هنا) =====
+        const API_URL = 'https://script.google.com/macros/s/AKfycby.../exec'; // ⚠️ غير هذا الرابط بالرابط الحقيقي
+
+        // ===== دالة إرسال الحجز =====
         async function submitBooking(e) {
             e.preventDefault();
 
@@ -270,7 +271,7 @@
             const formattedDate = dateObj.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             const formattedTime = dateObj.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
 
-            // إرسال البيانات إلى Google Sheets
+            // ===== إرسال البيانات إلى Google Sheets =====
             const bookingData = {
                 branch: branchName,
                 date: formattedDate,
@@ -281,7 +282,7 @@
             };
 
             try {
-                await fetch(API_URL, {
+                const response = await fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
@@ -292,7 +293,7 @@
                 console.error('❌ خطأ في الإرسال إلى Google Sheets:', error);
             }
 
-            // فتح واتساب
+            // ===== فتح واتساب =====
             let message = `مرحباً، أريد حجز موعد في فرع ${branchName}:\n`;
             message += `📅 التاريخ: ${formattedDate}\n`;
             message += `⏰ الوقت: ${formattedTime}\n`;
