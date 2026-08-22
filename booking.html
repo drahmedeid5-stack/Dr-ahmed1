@@ -11,7 +11,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Cairo', sans-serif; background: #f5f6f8; color: #1e2a3a; line-height: 1.8; direction: rtl; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .booking-card { background: #ffffff; max-width: 600px; width: 100%; padding: 40px 35px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10); border: 1px solid rgba(201, 154, 43, 0.15); }
+        .booking-card { background: #ffffff; max-width: 650px; width: 100%; padding: 40px 35px; border-radius: 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10); border: 1px solid rgba(201, 154, 43, 0.15); }
         .booking-card h1 { font-size: 2rem; font-weight: 900; color: #1a3a60; text-align: center; margin-bottom: 6px; }
         .booking-card h1 i { color: #c99a2b; margin-left: 10px; }
         .booking-card .sub { text-align: center; color: #5a6a7a; font-size: 1rem; margin-bottom: 30px; }
@@ -22,9 +22,11 @@
         .form-group select:focus, .form-group input:focus, .form-group textarea:focus { border-color: #c99a2b; outline: none; background: #fff; box-shadow: 0 0 0 4px rgba(201, 154, 43, 0.1); }
         .branch-phone-display { background: #f5f6f8; padding: 10px 16px; border-radius: 12px; margin-top: 6px; font-weight: 600; color: #1a3a60; display: flex; align-items: center; gap: 12px; border-right: 4px solid #c99a2b; }
         .btn-submit { display: block; width: 100%; background: #c99a2b; color: #fff; padding: 16px; border: none; border-radius: 50px; font-weight: 700; font-size: 1.2rem; cursor: pointer; transition: 0.3s ease; box-shadow: 0 6px 20px rgba(201, 154, 43, 0.35); margin-top: 10px; }
-        .btn-submit:hover { background: #b0861f; transform: translateY(-3px); }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #5a6a7a; font-weight: 600; }
+        .btn-submit:hover { background: #b0861f; transform: translateY(-3px); box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5); }
+        .btn-submit i { margin-left: 12px; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #5a6a7a; font-weight: 600; transition: 0.3s ease; }
         .back-link a { color: #2a4a7a; text-decoration: none; }
+        .back-link a:hover { color: #c99a2b; }
         .note-msg { background: #fff9e6; padding: 12px 18px; border-radius: 12px; border-right: 4px solid #c99a2b; font-size: 0.9rem; color: #5a6a7a; margin-bottom: 20px; }
         .note-msg i { color: #c99a2b; margin-left: 8px; }
         @media (max-width: 550px) { .booking-card { padding: 24px 18px; } .booking-card h1 { font-size: 1.6rem; } }
@@ -33,8 +35,9 @@
 <body>
     <div class="booking-card">
         <h1><i class="fas fa-calendar-check"></i> حجز موعد</h1>
-        <p class="sub">اختر الفرع والموعد المناسب لك</p>
+        <p class="sub">اختر الفرع واليوم والتاريخ المناسب لك</p>
         <div class="note-msg"><i class="fas fa-info-circle"></i> سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد.</div>
+
         <form id="bookingForm" onsubmit="submitBooking(event)">
             <div class="form-group">
                 <label><i class="fas fa-store"></i> اختر الفرع</label>
@@ -51,6 +54,12 @@
                 <select id="day" required>
                     <option value="">-- اختر الفرع أولاً --</option>
                 </select>
+            </div>
+
+            <!-- حقل التاريخ الجديد -->
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> التاريخ (اختر اليوم والشهر والسنة)</label>
+                <input type="date" id="bookingDate" required />
             </div>
 
             <div class="form-group">
@@ -96,9 +105,7 @@
                 const data = await response.json();
                 scheduleData = data;
                 document.getElementById('branch').disabled = false;
-            } catch (error) {
-                alert('حدث خطأ في تحميل المواعيد');
-            }
+            } catch (error) { alert('حدث خطأ في تحميل المواعيد'); }
         }
 
         document.getElementById('branch').addEventListener('change', function() {
@@ -108,17 +115,9 @@
             daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
             timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
             timeSelect.disabled = true;
-            if (!branch || !scheduleData[branch]) {
-                daySelect.disabled = true;
-                daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>';
-                return;
-            }
+            if (!branch || !scheduleData[branch]) { daySelect.disabled = true; daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>'; return; }
             const days = Object.keys(scheduleData[branch]);
-            if (days.length === 0) {
-                daySelect.disabled = true;
-                daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>';
-                return;
-            }
+            if (days.length === 0) { daySelect.disabled = true; daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>'; return; }
             daySelect.disabled = false;
             days.forEach(day => {
                 const option = document.createElement('option');
@@ -134,10 +133,7 @@
             const timeSelect = document.getElementById('time');
             timeSelect.innerHTML = '';
             timeSelect.disabled = true;
-            if (!branch || !scheduleData[branch] || !scheduleData[branch][day]) {
-                timeSelect.innerHTML = '<option value="">-- لا يوجد وقت متاح --</option>';
-                return;
-            }
+            if (!branch || !scheduleData[branch] || !scheduleData[branch][day]) { timeSelect.innerHTML = '<option value="">-- لا يوجد وقت متاح --</option>'; return; }
             const time = scheduleData[branch][day];
             timeSelect.disabled = false;
             const option = document.createElement('option');
@@ -146,70 +142,48 @@
             timeSelect.appendChild(option);
         });
 
-        // دالة لحساب تاريخ اليوم المختار القادم
-        function getNextDateForDay(dayName) {
-            const days = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-            const dayIndex = days.indexOf(dayName);
-            if (dayIndex === -1) return dayName; // لو مش يوم معروف رجعه زي ما هو
-
-            const now = new Date();
-            let diff = (dayIndex - now.getDay() + 7) % 7;
-            if (diff === 0) diff = 7; // لو النهارده نفس اليوم، نختار الأسبوع الجاي
-            const nextDate = new Date(now);
-            nextDate.setDate(now.getDate() + diff);
-
-            const formatted = nextDate.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            return formatted;
-        }
-
         async function submitBooking(e) {
             e.preventDefault();
             const branch = document.getElementById('branch');
             const branchName = branch.value;
             const branchPhone = branch.options[branch.selectedIndex].getAttribute('data-phone');
             const day = document.getElementById('day').value;
+            const selectedDate = document.getElementById('bookingDate').value; // التاريخ الجديد
             const time = document.getElementById('time').value;
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
-            if (!branchName || !day || !time || !name || !phone) {
-                alert('يرجى ملء جميع الحقول المطلوبة.');
+            if (!branchName || !day || !selectedDate || !time || !name || !phone) {
+                alert('يرجى ملء جميع الحقول المطلوبة (الفرع، اليوم، التاريخ، الوقت، الاسم، الهاتف).');
                 return;
             }
 
-            // حساب التاريخ الصحيح لليوم المختار
-            const fullDate = getNextDateForDay(day);
+            // تنسيق التاريخ ليكون بالعربي "السبت 22 أغسطس 2026"
+            const dateObj = new Date(selectedDate);
+            const formattedDate = dateObj.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-            const bookingData = { branch: branchName, date: fullDate, time: time, name: name, phone: phone, notes: notes };
+            const bookingData = { branch: branchName, date: formattedDate, time: time, name: name, phone: phone, notes: notes };
             let bookingNumber = '';
 
             try {
                 const response = await fetch(API_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
+                    method: 'POST', mode: 'cors', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(bookingData)
                 });
                 const result = await response.json();
                 if (result.success) bookingNumber = result.bookingNumber || 'غير معروف';
                 else { alert('خطأ: ' + result.error); return; }
-            } catch (error) {
-                alert('حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.');
-                return;
-            }
+            } catch (error) { console.error('خطأ:', error); alert('حدث خطأ في الاتصال بالخادم. حاول مرة أخرى.'); return; }
 
-            let message = `✅ تم تأكيد حجزك في عيادة دكتور أحمد عبد الرفاعي\n━━━━━━━━━━━━━━━━━━━━━━\n🔹 رقم الحجز: #${bookingNumber}\n🏥 الفرع: ${branchName}\n📅 اليوم: ${day}\n⏰ التاريخ: ${fullDate}\n⏰ الوقت: ${time}\n👤 الاسم: ${name}\n📞 رقم الهاتف: ${phone}\n📝 ملاحظات: ${notes}\n━━━━━━━━━━━━━━━━━━━━━━\n📌 يرجى الاحتفاظ برقم الحجز لتأكيد موعدك.`;
+            let message = `✅ تم تأكيد حجزك في عيادة دكتور أحمد عبد الرفاعي\n━━━━━━━━━━━━━━━━━━━━━━\n🔹 رقم الحجز: #${bookingNumber}\n🏥 الفرع: ${branchName}\n📅 اليوم: ${day}\n📆 التاريخ: ${formattedDate}\n⏰ الوقت: ${time}\n👤 الاسم: ${name}\n📞 رقم الهاتف: ${phone}\n📝 ملاحظات: ${notes}\n━━━━━━━━━━━━━━━━━━━━━━\n📌 يرجى الاحتفاظ برقم الحجز لتأكيد موعدك.`;
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${branchPhone}?text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
-            alert(`✅ تم تسجيل حجزك بنجاح!\n📌 رقم الحجز: #${bookingNumber}\n📅 تاريخ الموعد: ${fullDate}`);
+            alert(`✅ تم تسجيل حجزك بنجاح!\n📌 رقم الحجز: #${bookingNumber}`);
         }
 
-        window.onload = function() {
-            document.getElementById('branch').disabled = true;
-            loadSchedule();
-        };
+        window.onload = function() { document.getElementById('branch').disabled = true; loadSchedule(); };
     </script>
 </body>
 </html>
