@@ -9,11 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Cairo', sans-serif;
             background: #f5f6f8;
@@ -42,19 +38,9 @@
             text-align: center;
             margin-bottom: 6px;
         }
-        .booking-card h1 i {
-            color: #c99a2b;
-            margin-left: 10px;
-        }
-        .booking-card .sub {
-            text-align: center;
-            color: #5a6a7a;
-            font-size: 1rem;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 22px;
-        }
+        .booking-card h1 i { color: #c99a2b; margin-left: 10px; }
+        .booking-card .sub { text-align: center; color: #5a6a7a; font-size: 1rem; margin-bottom: 30px; }
+        .form-group { margin-bottom: 22px; }
         .form-group label {
             display: block;
             font-weight: 700;
@@ -62,11 +48,7 @@
             margin-bottom: 6px;
             font-size: 1rem;
         }
-        .form-group label i {
-            color: #c99a2b;
-            margin-left: 8px;
-            width: 20px;
-        }
+        .form-group label i { color: #c99a2b; margin-left: 8px; width: 20px; }
         .form-group select,
         .form-group input,
         .form-group textarea {
@@ -87,19 +69,7 @@
             background: #fff;
             box-shadow: 0 0 0 4px rgba(201, 154, 43, 0.1);
         }
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-        .form-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-        .form-row .form-group {
-            flex: 1 1 calc(50% - 8px);
-            min-width: 140px;
-        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
         .branch-phone-display {
             background: #f5f6f8;
             padding: 10px 16px;
@@ -112,10 +82,7 @@
             gap: 12px;
             border-right: 4px solid #c99a2b;
         }
-        .branch-phone-display i {
-            color: #25d366;
-            font-size: 1.2rem;
-        }
+        .branch-phone-display i { color: #25d366; font-size: 1.2rem; }
         .btn-submit {
             display: block;
             width: 100%;
@@ -136,24 +103,10 @@
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5);
         }
-        .btn-submit i {
-            margin-left: 12px;
-        }
-        .back-link {
-            display: block;
-            text-align: center;
-            margin-top: 20px;
-            color: #5a6a7a;
-            font-weight: 600;
-            transition: 0.3s ease;
-        }
-        .back-link a {
-            color: #2a4a7a;
-            text-decoration: none;
-        }
-        .back-link a:hover {
-            color: #c99a2b;
-        }
+        .btn-submit i { margin-left: 12px; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #5a6a7a; font-weight: 600; }
+        .back-link a { color: #2a4a7a; text-decoration: none; }
+        .back-link a:hover { color: #c99a2b; }
         .note-msg {
             background: #fff9e6;
             padding: 12px 18px;
@@ -163,28 +116,7 @@
             color: #5a6a7a;
             margin-bottom: 20px;
         }
-        .note-msg i {
-            color: #c99a2b;
-            margin-left: 8px;
-        }
-        /* رسالة خطأ أو تحذير */
-        .error-msg {
-            color: #d32f2f;
-            font-size: 0.9rem;
-            margin-top: 6px;
-            display: none;
-        }
-        @media (max-width: 550px) {
-            .booking-card {
-                padding: 24px 18px;
-            }
-            .form-row .form-group {
-                flex: 1 1 100%;
-            }
-            .booking-card h1 {
-                font-size: 1.6rem;
-            }
-        }
+        .note-msg i { color: #c99a2b; margin-left: 8px; }
     </style>
 </head>
 <body>
@@ -192,8 +124,7 @@
         <h1><i class="fas fa-calendar-check"></i> حجز موعد</h1>
         <p class="sub">اختر الفرع والموعد المناسب لك</p>
         <div class="note-msg">
-            <i class="fas fa-info-circle"></i>
-            سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد. 
+            <i class="fas fa-info-circle"></i> سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد.
         </div>
         <form id="bookingForm" onsubmit="submitBooking(event)">
             <!-- اختيار الفرع -->
@@ -211,18 +142,26 @@
             </div>
 
             <!-- اليوم (يتغير بناءً على الفرع) -->
-            <div class="form-group" id="dayGroup">
-                <label><i class="fas fa-calendar-day"></i> اليوم</label>
+            <div class="form-group">
+                <label><i class="fas fa-calendar-day"></i> يوم العمل بالعيادة</label>
                 <select id="day" required disabled>
                     <option value="">-- اختر الفرع أولاً --</option>
                 </select>
             </div>
 
-            <!-- الوقت (يتغير بناءً على اليوم) -->
-            <div class="form-group" id="timeGroup">
+            <!-- تاريخ الحجز (يظهر التواريخ المتاحة لهذا اليوم خلال شهرين) -->
+            <div class="form-group">
+                <label><i class="fas fa-calendar-alt"></i> تاريخ الحجز (التاريخ المحدد)</label>
+                <select id="bookingDate" required disabled>
+                    <option value="">-- اختر اليوم أولاً --</option>
+                </select>
+            </div>
+
+            <!-- الوقت -->
+            <div class="form-group">
                 <label><i class="fas fa-clock"></i> الوقت</label>
                 <select id="time" required disabled>
-                    <option value="">-- اختر اليوم أولاً --</option>
+                    <option value="">-- اختر تاريخ الحجز أولاً --</option>
                 </select>
             </div>
 
@@ -250,135 +189,87 @@
     </div>
 
     <script>
-        // ============================================================
-        // 1. ربط API لجلب بيانات الموقع (بما فيها مواعيد العمل)
-        // ============================================================
-        // ⚠️ استبدل هذا الرابط بالرابط الخاص بـ Web App بتاع شيت إدارة الموقع
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbzUHh_JfDAR6P9KxKxS9yNTuFPu7eRDarHV5ojwNwI7dPUj3hOFNsm7PZZwz0ywu1RITQ/exec';
+        let workingHoursData = [];
+        let branchDays = {};
+        let branchTimes = {};
 
-        // ============================================================
-        // 2. متغيرات لتخزين البيانات
-        // ============================================================
-        let workingHoursData = []; // هتخزن كل صفوف التاب "مواعيد_العمل"
-        let branchDays = {};      // هتخزن الأيام لكل فرع
-        let branchTimes = {};     // هتخزن الأوقات لكل فرع ويوم
-
-        // ============================================================
-        // 3. جلب بيانات مواعيد العمل من التاب "مواعيد_العمل"
-        // ============================================================
         async function loadWorkingHours() {
             try {
                 const response = await fetch(SITE_API_URL);
                 const data = await response.json();
-
-                // نفترض إن الـ API بيرجع مصفوفة من الصفوف
-                // أو كائن فيه مفتاح "working_hours" يحتوي على المصفوفة
-                // هنا هنفترض إن البيانات جاية في صورة مصفوفة من الكائنات
-                // { branch, day, from, to, status }
-                // هنضبطها حسب شكل البيانات اللي هترجعها من الـ Sheet
-                // لكن للتبسيط، هنحاكي البيانات كمثال، وبعدين نستبدلها بالبيانات الحقيقية
-
-                // هنفترض إن الـ API بيرجع JSON بالشكل ده:
-                // { "status": "OK", "data": [ { "branch": "أكتوبر", "day": "السبت", "from": "09:00", "to": "14:00", "status": "مفتوح" }, ... ] }
-
-                // هنا هنعالج البيانات ونخزنها في المتغيرات
                 if (data && data.data) {
                     workingHoursData = data.data;
                 } else {
-                    // لو البيانات مش بالشكل المتوقع، نستخدم بيانات افتراضية للتجربة
-                    console.warn('البيانات مش بالشكل المتوقع، بنستخدم بيانات افتراضية.');
                     workingHoursData = getDefaultWorkingHours();
                 }
-
-                // تنظيم البيانات في كائنات لتسهيل الوصول
                 organizeWorkingHours();
-
-                // تفعيل قائمة الفرع (بعد ما البيانات تتحمل)
                 document.getElementById('branch').disabled = false;
-
             } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل:', error);
-                // في حالة الخطأ، نستخدم بيانات افتراضية
                 workingHoursData = getDefaultWorkingHours();
                 organizeWorkingHours();
                 document.getElementById('branch').disabled = false;
-                alert('حدث خطأ في تحميل مواعيد العمل، سيتم استخدام المواعيد الافتراضية.');
             }
         }
 
-        // بيانات افتراضية (للتجربة)
         function getDefaultWorkingHours() {
             return [
                 { branch: 'أكتوبر', day: 'السبت', from: '09:00', to: '14:00', status: 'مفتوح' },
-                { branch: 'أكتوبر', day: 'الأحد', from: 'مغلق', to: 'مغلق', status: 'مغلق' },
                 { branch: 'أكتوبر', day: 'الإثنين', from: '17:00', to: '21:00', status: 'مفتوح' },
-                { branch: 'أكتوبر', day: 'الثلاثاء', from: '09:00', to: '14:00', status: 'مفتوح' },
-                { branch: 'أكتوبر', day: 'الأربعاء', from: 'مغلق', to: 'مغلق', status: 'مغلق' },
-                { branch: 'أكتوبر', day: 'الخميس', from: '09:00', to: '14:00', status: 'مفتوح' },
-                { branch: 'أكتوبر', day: 'الجمعة', from: 'مغلق', to: 'مغلق', status: 'مغلق' },
                 { branch: 'فيصل', day: 'السبت', from: '10:00', to: '15:00', status: 'مفتوح' },
-                { branch: 'فيصل', day: 'الأحد', from: 'مغلق', to: 'مغلق', status: 'مغلق' },
-                { branch: 'فيصل', day: 'الإثنين', from: '08:00', to: '12:00', status: 'مفتوح' },
-                { branch: 'فيصل', day: 'الثلاثاء', from: '16:00', to: '20:00', status: 'مفتوح' },
-                { branch: 'فيصل', day: 'الأربعاء', from: 'مغلق', to: 'مغلق', status: 'مغلق' },
-                { branch: 'فيصل', day: 'الخميس', from: '10:00', to: '15:00', status: 'مفتوح' },
-                { branch: 'فيصل', day: 'الجمعة', from: 'مغلق', to: 'مغلق', status: 'مغلق' }
+                { branch: 'فيصل', day: 'الثلاثاء', from: '16:00', to: '20:00', status: 'مفتوح' }
             ];
         }
 
-        // ============================================================
-        // 4. تنظيم البيانات في كائنات
-        // ============================================================
         function organizeWorkingHours() {
             branchDays = {};
             branchTimes = {};
-
             workingHoursData.forEach(item => {
                 const branch = item.branch;
                 const day = item.day;
-                const from = item.from;
-                const to = item.to;
-                const status = item.status;
+                if (item.status === 'مفتوح' || item.status === 'open' || item.status === 'available') {
+                    if (!branchDays[branch]) branchDays[branch] = [];
+                    if (!branchDays[branch].includes(day)) branchDays[branch].push(day);
 
-                // إذا كان اليوم مفتوح، نضيفه للأيام المتاحة
-                if (status === 'مفتوح' || status === 'open' || status === 'available') {
-                    if (!branchDays[branch]) {
-                        branchDays[branch] = [];
-                    }
-                    if (!branchDays[branch].includes(day)) {
-                        branchDays[branch].push(day);
-                    }
-
-                    // تخزين الأوقات لهذا اليوم
-                    if (!branchTimes[branch]) {
-                        branchTimes[branch] = {};
-                    }
-                    if (!branchTimes[branch][day]) {
-                        branchTimes[branch][day] = [];
-                    }
-                    // إضافة الوقت (من - إلى) ككائن
-                    branchTimes[branch][day].push({ from: from, to: to });
+                    if (!branchTimes[branch]) branchTimes[branch] = {};
+                    if (!branchTimes[branch][day]) branchTimes[branch][day] = [];
+                    branchTimes[branch][day].push({ from: item.from, to: item.to });
                 }
             });
-
-            // ترتيب الأيام حسب ترتيب الأسبوع
-            const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-            for (let branch in branchDays) {
-                branchDays[branch].sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
-            }
         }
 
-        // ============================================================
-        // 5. تحديث قائمة الأيام عند اختيار الفرع
-        // ============================================================
+        // تحويل اسم اليوم (مثل "السبت") إلى رقم يوم في الأسبوع (0 الأحد، 6 السبت)
+        function getDayIndex(dayName) {
+            const map = { 'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
+            return map[dayName];
+        }
+
+        // توليد التواريخ القادمة خلال شهرين لنفس اليوم المختار
+        function generateUpcomingDates(dayName) {
+            const dates = [];
+            const targetDayIndex = getDayIndex(dayName);
+            let currentDate = new Date();
+            
+            // البحث لمدة 60 يوم قادمة (شهرين)
+            for (let i = 0; i < 60; i++) {
+                if (currentDate.getDay() === targetDayIndex) {
+                    const formatted = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+                    const displayFormatted = `${dayName} (${formatted})`;
+                    dates.push({ value: formatted, text: displayFormatted });
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return dates;
+        }
+
         document.getElementById('branch').addEventListener('change', function() {
             const branch = this.value;
             const daySelect = document.getElementById('day');
+            const dateSelect = document.getElementById('bookingDate');
             const timeSelect = document.getElementById('time');
             const phoneDisplay = document.getElementById('branchPhoneDisplay');
             const phoneSpan = document.getElementById('phoneNumberDisplay');
 
-            // عرض رقم الفرع
             const selected = this.options[this.selectedIndex];
             const phone = selected.getAttribute('data-phone');
             if (phone) {
@@ -388,27 +279,18 @@
                 phoneDisplay.style.display = 'none';
             }
 
-            // إعادة تعيين قائمة الأيام
-            daySelect.innerHTML = '';
-            timeSelect.innerHTML = '<option value="">-- اختر اليوم أولاً --</option>';
+            daySelect.innerHTML = '<option value="">-- اختر اليوم أولاً --</option>';
+            daySelect.disabled = true;
+            dateSelect.innerHTML = '<option value="">-- اختر اليوم أولاً --</option>';
+            dateSelect.disabled = true;
+            timeSelect.innerHTML = '<option value="">-- اختر التاريخ أولاً --</option>';
             timeSelect.disabled = true;
 
-            if (!branch || !branchDays[branch]) {
-                daySelect.disabled = true;
-                daySelect.innerHTML = '<option value="">-- لا توجد مواعيد متاحة --</option>';
-                return;
-            }
+            if (!branch || !branchDays[branch]) return;
 
-            // ملء قائمة الأيام المتاحة
             const days = branchDays[branch];
-            if (days.length === 0) {
-                daySelect.disabled = true;
-                daySelect.innerHTML = '<option value="">-- لا توجد مواعيد متاحة --</option>';
-                return;
-            }
-
             daySelect.disabled = false;
-            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
+            daySelect.innerHTML = '<option value="">-- اختر يوم العمل --</option>';
             days.forEach(day => {
                 const option = document.createElement('option');
                 option.value = day;
@@ -417,44 +299,50 @@
             });
         });
 
-        // ============================================================
-        // 6. تحديث قائمة الأوقات عند اختيار اليوم
-        // ============================================================
         document.getElementById('day').addEventListener('change', function() {
-            const branch = document.getElementById('branch').value;
             const day = this.value;
+            const dateSelect = document.getElementById('bookingDate');
+            const timeSelect = document.getElementById('time');
+
+            dateSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز --</option>';
+            dateSelect.disabled = true;
+            timeSelect.innerHTML = '<option value="">-- اختر التاريخ أولاً --</option>';
+            timeSelect.disabled = true;
+
+            if (!day) return;
+
+            const upcomingDates = generateUpcomingDates(day);
+            dateSelect.disabled = false;
+            upcomingDates.forEach(d => {
+                const option = document.createElement('option');
+                option.value = d.text; // هيتسجل في الشيت بالشكل المضبوط
+                option.textContent = d.text;
+                dateSelect.appendChild(option);
+            });
+        });
+
+        document.getElementById('bookingDate').addEventListener('change', function() {
+            const branch = document.getElementById('branch').value;
+            const day = document.getElementById('day').value;
             const timeSelect = document.getElementById('time');
 
             timeSelect.innerHTML = '';
             timeSelect.disabled = true;
 
-            if (!branch || !day || !branchTimes[branch] || !branchTimes[branch][day]) {
-                timeSelect.innerHTML = '<option value="">-- لا توجد أوقات متاحة --</option>';
-                return;
-            }
+            if (!branch || !day || !branchTimes[branch] || !branchTimes[branch][day]) return;
 
             const times = branchTimes[branch][day];
-            if (times.length === 0) {
-                timeSelect.innerHTML = '<option value="">-- لا توجد أوقات متاحة --</option>';
-                return;
-            }
-
             timeSelect.disabled = false;
             timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
             times.forEach(timeSlot => {
                 const option = document.createElement('option');
-                // نعرض الوقت بالشكل: "من 09:00 إلى 14:00"
                 option.value = `${timeSlot.from} - ${timeSlot.to}`;
                 option.textContent = `من ${timeSlot.from} إلى ${timeSlot.to}`;
                 timeSelect.appendChild(option);
             });
         });
 
-        // ============================================================
-        // 7. دالة إرسال الحجز (تعديل)
-        // ============================================================
-        // ⚠️ استبدل هذا الرابط بالرابط الخاص بـ Web App بتاع شيت الحجوزات
-        const BOOKING_API_URL = 'https://script.google.com/macros/s/AKfycbzUHh_JfDAR6P9KxKxS9yNTuFPu7eRDarHV5ojwNwI7dPUj3hOFNsm7PZZwz0ywu1RITQ/exec';
+        const BOOKING_API_URL = SITE_API_URL;
 
         async function submitBooking(e) {
             e.preventDefault();
@@ -463,30 +351,23 @@
             const branchName = branch.value;
             const branchPhone = branch.options[branch.selectedIndex].getAttribute('data-phone');
             const day = document.getElementById('day').value;
-            const timeRange = document.getElementById('time').value; // "09:00 - 14:00"
+            const bookingDate = document.getElementById('bookingDate').value; // التاريخ المختار بالكامل
+            const timeRange = document.getElementById('time').value;
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
-            if (!branchName || !day || !timeRange || !name || !phone) {
+            if (!branchName || !day || !bookingDate || !timeRange || !name || !phone) {
                 alert('يرجى ملء جميع الحقول المطلوبة.');
                 return;
             }
 
-            // استخراج الوقت الفعلي من النطاق (نأخذ وقت البداية فقط)
             const timeParts = timeRange.split(' - ');
             const fromTime = timeParts[0] || '';
 
-            // تنسيق التاريخ (نأخذ التاريخ الحالي أو نستخدم تاريخ ثابت)
-            const now = new Date();
-            const formattedDate = now.toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            // نضيف اليوم والوقت المختار
-            const fullDate = `${day} ${formattedDate}`;
-
-            // ===== إرسال البيانات إلى Google Sheets (شيت الحجوزات) =====
             const bookingData = {
                 branch: branchName,
-                date: fullDate,
+                date: bookingDate, // هيتكتب بشكل منظم جداً في الشيت
                 time: fromTime,
                 name: name,
                 phone: phone,
@@ -500,34 +381,31 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(bookingData)
                 });
-                console.log('✅ تم تسجيل الحجز في Google Sheets');
             } catch (error) {
-                console.error('❌ خطأ في الإرسال إلى Google Sheets:', error);
+                console.error('خطأ:', error);
             }
 
-            // ===== فتح واتساب =====
-            let message = `مرحباً، أريد حجز موعد في فرع ${branchName}:\n`;
-            message += `📅 اليوم: ${day}\n`;
+            let message = `مرحباً، أريد تأكيد حجز موعد في فرع ${branchName}:\n`;
+            message += `📅 التاريخ: ${bookingDate}\n`;
             message += `⏰ الوقت: ${timeRange}\n`;
             message += `👤 الاسم: ${name}\n`;
             message += `📞 رقم الهاتف: ${phone}\n`;
-            if (notes) {
-                message += `📝 ملاحظات: ${notes}\n`;
-            }
+            if (notes) message += `📝 ملاحظات: ${notes}\n`;
             message += `\nشكراً!`;
 
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${branchPhone}?text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
 
-            alert('✅ تم تسجيل حجزك وإرسال رسالة إلى واتساب.');
+            alert('✅ تم تسجيل حجزك بنجاح!');
+            document.getElementById('bookingForm').reset();
+            document.getElementById('day').disabled = true;
+            document.getElementById('bookingDate').disabled = true;
+            document.getElementById('time').disabled = true;
+            document.getElementById('branchPhoneDisplay').style.display = 'none';
         }
 
-        // ============================================================
-        // 8. تشغيل تحميل البيانات عند تحميل الصفحة
-        // ============================================================
         window.onload = function() {
-            // تعطيل حقول الفرع مؤقتاً حتى تتحمل البيانات
             document.getElementById('branch').disabled = true;
             loadWorkingHours();
         };
