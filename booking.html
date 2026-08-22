@@ -245,8 +245,9 @@
 
     <script>
         // ============================================================
-        // 1. الرابط الثابت بتاع الـ API (من جوجل شيت)
+        // 1. الرابط الثابت بتاع الـ API
         // ============================================================
+        // ⚠️ مهم: غير الرابط ده بالرابط اللي خدته من Apps Script
         const API_URL = 'https://script.google.com/macros/s/AKfycbzUHh_JfDAR6P9KxKxS9yNTuFPu7eRDarHV5ojwNwI7dPUj3hOFNsm7PZZwz0ywu1RITQ/exec';
 
         // ============================================================
@@ -271,10 +272,15 @@
         async function getSchedule() {
             try {
                 const response = await fetch(`${API_URL}?action=getSchedule`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 const data = await response.json();
+                console.log('✅ البيانات القادمة من الشيت:', data);
                 return data;
             } catch (error) {
-                console.error('خطأ في جلب المواعيد:', error);
+                console.error('❌ خطأ في جلب المواعيد:', error);
+                alert('⚠️ لا يمكن جلب مواعيد العمل. تأكد من الاتصال بالشيت.\n' + error.message);
                 return null;
             }
         }
@@ -283,12 +289,12 @@
             const daySelect = document.getElementById('day');
             const timeSelect = document.getElementById('time');
 
-            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
+            daySelect.innerHTML = '<option value="">-- جاري التحميل --</option>';
             timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
 
             const schedule = await getSchedule();
             if (!schedule) {
-                alert('لا يمكن جلب مواعيد العمل. تأكد من الاتصال بالشيت.');
+                daySelect.innerHTML = '<option value="">خطأ في جلب البيانات</option>';
                 return;
             }
 
@@ -302,42 +308,59 @@
                 daysKey = 'days_faisal';
                 timesKey = 'times_faisal';
             } else {
+                daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
                 return;
             }
 
             const daysValue = schedule[daysKey] || '';
             const timesValue = schedule[timesKey] || '';
 
+            console.log(`📅 أيام ${branchName}:`, daysValue);
+            console.log(`⏰ مواعيد ${branchName}:`, timesValue);
+
             if (!daysValue || daysValue.toLowerCase().includes('مغلق')) {
                 daySelect.innerHTML = '<option value="">الفرع مغلق حالياً</option>';
+                timeSelect.innerHTML = '<option value="">-- لا توجد مواعيد --</option>';
                 return;
             }
 
-            const daysList = daysValue.split(',').map(item => item.trim());
-            const timesList = timesValue.split(',').map(item => item.trim());
+            // تقسيم الأيام والمواعيد (بفرض أنهم مفصولين بفاصلة)
+            const daysList = daysValue.split(',').map(item => item.trim()).filter(item => item);
+            const timesList = timesValue.split(',').map(item => item.trim()).filter(item => item);
 
+            if (daysList.length === 0) {
+                daySelect.innerHTML = '<option value="">لا توجد أيام متاحة</option>';
+                return;
+            }
+
+            // إضافة الأيام للقائمة المنسدلة
+            daySelect.innerHTML = '<option value="">-- اختر اليوم --</option>';
             daysList.forEach(day => {
-                if (day) {
-                    const option = document.createElement('option');
-                    option.value = day;
-                    option.textContent = day;
-                    daySelect.appendChild(option);
-                }
+                const option = document.createElement('option');
+                option.value = day;
+                option.textContent = day;
+                daySelect.appendChild(option);
             });
 
+            // دالة تحديث قائمة المواعيد عند اختيار اليوم
             function updateTimes() {
                 timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
+                if (timesList.length === 0) {
+                    timeSelect.innerHTML = '<option value="">لا توجد مواعيد</option>';
+                    return;
+                }
                 timesList.forEach(time => {
-                    if (time) {
-                        const option = document.createElement('option');
-                        option.value = time;
-                        option.textContent = time;
-                        timeSelect.appendChild(option);
-                    }
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
                 });
             }
 
+            // تحديث المواعيد أول مرة
             updateTimes();
+
+            // عند تغيير اليوم، نعيد تحديث المواعيد (نفسها)
             daySelect.onchange = function() {
                 updateTimes();
             };
@@ -400,9 +423,13 @@
                     console.log('✅ تم تسجيل الحجز، رقم الحجز:', bookingNumber);
                 } else {
                     console.error('❌ خطأ في التسجيل:', result.error);
+                    alert('⚠️ حدث خطأ في تسجيل الحجز: ' + result.error);
+                    return;
                 }
             } catch (error) {
                 console.error('❌ خطأ في الإرسال إلى Google Sheets:', error);
+                alert('⚠️ حدث خطأ في الإرسال: ' + error.message);
+                return;
             }
 
             // ===== رسالة واتساب مع رقم الحجز =====
@@ -432,7 +459,6 @@
         // 5. تشغيل الكود عند تحميل الصفحة
         // ============================================================
         document.addEventListener('DOMContentLoaded', function() {
-            // أي إعدادات إضافية لو محتاج
             console.log('✅ صفحة الحجز جاهزة.');
         });
     </script>
