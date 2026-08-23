@@ -125,18 +125,39 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* سلايد الخدمات المتحرك */
-        .services-slider { overflow: hidden; margin-top: 35px; }
+        /* سلايد الخدمات - بأسهم يدوية */
+        .services-slider { position: relative; margin-top: 35px; padding: 0 60px; }
+        .services-slider-viewport { overflow: hidden; }
         .services-track {
             display: flex;
             gap: 30px;
-            width: max-content;
-            animation: services-scroll 40s linear infinite;
+            transition: transform 0.45s ease;
         }
-        .services-slider:hover .services-track { animation-play-state: paused; }
-        @keyframes services-scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
+        .services-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #ffffff;
+            color: #2563eb;
+            border: 1px solid rgba(37, 99, 235, 0.25);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            transition: 0.25s ease;
+        }
+        .services-arrow:hover { background: #2563eb; color: #fff; transform: translateY(-50%) scale(1.08); }
+        .services-arrow.next { left: 0; }
+        .services-arrow.prev { right: 0; }
+        @media (max-width: 700px) {
+            .services-slider { padding: 0 46px; }
+            .services-arrow { width: 38px; height: 38px; font-size: 0.95rem; }
         }
 
         /* باقي الأقسام */
@@ -324,13 +345,17 @@
             <h2 class="section-title section-title-center">الخدمات الطبية والجراحية</h2>
             <p class="section-subtitle" style="text-align:center;">نقدم أحدث الحلول الطبية والتجربة الجراحية الدقيقة لعلاج كافة أمراض الكلى والمسالك البولية.</p>
             <div class="services-slider">
-                <div class="services-track" id="servicesTrack">
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-prostate"></i></div><h4>أعراض البروستاتا</h4><p>تشخيص دقيق لتضخم البروستاتا وعلاجه دوائياً أو جراحياً عبر المنظار.</p></div>
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-bolt"></i></div><h4>تفتيت الحصوات بالليزر</h4><p>أحدث تقنيات تفتيت حصوات الكلى والحالب بالليزر بدون تدخل جراحي مفتوح.</p></div>
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-microscope"></i></div><h4>مناظير المسالك البولية</h4><p>استخدام أحدث المناظير لعلاج حصوات الحالب والمثانة ومشاكل مجرى البول.</p></div>
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-kidney"></i></div><h4>جراحات الكلى</h4><p>إجراء جراحات استئصال الكلى، علاج تصلب الكلى، وجراحات دوالي الخصية المتقدمة.</p></div>
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-female"></i></div><h4>مسالك السيدات</h4><p>تشخيص وعلاج حالات السلس البولي الإجهادي والإلحاحي والالتهابات المتكررة.</p></div>
-                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-child"></i></div><h4>جراحات المسالك للأطفال</h4><p>علاج حالات الإنسداد الحالبي، الفتق، والإنسداد البولي عند الأطفال.</p></div>
+                <button class="services-arrow prev" id="servicesPrevBtn" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>
+                <button class="services-arrow next" id="servicesNextBtn" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>
+                <div class="services-slider-viewport">
+                    <div class="services-track" id="servicesTrack">
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-prostate"></i></div><h4>أعراض البروستاتا</h4><p>تشخيص دقيق لتضخم البروستاتا وعلاجه دوائياً أو جراحياً عبر المنظار.</p></div>
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-bolt"></i></div><h4>تفتيت الحصوات بالليزر</h4><p>أحدث تقنيات تفتيت حصوات الكلى والحالب بالليزر بدون تدخل جراحي مفتوح.</p></div>
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-microscope"></i></div><h4>مناظير المسالك البولية</h4><p>استخدام أحدث المناظير لعلاج حصوات الحالب والمثانة ومشاكل مجرى البول.</p></div>
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-kidney"></i></div><h4>جراحات الكلى</h4><p>إجراء جراحات استئصال الكلى، علاج تصلب الكلى، وجراحات دوالي الخصية المتقدمة.</p></div>
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-female"></i></div><h4>مسالك السيدات</h4><p>تشخيص وعلاج حالات السلس البولي الإجهادي والإلحاحي والالتهابات المتكررة.</p></div>
+                        <div class="service-card"><div class="icon-wrap"><i class="fas fa-child"></i></div><h4>جراحات المسالك للأطفال</h4><p>علاج حالات الإنسداد الحالبي، الفتق، والإنسداد البولي عند الأطفال.</p></div>
+                    </div>
                 </div>
             </div>
             <div class="services-cta">
@@ -439,14 +464,62 @@
         function renderServices(services) {
             const track = document.getElementById('servicesTrack');
             if (!track || !services || !services.length) return;
-            const cardsHtml = services.map(s => `
+            track.innerHTML = services.map(s => `
                 <div class="service-card">
                     <div class="icon-wrap"><i class="${s.icon || SERVICE_ICONS_FALLBACK}"></i></div>
                     <h4>${s.title}</h4>
                     <p>${s.desc || ''}</p>
                 </div>
             `).join('');
-            track.innerHTML = cardsHtml + cardsHtml; // تكرار عشان الحركة تبقى متصلة من غير قطع
+            initServicesSlider();
+        }
+
+        function initServicesSlider() {
+            const track = document.getElementById('servicesTrack');
+            const prevBtn = document.getElementById('servicesPrevBtn');
+            const nextBtn = document.getElementById('servicesNextBtn');
+            if (!track || !prevBtn || !nextBtn) return;
+
+            let index = 0;
+
+            function cardStep() {
+                const card = track.querySelector('.service-card');
+                if (!card) return 0;
+                const gap = 30;
+                return card.getBoundingClientRect().width + gap;
+            }
+
+            function visibleCount() {
+                const viewport = track.parentElement;
+                const step = cardStep();
+                if (!step) return 1;
+                return Math.max(1, Math.floor(viewport.getBoundingClientRect().width / step));
+            }
+
+            function maxIndex() {
+                const total = track.children.length;
+                return Math.max(0, total - visibleCount());
+            }
+
+            function update() {
+                const step = cardStep();
+                track.style.transform = `translateX(${index * step}px)`;
+            }
+
+            nextBtn.addEventListener('click', function () {
+                const max = maxIndex();
+                index = (index >= max) ? 0 : index + 1; // يلف من الأول تاني لما يوصل للنهاية
+                update();
+            });
+
+            prevBtn.addEventListener('click', function () {
+                const max = maxIndex();
+                index = (index <= 0) ? max : index - 1; // يرجع للنهاية لما يكون في الأول
+                update();
+            });
+
+            window.addEventListener('resize', update);
+            update();
         }
 
         const cbName = '__dynamic_cb_' + Date.now();
@@ -462,6 +535,8 @@
         const script = document.createElement('script');
         script.src = SITE_API_URL + '?action=getDynamicContent&callback=' + cbName;
         document.body.appendChild(script);
+
+        initServicesSlider();
     })();
     </script>
 
