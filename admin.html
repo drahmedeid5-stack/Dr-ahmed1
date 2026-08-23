@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة تحكم الحجوزات - عيادة دكتور أحمد عبد الرفاعي</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+    background: #f2f4f8;
+    color: #222;
+    min-height: 100vh;
+  }
+
+  /* ---------- شاشة الدخول ---------- */
+  #loginScreen {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #loginBox {
+    background: #fff;
+    padding: 36px 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+  #loginBox h1 { font-size: 20px; color: #1a3a60; margin-bottom: 6px; }
+  #loginBox p { color: #777; font-size: 13px; margin-bottom: 22px; }
+  #loginBox input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  #loginBox button {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1a3a60;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  #loginBox button:hover { background: #142e4c; }
+  #loginError { color: #d32f2f; font-size: 13px; margin-top: 10px; min-height: 16px; }
+
+  /* ---------- الهيدر ---------- */
+  header {
+    background: #1a3a60;
+    color: #fff;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  header h1 { font-size: 18px; }
+  header .actions { display: flex; gap: 10px; }
+  header button {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  header button:hover { background: rgba(255,255,255,0.28); }
+
+  main { padding: 16px; max-width: 1100px; margin: 0 auto; }
+  #loadingMsg, #emptyMsg { text-align: center; color: #888; padding: 40px 0; display: none; }
+
+  /* ---------- كروت الحجوزات ---------- */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-right: 5px solid #ccc;
+  }
+  .card.status-انتظار { border-right-color: #f5a623; }
+  .card.status-تأكيد_الحجز { border-right-color: #2e9e4f; }
+  .card.status-إلغاء_الحجز { border-right-color: #d32f2f; opacity: 0.75; }
+
+  .card .info { flex: 1; min-width: 220px; }
+  .card .info .name { font-size: 16px; font-weight: bold; color: #1a3a60; }
+  .card .info .meta { font-size: 13px; color: #666; margin-top: 4px; line-height: 1.7; }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #fff;
+    margin-inline-start: 6px;
+  }
+  .badge.انتظار { background: #f5a623; }
+  .badge.تأكيد_الحجز { background: #2e9e4f; }
+  .badge.إلغاء_الحجز { background: #d32f2f; }
+
+  .card .buttons { display: flex; gap: 8px; }
+  .card .buttons button {
+    padding: 9px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #fff;
+  }
+  .btn-confirm { background: #25d366; }
+  .btn-confirm:hover { background: #1eb857; }
+  .btn-cancel { background: #d32f2f; }
+  .btn-cancel:hover { background: #b32424; }
+  .card .buttons button:disabled { opacity: 0.5; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+  <!-- ============ شاشة الدخول ============ -->
+  <div id="loginScreen">
+    <div id="loginBox">
+      <h1>لوحة تحكم الحجوزات</h1>
+      <p>عيادة دكتور أحمد عبد الرفاعي</p>
+      <input type="password" id="keyInput" placeholder="الرقم السري" onkeydown="if(event.key==='Enter') login()">
+      <button onclick="login()">دخول</button>
+      <div id="loginError"></div>
+    </div>
+  </div>
+
+  <!-- ============ الشاشة الرئيسية ============ -->
+  <div id="mainScreen" style="display:none;">
+    <header>
+      <h1>📋 الحجوزات</h1>
+      <div class="actions">
+        <button onclick="loadBookings()">🔄 تحديث</button>
+        <button onclick="logout()">🚪 خروج</button>
+      </div>
+    </header>
+    <main>
+      <div id="loadingMsg">جاري تحميل الحجوزات...</div>
+      <div id="emptyMsg">لا توجد حجوزات حتى الآن</div>
+      <div id="bookingsList"></div>
+    </main>
+  </div>
+
+<script>
+  // مهم جدًا: غيّر ده لرابط الـ Web App بتاعك (نفس رابط صفحة الحجز)
+  const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
+
+  let adminKey = sessionStorage.getItem('adminKey') || '';
+
+  function jsonpRequest(params, callback) {
+    const cbName = '__cb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+    window[cbName] = function (data) {
+      callback(data);
+      delete window[cbName];
+      script.remove();
+    };
+    const query = Object.keys(params).map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k])).join('&');
+    const script = document.createElement('script');
+    script.src = SITE_API_URL + '?' + query + '&callback=' + cbName;
+    script.onerror = function () {
+      callback({ error: 'تعذر الاتصال بالسيرفر' });
+      delete window[cbName];
+    };
+    document.body.appendChild(script);
+  }
+
+  function login() {
+    const key = document.getElementById('keyInput').value.trim();
+    if (!key) return;
+    document.getElementById('loginError').textContent = '';
+    jsonpRequest({ action: 'getBookings', key: key }, function (data) {
+      if (data.error) {
+        document.getElementById('loginError').textContent = 'الرقم السري غلط، حاول تاني';
+        return;
+      }
+      adminKey = key;
+      sessionStorage.setItem('adminKey', key);
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainScreen').style.display = 'block';
+      renderBookings(data.bookings || []);
+    });
+  }
+
+  function logout() {
+    sessionStorage.removeItem('adminKey');
+    adminKey = '';
+    document.getElementById('mainScreen').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('keyInput').value = '';
+  }
+
+  function loadBookings() {
+    if (!adminKey) return;
+    document.getElementById('loadingMsg').style.display = 'block';
+    document.getElementById('bookingsList').innerHTML = '';
+    document.getElementById('emptyMsg').style.display = 'none';
+    jsonpRequest({ action: 'getBookings', key: adminKey }, function (data) {
+      document.getElementById('loadingMsg').style.display = 'none';
+      if (data.error) { logout(); return; }
+      renderBookings(data.bookings || []);
+    });
+  }
+
+  function statusClass(status) {
+    return (status || 'انتظار').replace(/ /g, '_');
+  }
+
+  function renderBookings(bookings) {
+    const container = document.getElementById('bookingsList');
+    container.innerHTML = '';
+    if (!bookings.length) {
+      document.getElementById('emptyMsg').style.display = 'block';
+      return;
+    }
+    document.getElementById('emptyMsg').style.display = 'none';
+
+    bookings.forEach(function (b) {
+      const div = document.createElement('div');
+      div.className = 'card status-' + statusClass(b.status);
+      div.innerHTML = `
+        <div class="info">
+          <div class="name">${b.name || '-'} <span class="badge ${statusClass(b.status)}">${b.status || 'انتظار'}</span></div>
+          <div class="meta">
+            🔹 رقم الحجز: #${b.bookingNumber} &nbsp; | &nbsp; 🏥 ${b.branch} <br>
+            📅 ${b.date} &nbsp; ⏰ ${b.time} <br>
+            📞 ${b.phone}${b.notes ? ' &nbsp; | &nbsp; 📝 ' + b.notes : ''}
+          </div>
+        </div>
+        <div class="buttons">
+          <button class="btn-confirm" onclick="updateStatus(${b.rowIndex}, 'تأكيد الحجز', this)" ${b.status === 'تأكيد الحجز' ? 'disabled' : ''}>✅ تأكيد</button>
+          <button class="btn-cancel" onclick="updateStatus(${b.rowIndex}, 'إلغاء الحجز', this)" ${b.status === 'إلغاء الحجز' ? 'disabled' : ''}>❌ إلغاء</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  function updateStatus(rowIndex, status, btn) {
+    btn.disabled = true;
+    btn.textContent = '...جاري التنفيذ';
+    jsonpRequest({ action: 'updateStatus', key: adminKey, rowIndex: rowIndex, status: status }, function (data) {
+      if (!data.success) {
+        alert('حصل خطأ: ' + (data.error || 'غير معروف'));
+        loadBookings();
+        return;
+      }
+      if (data.whatsappUrl) {
+        window.open(data.whatsappUrl, '_blank');
+      }
+      loadBookings();
+    });
+  }
+
+  // لو المفتاح محفوظ من قبل، ادخل على طول
+  window.onload = function () {
+    if (adminKey) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('mainScreen').style.display = 'block';
+      loadBookings();
+    }
+  };
+</script>
+</body>
+</html>
