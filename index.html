@@ -94,6 +94,51 @@
         .hero-nav a { color: #ffffff; font-weight: 600; font-size: 1.05rem; transition: 0.3s; display: flex; align-items: center; gap: 8px; }
         .hero-nav a:hover { color: #bfdbfe; }
 
+        /* شريط الأخبار المتحرك */
+        .news-ticker {
+            background: rgba(0,0,0,0.18);
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+            margin: 16px 0;
+            padding: 10px 0;
+            position: relative;
+        }
+        .news-ticker-track {
+            display: flex;
+            width: max-content;
+            gap: 60px;
+            animation: ticker-scroll 28s linear infinite;
+        }
+        .news-ticker-track span {
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 1rem;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .news-ticker-track span::before { content: '📢'; }
+        @keyframes ticker-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* سلايد الخدمات المتحرك */
+        .services-slider { overflow: hidden; margin-top: 35px; }
+        .services-track {
+            display: flex;
+            gap: 30px;
+            width: max-content;
+            animation: services-scroll 40s linear infinite;
+        }
+        .services-slider:hover .services-track { animation-play-state: paused; }
+        @keyframes services-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
         /* باقي الأقسام */
         .section-title { font-size: 2.4rem; font-weight: 900; color: #1e3a8a; position: relative; display: inline-block; margin-bottom: 15px; }
         .section-title::after { content: ''; position: absolute; bottom: -6px; right: 0; width: 80px; height: 4px; background: #2563eb; border-radius: 4px; }
@@ -124,7 +169,7 @@
         
         .services { padding: 70px 0 60px; background: #eff6ff; }
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 30px; margin-top: 35px; }
-        .service-card { background: #ffffff; padding: 32px 24px 28px; border-radius: 20px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04); transition: 0.4s ease; border: 1px solid rgba(0, 0, 0, 0.03); text-align: center; }
+        .service-card { background: #ffffff; padding: 32px 24px 28px; border-radius: 20px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04); transition: 0.4s ease; border: 1px solid rgba(0, 0, 0, 0.03); text-align: center; flex: 0 0 280px; }
         .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08); border-color: rgba(37, 99, 235, 0.2); }
         .service-card .icon-wrap { display: inline-flex; justify-content: center; align-items: center; width: 80px; height: 80px; border-radius: 50%; background: rgba(37, 99, 235, 0.1); color: #2563eb; font-size: 2.6rem; margin-bottom: 18px; transition: 0.3s ease; }
         .service-card:hover .icon-wrap { background: #2563eb; color: #fff; box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3); }
@@ -218,14 +263,14 @@
                 </div>
             </div>
             
-            <!-- زر احجز الآن اللي بيودي لصفحة الحجز -->
-            <div style="text-align: center; margin-bottom: 15px;">
-                <a href="booking.html" class="hero-book-btn">
-                    <i class="fas fa-calendar-check"></i> احجز الآن
-                </a>
+            <div class="news-ticker" id="newsTicker" style="display:none;">
+                <div class="news-ticker-track" id="newsTickerTrack"></div>
             </div>
 
             <div class="hero-buttons">
+                <a href="booking.html" class="hero-book-btn" style="margin-bottom:0;">
+                    <i class="fas fa-calendar-check"></i> احجز الآن
+                </a>
                 <a href="https://wa.me/201061119615" id="cmWhatsappOctober" target="_blank" class="btn-whatsapp">
                     <i class="fab fa-whatsapp"></i> تواصل واتساب
                 </a>
@@ -249,7 +294,7 @@
                 <div class="about-text">
                     <div class="doctor-name-lg">دكتور <span>أحمد عيد رفاعي</span></div>
                     <div class="doctor-sub"><i class="fas fa-stethoscope"></i> استشاري جراحة المسالك البولية</div>
-                    <ul class="about-points">
+                    <ul class="about-points" id="aboutPointsList">
                         <li><i class="fas fa-check-circle"></i><span><strong>خبرة واسعة</strong> في تشخيص وعلاج أدق وأعقد الحالات الجراحية.</span></li>
                         <li><i class="fas fa-check-circle"></i><span><strong>مدرس بكلية الطب</strong> – جامعة الأزهر، مواكبة دائمة لأحدث الأدوات والتقنيات الطبية.</span></li>
                         <li><i class="fas fa-check-circle"></i><span><strong>استشاري جراحات المناظير والكلى</strong>، متخصص في العمليات بأقل تدخل جراحي.</span></li>
@@ -278,13 +323,15 @@
         <div class="container">
             <h2 class="section-title section-title-center">الخدمات الطبية والجراحية</h2>
             <p class="section-subtitle" style="text-align:center;">نقدم أحدث الحلول الطبية والتجربة الجراحية الدقيقة لعلاج كافة أمراض الكلى والمسالك البولية.</p>
-            <div class="services-grid">
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-prostate"></i></div><h4>أعراض البروستاتا</h4><p>تشخيص دقيق لتضخم البروستاتا وعلاجه دوائياً أو جراحياً عبر المنظار.</p></div>
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-bolt"></i></div><h4>تفتيت الحصوات بالليزر</h4><p>أحدث تقنيات تفتيت حصوات الكلى والحالب بالليزر بدون تدخل جراحي مفتوح.</p></div>
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-microscope"></i></div><h4>مناظير المسالك البولية</h4><p>استخدام أحدث المناظير لعلاج حصوات الحالب والمثانة ومشاكل مجرى البول.</p></div>
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-kidney"></i></div><h4>جراحات الكلى</h4><p>إجراء جراحات استئصال الكلى، علاج تصلب الكلى، وجراحات دوالي الخصية المتقدمة.</p></div>
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-female"></i></div><h4>مسالك السيدات</h4><p>تشخيص وعلاج حالات السلس البولي الإجهادي والإلحاحي والالتهابات المتكررة.</p></div>
-                <div class="service-card"><div class="icon-wrap"><i class="fas fa-child"></i></div><h4>جراحات المسالك للأطفال</h4><p>علاج حالات الإنسداد الحالبي، الفتق، والإنسداد البولي عند الأطفال.</p></div>
+            <div class="services-slider">
+                <div class="services-track" id="servicesTrack">
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-prostate"></i></div><h4>أعراض البروستاتا</h4><p>تشخيص دقيق لتضخم البروستاتا وعلاجه دوائياً أو جراحياً عبر المنظار.</p></div>
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-bolt"></i></div><h4>تفتيت الحصوات بالليزر</h4><p>أحدث تقنيات تفتيت حصوات الكلى والحالب بالليزر بدون تدخل جراحي مفتوح.</p></div>
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-microscope"></i></div><h4>مناظير المسالك البولية</h4><p>استخدام أحدث المناظير لعلاج حصوات الحالب والمثانة ومشاكل مجرى البول.</p></div>
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-kidney"></i></div><h4>جراحات الكلى</h4><p>إجراء جراحات استئصال الكلى، علاج تصلب الكلى، وجراحات دوالي الخصية المتقدمة.</p></div>
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-female"></i></div><h4>مسالك السيدات</h4><p>تشخيص وعلاج حالات السلس البولي الإجهادي والإلحاحي والالتهابات المتكررة.</p></div>
+                    <div class="service-card"><div class="icon-wrap"><i class="fas fa-child"></i></div><h4>جراحات المسالك للأطفال</h4><p>علاج حالات الإنسداد الحالبي، الفتق، والإنسداد البولي عند الأطفال.</p></div>
+                </div>
             </div>
             <div class="services-cta">
                 <a href="#" class="btn-dark"><i class="fas fa-phone-alt"></i> استشر الطبيب الآن</a>
@@ -368,6 +415,56 @@
     </footer>
 
     <!-- السكربتات -->
+    <script>
+    (function () {
+        const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
+
+        const SERVICE_ICONS_FALLBACK = 'fas fa-notes-medical';
+
+        function renderNews(news) {
+            const wrap = document.getElementById('newsTicker');
+            const track = document.getElementById('newsTickerTrack');
+            if (!wrap || !track || !news || !news.length) return;
+            const itemsHtml = news.map(n => `<span>${n.text}</span>`).join('');
+            track.innerHTML = itemsHtml + itemsHtml; // تكرار عشان الحركة تبقى متصلة من غير قطع
+            wrap.style.display = 'block';
+        }
+
+        function renderAboutPoints(points) {
+            const list = document.getElementById('aboutPointsList');
+            if (!list || !points || !points.length) return;
+            list.innerHTML = points.map(p => `<li><i class="fas fa-check-circle"></i><span>${p.text}</span></li>`).join('');
+        }
+
+        function renderServices(services) {
+            const track = document.getElementById('servicesTrack');
+            if (!track || !services || !services.length) return;
+            const cardsHtml = services.map(s => `
+                <div class="service-card">
+                    <div class="icon-wrap"><i class="${s.icon || SERVICE_ICONS_FALLBACK}"></i></div>
+                    <h4>${s.title}</h4>
+                    <p>${s.desc || ''}</p>
+                </div>
+            `).join('');
+            track.innerHTML = cardsHtml + cardsHtml; // تكرار عشان الحركة تبقى متصلة من غير قطع
+        }
+
+        const cbName = '__dynamic_cb_' + Date.now();
+        window[cbName] = function (data) {
+            if (data && !data.error) {
+                renderNews(data.news);
+                renderAboutPoints(data.aboutPoints);
+                renderServices(data.services);
+            }
+            delete window[cbName];
+            script.remove();
+        };
+        const script = document.createElement('script');
+        script.src = SITE_API_URL + '?action=getDynamicContent&callback=' + cbName;
+        document.body.appendChild(script);
+    })();
+    </script>
+
     <script>
     (function () {
         // ضع هنا رابط الـ Web App الخاص بشيت إدارة المحتوى
