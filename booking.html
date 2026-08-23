@@ -170,6 +170,13 @@
                 <label><i class="fas fa-user"></i> الاسم الكامل</label>
                 <input type="text" id="name" placeholder="أدخل اسمك ثلاثي" required />
             </div>
+
+            <!-- خانة السن الجديدة -->
+            <div class="form-group">
+                <label><i class="fas fa-birthday-cake"></i> السن</label>
+                <input type="number" id="age" placeholder="أدخل السن (بالسنوات)" min="0" max="120" required />
+            </div>
+
             <div class="form-group">
                 <label><i class="fas fa-phone"></i> رقم التليفون (واتساب)</label>
                 <input type="tel" id="phone" placeholder="مثال: 01012345678" required />
@@ -189,7 +196,7 @@
     </div>
 
     <script>
-        // مهم: غيّر ده لرابط الـ Web App الجديد بعد ما تعمل Deploy للكود الجديد
+        // رابط الـ Web App الخاص بك
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
         let branchDays = {};      
@@ -243,7 +250,6 @@
             };
         }
 
-        // بيحول وقت زي "6:00 م" أو "6 م" لعدد دقايق من نص الليل
         function timeStrToMinutes(raw) {
             const s = raw.trim();
             const isPM = s.includes('م') && !s.includes('ص');
@@ -259,7 +265,6 @@
             return h * 60 + m;
         }
 
-        // بيحول عدد الدقايق لنص زي "6:10 م"
         function minutesToTimeStr(totalMinutes) {
             let h = Math.floor(totalMinutes / 60) % 24;
             const m = totalMinutes % 60;
@@ -270,11 +275,10 @@
             return `${h12}:${mm} ${period}`;
         }
 
-        // بيقسم رينج زي "6:00 م - 9:00 م" لمواعيد كل 10 دقايق
         function generateTimeSlots(rangeStr, stepMinutes) {
             if (!rangeStr) return [];
             const parts = rangeStr.split(/-|–|إلى/).map(p => p.trim()).filter(Boolean);
-            if (parts.length < 2) return [rangeStr]; // شكل مش متعرف عليه، رجّع النص زي ما هو
+            if (parts.length < 2) return [rangeStr]; 
 
             const startMin = timeStrToMinutes(parts[0]);
             const endMin = timeStrToMinutes(parts[1]);
@@ -401,11 +405,12 @@
             const bookingDate = document.getElementById('bookingDate').value;
             const timeStr = document.getElementById('time').value;
             const name = document.getElementById('name').value.trim();
+            const age = document.getElementById('age').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
-            if (!branchName || !bookingDate || !timeStr || !name || !phone) {
-                alert('يرجى ملء جميع الحقول المطلوبة.');
+            if (!branchName || !bookingDate || !timeStr || !name || !age || !phone) {
+                alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك السن.');
                 return;
             }
 
@@ -414,6 +419,7 @@
                 date: bookingDate, 
                 time: timeStr,
                 name: name,
+                age: age,       {/* إرسال السن */}
                 phone: phone,
                 notes: notes
             };
@@ -433,6 +439,7 @@
             message += `📅 التاريخ: ${bookingDate}\n`;
             message += `⏰ الوقت: ${timeStr}\n`;
             message += `👤 الاسم: ${name}\n`;
+            message += `🎂 السن: ${age} سنة\n`;
             message += `📞 رقم الهاتف: ${phone}\n`;
             if (notes) message += `📝 ملاحظات: ${notes}\n`;
             message += `\nأرجو تأكيد الحجز برقم الحجز الخاص بي، شكراً!`;
@@ -455,7 +462,7 @@
         };
     </script>
 
-    <!-- عداد الزوار: نفس كود visitor-counter-snippet.html -->
+    <!-- عداد الزوار -->
     <script>
     (function () {
       function updateCounter(data) {
