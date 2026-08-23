@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>حجز موعد - عيادة دكتور أحمد عبد رفاعي</title>
+    <title>حجز موعد - عيادة دكتور أحمد عيد رفاعي</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet" />
@@ -117,6 +117,8 @@
             margin-bottom: 20px;
         }
         .note-msg i { color: #c99a2b; margin-left: 8px; }
+        /* تنسيق إضافي للوقت */
+        .time-slot { font-size: 0.95rem; }
     </style>
 </head>
 <body>
@@ -124,10 +126,10 @@
         <h1><i class="fas fa-calendar-check"></i> حجز موعد</h1>
         <p class="sub">اختر الفرع والموعد المناسب لك</p>
         <div class="note-msg">
-            <i class="fas fa-info-circle"></i> سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد. 
+            <i class="fas fa-info-circle"></i> سيتم إرسال بيانات حجزك عبر واتساب لتأكيد الموعد.
         </div>
         <form id="bookingForm" onsubmit="submitBooking(event)">
-            <!-- اختيار الفرع -->
+            <!-- الفرع -->
             <div class="form-group">
                 <label><i class="fas fa-store"></i> اختر الفرع</label>
                 <select id="branch" required>
@@ -141,7 +143,7 @@
                 </div>
             </div>
 
-            <!-- اليوم -->
+            <!-- اليوم (يوم العمل) -->
             <div class="form-group">
                 <label><i class="fas fa-calendar-day"></i> يوم العمل بالعيادة</label>
                 <select id="day" required disabled>
@@ -149,7 +151,7 @@
                 </select>
             </div>
 
-            <!-- تاريخ الحجز -->
+            <!-- تاريخ الحجز الفعلي -->
             <div class="form-group">
                 <label><i class="fas fa-calendar-alt"></i> تاريخ الحجز</label>
                 <select id="bookingDate" required disabled>
@@ -157,7 +159,7 @@
                 </select>
             </div>
 
-            <!-- الوقت -->
+            <!-- الوقت (ديناميكي كل 10 دقائق) -->
             <div class="form-group">
                 <label><i class="fas fa-clock"></i> الوقت</label>
                 <select id="time" required disabled>
@@ -165,7 +167,7 @@
                 </select>
             </div>
 
-            <!-- باقي الحقول -->
+            <!-- بيانات المريض -->
             <div class="form-group">
                 <label><i class="fas fa-user"></i> الاسم الكامل</label>
                 <input type="text" id="name" placeholder="أدخل اسمك ثلاثي" required />
@@ -189,81 +191,92 @@
     </div>
 
     <script>
-        // مهم: غيّر ده لرابط الـ Web App الجديد بعد ما تعمل Deploy للكود الجديد
+        // =================================================================
+        // 1. رابط API (عدّله بالرابط الجديد بعد التعديل)
+        // =================================================================
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
-        let branchDays = {};      
-        let branchTimes = {};     
+        // =================================================================
+        // 2. دوال مساعدة للوقت
+        // =================================================================
+        function parseTime(timeStr) {
+            // يحول "8:30 م" إلى { hours, minutes, period }
+            const parts = timeStr.trim().split(' ');
+            if (parts.length !== 2) return null;
+            const timePart = parts[0]; // 8:30
+            const period = parts[1];   // م أو ص
+            const hm = timePart.split(':');
+            let hours = parseInt(hm[0]);
+            const minutes = parseInt(hm[1] || 0);
+            if (period === 'م' && hours !== 12) hours += 12;
+            if (period === 'ص' && hours === 12) hours = 0;
+            return { hours, minutes, period };
+        }
 
-        async function loadWorkingHours() {
+        function formatTime(hours, minutes) {
+            let h = hours;
+            let period = 'ص';
+            if (h >= 12) { period = 'م'; if (h > 12) h -= 12; }
+            if (h === 0) { h = 12; period = 'ص'; }
+            const mStr = minutes < 10 ? '0' + minutes : minutes;
+            return h + ':' + mStr + ' ' + period;
+        }
+
+        function generateTimeSlots(startStr, endStr, intervalMinutes = 10) {
+            const start = parseTime(startStr);
+            const end = parseTime(endStr);
+            if (!start || !end) return [];
+            const slots = [];
+            let currentMinutes = start.hours * 60 + start.minutes;
+            const endMinutes = end.hours * 60 + end.minutes;
+            while (currentMinutes <= endMinutes) {
+                const h = Math.floor(currentMinutes / 60);
+                const m = currentMinutes % 60;
+                slots.push(formatTime(h, m));
+                currentMinutes += intervalMinutes;
+            }
+            return slots;
+        }
+
+        // =================================================================
+        // 3. جلب بيانات المواعيد من API
+        // =================================================================
+        let scheduleMap = {}; // { branch: { day: { start, end } } }
+
+        async function loadSchedule() {
             try {
                 const response = await fetch(SITE_API_URL + '?action=getSchedule');
                 const result = await response.json();
 
                 if (result && result.status === "OK" && result.data) {
-                    const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-                    
-                    branchDays = {};
-                    branchTimes = {};
-
+                    scheduleMap = {};
                     result.data.forEach(item => {
                         const branch = item.branch;
                         const day = item.day;
-                        const time = item.time;
-
-                        if (!branchDays[branch]) branchDays[branch] = [];
-                        if (!branchDays[branch].includes(day)) branchDays[branch].push(day);
-
-                        if (!branchTimes[branch]) branchTimes[branch] = {};
-                        branchTimes[branch][day] = time;
+                        if (!scheduleMap[branch]) scheduleMap[branch] = {};
+                        scheduleMap[branch][day] = { start: item.start, end: item.end };
                     });
-
-                    for (let branch in branchDays) {
-                        branchDays[branch].sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
+                    // ترتيب الأيام
+                    const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
+                    for (let branch in scheduleMap) {
+                        const days = Object.keys(scheduleMap[branch]);
+                        days.sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
+                        // نعيد بناء الكائن بنفس الترتيب لو عاوز، بس مش ضروري
                     }
                 } else {
-                    setupDefaultData();
+                    throw new Error('بيانات غير صالحة');
                 }
                 document.getElementById('branch').disabled = false;
             } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل:', error);
-                setupDefaultData();
+                console.error('خطأ في جلب المواعيد:', error);
+                alert('حدث خطأ في تحميل مواعيد العمل. الرجاء تحديث الصفحة أو المحاولة لاحقاً.');
                 document.getElementById('branch').disabled = false;
             }
         }
 
-        function setupDefaultData() {
-            branchDays = {
-                "أكتوبر": ["السبت", "الإثنين", "الثلاثاء", "الخميس"],
-                "فيصل": ["السبت", "الإثنين", "الثلاثاء", "الخميس"]
-            };
-            branchTimes = {
-                "أكتوبر": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" },
-                "فيصل": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" }
-            };
-        }
-
-        function getDayIndex(dayName) {
-            const map = { 'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
-            return map[dayName];
-        }
-
-        function generateUpcomingDates(dayName) {
-            const dates = [];
-            const targetDayIndex = getDayIndex(dayName);
-            let currentDate = new Date();
-            
-            for (let i = 0; i < 60; i++) {
-                if (currentDate.getDay() === targetDayIndex) {
-                    const formatted = currentDate.toISOString().split('T')[0];
-                    const displayFormatted = `${dayName} (${formatted})`;
-                    dates.push({ value: displayFormatted, text: displayFormatted });
-                }
-                currentDate.setDate(currentDate.getDate() + 1);
-            }
-            return dates;
-        }
-
+        // =================================================================
+        // 4. تفعيل القوائم المنسدلة
+        // =================================================================
         document.getElementById('branch').addEventListener('change', function() {
             const branch = this.value;
             const daySelect = document.getElementById('day');
@@ -272,6 +285,7 @@
             const phoneDisplay = document.getElementById('branchPhoneDisplay');
             const phoneSpan = document.getElementById('phoneNumberDisplay');
 
+            // عرض رقم الفرع
             const selected = this.options[this.selectedIndex];
             const phone = selected.getAttribute('data-phone');
             if (phone) {
@@ -281,6 +295,7 @@
                 phoneDisplay.style.display = 'none';
             }
 
+            // تعطيل القوائم التالية
             daySelect.innerHTML = '<option value="">-- اختر اليوم أولاً --</option>';
             daySelect.disabled = true;
             dateSelect.innerHTML = '<option value="">-- اختر يوم العمل أولاً --</option>';
@@ -288,9 +303,9 @@
             timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
             timeSelect.disabled = true;
 
-            if (!branch || !branchDays[branch]) return;
+            if (!branch || !scheduleMap[branch]) return;
 
-            const days = branchDays[branch];
+            const days = Object.keys(scheduleMap[branch]);
             if (days.length === 0) return;
 
             daySelect.disabled = false;
@@ -302,6 +317,30 @@
                 daySelect.appendChild(option);
             });
         });
+
+        // =================================================================
+        // 5. توليد التواريخ القادمة بناءً على اليوم
+        // =================================================================
+        function getDayIndex(dayName) {
+            const map = { 'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
+            return map[dayName];
+        }
+
+        function generateUpcomingDates(dayName, maxDays = 60) {
+            const dates = [];
+            const targetDayIndex = getDayIndex(dayName);
+            if (targetDayIndex === undefined) return dates;
+            let currentDate = new Date();
+            for (let i = 0; i < maxDays; i++) {
+                if (currentDate.getDay() === targetDayIndex) {
+                    const formatted = currentDate.toISOString().split('T')[0];
+                    const displayFormatted = `${dayName} (${formatted})`;
+                    dates.push({ value: displayFormatted, text: displayFormatted });
+                }
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            return dates;
+        }
 
         document.getElementById('day').addEventListener('change', function() {
             const day = this.value;
@@ -316,6 +355,10 @@
             if (!day) return;
 
             const upcomingDates = generateUpcomingDates(day);
+            if (upcomingDates.length === 0) {
+                alert('لا توجد تواريخ قادمة لهذا اليوم.');
+                return;
+            }
             dateSelect.disabled = false;
             upcomingDates.forEach(d => {
                 const option = document.createElement('option');
@@ -325,25 +368,40 @@
             });
         });
 
+        // =================================================================
+        // 6. توليد قائمة المواعيد (ديناميكية كل 10 دقائق)
+        // =================================================================
         document.getElementById('bookingDate').addEventListener('change', function() {
             const branch = document.getElementById('branch').value;
             const day = document.getElementById('day').value;
             const timeSelect = document.getElementById('time');
 
-            timeSelect.innerHTML = '';
+            timeSelect.innerHTML = '<option value="">-- اختر الوقت --</option>';
             timeSelect.disabled = true;
 
-            if (!branch || !day || !branchTimes[branch] || !branchTimes[branch][day]) return;
+            if (!branch || !day || !scheduleMap[branch] || !scheduleMap[branch][day]) return;
 
-            const timeStr = branchTimes[branch][day];
+            const { start, end } = scheduleMap[branch][day];
+            if (!start || !end) return;
+
+            const slots = generateTimeSlots(start, end, 10);
+            if (slots.length === 0) {
+                alert('لا توجد مواعيد متاحة في هذا اليوم.');
+                return;
+            }
+
             timeSelect.disabled = false;
-            
-            const option = document.createElement('option');
-            option.value = timeStr;
-            option.textContent = timeStr;
-            timeSelect.appendChild(option);
+            slots.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot;
+                option.textContent = slot;
+                timeSelect.appendChild(option);
+            });
         });
 
+        // =================================================================
+        // 7. إرسال الحجز
+        // =================================================================
         async function submitBooking(e) {
             e.preventDefault();
 
@@ -351,20 +409,20 @@
             const branchName = branch.value;
             const branchPhone = branch.options[branch.selectedIndex].getAttribute('data-phone');
             const bookingDate = document.getElementById('bookingDate').value;
-            const timeStr = document.getElementById('time').value;
+            const timeSlot = document.getElementById('time').value;
             const name = document.getElementById('name').value.trim();
             const phone = document.getElementById('phone').value.trim();
             const notes = document.getElementById('notes').value.trim();
 
-            if (!branchName || !bookingDate || !timeStr || !name || !phone) {
+            if (!branchName || !bookingDate || !timeSlot || !name || !phone) {
                 alert('يرجى ملء جميع الحقول المطلوبة.');
                 return;
             }
 
             const bookingData = {
                 branch: branchName,
-                date: bookingDate, 
-                time: timeStr,
+                date: bookingDate,
+                time: timeSlot,
                 name: name,
                 phone: phone,
                 notes: notes
@@ -378,12 +436,12 @@
                     body: JSON.stringify(bookingData)
                 });
             } catch (error) {
-                console.error('خطأ:', error);
+                console.error('خطأ في الإرسال:', error);
             }
 
             let message = `مرحباً، أريد تسجيل حجز موعد في فرع ${branchName}:\n`;
             message += `📅 التاريخ: ${bookingDate}\n`;
-            message += `⏰ الوقت: ${timeStr}\n`;
+            message += `⏰ الوقت: ${timeSlot}\n`;
             message += `👤 الاسم: ${name}\n`;
             message += `📞 رقم الهاتف: ${phone}\n`;
             if (notes) message += `📝 ملاحظات: ${notes}\n`;
@@ -401,13 +459,16 @@
             document.getElementById('branchPhoneDisplay').style.display = 'none';
         }
 
+        // =================================================================
+        // 8. تحميل البيانات عند فتح الصفحة
+        // =================================================================
         window.onload = function() {
             document.getElementById('branch').disabled = true;
-            loadWorkingHours();
+            loadSchedule();
         };
     </script>
 
-    <!-- عداد الزوار: نفس كود visitor-counter-snippet.html -->
+    <!-- عداد الزوار (نفس الكود) -->
     <script>
     (function () {
       function updateCounter(data) {
