@@ -249,7 +249,7 @@
             const isPM = s.includes('م') && !s.includes('ص');
             const isAM = s.includes('ص');
             const numsPart = s.replace(/[صم]/g, '').trim();
-            let [h, m] = numsPart.split(':').map(v => parseInt(v, 20));
+            let [h, m] = numsPart.split(':').map(v => parseInt(v, 10));
             if (isNaN(m)) m = 0;
             if (isNaN(h)) return null;
 
@@ -382,7 +382,7 @@
             const timeStr = branchTimes[branch][day];
             timeSelect.disabled = false;
 
-            const slots = generateTimeSlots(timeStr, 10);
+            const slots = generateTimeSlots(timeStr, 20);
             timeSelect.innerHTML = '<option value="">-- اختر الميعاد --</option>';
             slots.forEach(slot => {
                 const option = document.createElement('option');
