@@ -243,6 +243,50 @@
             };
         }
 
+        // بيحول وقت زي "6:00 م" أو "6 م" لعدد دقايق من نص الليل
+        function timeStrToMinutes(raw) {
+            const s = raw.trim();
+            const isPM = s.includes('م') && !s.includes('ص');
+            const isAM = s.includes('ص');
+            const numsPart = s.replace(/[صم]/g, '').trim();
+            let [h, m] = numsPart.split(':').map(v => parseInt(v, 10));
+            if (isNaN(m)) m = 0;
+            if (isNaN(h)) return null;
+
+            if (isPM && h !== 12) h += 12;
+            if (isAM && h === 12) h = 0;
+
+            return h * 60 + m;
+        }
+
+        // بيحول عدد الدقايق لنص زي "6:10 م"
+        function minutesToTimeStr(totalMinutes) {
+            let h = Math.floor(totalMinutes / 60) % 24;
+            const m = totalMinutes % 60;
+            const period = h >= 12 ? 'م' : 'ص';
+            let h12 = h % 12;
+            if (h12 === 0) h12 = 12;
+            const mm = String(m).padStart(2, '0');
+            return `${h12}:${mm} ${period}`;
+        }
+
+        // بيقسم رينج زي "6:00 م - 9:00 م" لمواعيد كل 10 دقايق
+        function generateTimeSlots(rangeStr, stepMinutes) {
+            if (!rangeStr) return [];
+            const parts = rangeStr.split(/-|–|إلى/).map(p => p.trim()).filter(Boolean);
+            if (parts.length < 2) return [rangeStr]; // شكل مش متعرف عليه، رجّع النص زي ما هو
+
+            const startMin = timeStrToMinutes(parts[0]);
+            const endMin = timeStrToMinutes(parts[1]);
+            if (startMin === null || endMin === null) return [rangeStr];
+
+            const slots = [];
+            for (let t = startMin; t <= endMin; t += stepMinutes) {
+                slots.push(minutesToTimeStr(t));
+            }
+            return slots.length ? slots : [rangeStr];
+        }
+
         function getDayIndex(dayName) {
             const map = { 'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3, 'الخميس': 4, 'الجمعة': 5, 'السبت': 6 };
             return map[dayName];
@@ -337,11 +381,15 @@
 
             const timeStr = branchTimes[branch][day];
             timeSelect.disabled = false;
-            
-            const option = document.createElement('option');
-            option.value = timeStr;
-            option.textContent = timeStr;
-            timeSelect.appendChild(option);
+
+            const slots = generateTimeSlots(timeStr, 10);
+            timeSelect.innerHTML = '<option value="">-- اختر الميعاد --</option>';
+            slots.forEach(slot => {
+                const option = document.createElement('option');
+                option.value = slot;
+                option.textContent = slot;
+                timeSelect.appendChild(option);
+            });
         });
 
         async function submitBooking(e) {
