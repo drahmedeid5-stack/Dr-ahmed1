@@ -131,7 +131,7 @@
             <div class="form-group">
                 <label><i class="fas fa-store"></i> اختر الفرع</label>
                 <select id="branch" required>
-                    <option value="">-- اختر --</option>
+                    <option value="">-- اختر الفرع --</option>
                     <option value="أكتوبر" data-phone="201061119615">فرع أكتوبر</option>
                     <option value="فيصل" data-phone="201032444727">فرع فيصل</option>
                 </select>
@@ -165,7 +165,7 @@
                 </select>
             </div>
 
-            <!-- باقي الحقول -->
+            <!-- الاسم الكامل -->
             <div class="form-group">
                 <label><i class="fas fa-user"></i> الاسم الكامل</label>
                 <input type="text" id="name" placeholder="أدخل اسمك ثلاثي" required />
@@ -177,10 +177,13 @@
                 <input type="number" id="age" placeholder="أدخل السن (بالسنوات)" min="0" max="120" required />
             </div>
 
+            <!-- رقم التليفون -->
             <div class="form-group">
                 <label><i class="fas fa-phone"></i> رقم التليفون (واتساب)</label>
                 <input type="tel" id="phone" placeholder="مثال: 01012345678" required />
             </div>
+
+            <!-- ملاحظات -->
             <div class="form-group">
                 <label><i class="fas fa-pen"></i> ملاحظات (اختياري)</label>
                 <textarea id="notes" placeholder="أي تفاصيل إضافية تريد إخبارنا بها"></textarea>
@@ -196,7 +199,7 @@
     </div>
 
     <script>
-        // رابط الـ Web App الخاص بك
+        // رابط الـ Web App الخاص بك المعتمد
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
         let branchDays = {};      
@@ -207,7 +210,7 @@
                 const response = await fetch(SITE_API_URL + '?action=getSchedule');
                 const result = await response.json();
 
-                if (result && result.status === "OK" && result.data) {
+                if (result && result.status === "OK" && result.data && result.data.length > 0) {
                     const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
                     
                     branchDays = {};
@@ -233,7 +236,7 @@
                 }
                 document.getElementById('branch').disabled = false;
             } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل:', error);
+                console.error('خطأ في جلب مواعيد العمل، تم تفعيل البيانات الافتراضية:', error);
                 setupDefaultData();
                 document.getElementById('branch').disabled = false;
             }
@@ -245,8 +248,8 @@
                 "فيصل": ["السبت", "الإثنين", "الثلاثاء", "الخميس"]
             };
             branchTimes = {
-                "أكتوبر": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" },
-                "فيصل": { "السبت": "3:00 م - 9:00 م", "الإثنين": "6:00 م - 9:00 م" }
+                "أكتوبر": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" },
+                "فيصل": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" }
             };
         }
 
@@ -419,7 +422,7 @@
                 date: bookingDate, 
                 time: timeStr,
                 name: name,
-                age: age,       {/* إرسال السن */}
+                age: age,
                 phone: phone,
                 notes: notes
             };
@@ -432,7 +435,7 @@
                     body: JSON.stringify(bookingData)
                 });
             } catch (error) {
-                console.error('خطأ:', error);
+                console.error('خطأ أثناء إرسال البيانات:', error);
             }
 
             let message = `مرحباً، أريد تسجيل حجز موعد في فرع ${branchName}:\n`;
