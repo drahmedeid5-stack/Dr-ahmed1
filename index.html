@@ -66,7 +66,7 @@
         .hero-center .best-care { font-size: 2rem; font-weight: 900; color: #ffffff; letter-spacing: 1px; text-shadow: 0 2px 8px rgba(0,0,0,0.3); }
         .hero-center .desc { font-size: 1.1rem; color: #dbeafe; max-width: 800px; margin: 10px auto 0; line-height: 1.9; }
 
-        /* زرار احجز الآن + الأزرار التانية */
+        /* الأزرار في الهيدر */
         .hero-book-btn {
             display: inline-flex;
             align-items: center;
@@ -125,7 +125,7 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* سلايد الخدمات - بأسهم يدوية */
+        /* سلايد الخدمات */
         .services-slider { position: relative; margin-top: 35px; padding: 0 60px; }
         .services-slider-viewport { overflow: hidden; }
         .services-track {
@@ -160,7 +160,7 @@
             .services-arrow { width: 38px; height: 38px; font-size: 0.95rem; }
         }
 
-        /* باقي الأقسام */
+        /* تنسيقات الأقسام العامة */
         .section-title { font-size: 2.4rem; font-weight: 900; color: #1e3a8a; position: relative; display: inline-block; margin-bottom: 15px; }
         .section-title::after { content: ''; position: absolute; bottom: -6px; right: 0; width: 80px; height: 4px; background: #2563eb; border-radius: 4px; }
         .section-title-center { display: block; text-align: center; }
@@ -189,7 +189,6 @@
         .about-image .card-float p { color: #475569; font-size: 0.95rem; }
         
         .services { padding: 70px 0 60px; background: #eff6ff; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 30px; margin-top: 35px; }
         .service-card { background: #ffffff; padding: 32px 24px 28px; border-radius: 20px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04); transition: 0.4s ease; border: 1px solid rgba(0, 0, 0, 0.03); text-align: center; flex: 0 0 280px; }
         .service-card:hover { transform: translateY(-8px); box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08); border-color: rgba(37, 99, 235, 0.2); }
         .service-card .icon-wrap { display: inline-flex; justify-content: center; align-items: center; width: 80px; height: 80px; border-radius: 50%; background: rgba(37, 99, 235, 0.1); color: #2563eb; font-size: 2.6rem; margin-bottom: 18px; transition: 0.3s ease; }
@@ -259,7 +258,6 @@
             .hero-center .best-care { font-size: 1.5rem; }
             .section-title { font-size: 1.6rem; }
             .branch-card { flex: 1 1 100%; max-width: 100%; }
-            .services-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -359,7 +357,7 @@
                 </div>
             </div>
             <div class="services-cta">
-                <a href="#" class="btn-dark"><i class="fas fa-phone-alt"></i> استشر الطبيب الآن</a>
+                <a href="#branches" class="btn-dark"><i class="fas fa-phone-alt"></i> استشر الطبيب الآن</a>
             </div>
         </div>
     </section>
@@ -407,8 +405,8 @@
                     <div class="phone-item"><i class="fas fa-phone"></i> <span id="cmPhoneFaisalFooter">01032444727</span></div>
                     <div class="phone-item"><i class="fas fa-phone"></i> <span id="cmPhoneOctoberFooter">01061119615</span></div>
                     <div class="links-row" style="margin-top:14px;">
-                        <a href="#"><i class="fas fa-map-pin"></i> الموقع</a>
-                        <a href="#"><i class="fab fa-whatsapp"></i> واتساب</a>
+                        <a href="#branches"><i class="fas fa-map-pin"></i> الموقع</a>
+                        <a href="https://wa.me/201061119615" target="_blank"><i class="fab fa-whatsapp"></i> واتساب</a>
                     </div>
                 </div>
                 <div class="hours-col">
@@ -439,11 +437,10 @@
         </div>
     </footer>
 
-    <!-- السكربتات -->
+    <!-- السكربتات البرمجية -->
     <script>
     (function () {
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
-
         const SERVICE_ICONS_FALLBACK = 'fas fa-notes-medical';
 
         function renderNews(news) {
@@ -451,7 +448,7 @@
             const track = document.getElementById('newsTickerTrack');
             if (!wrap || !track || !news || !news.length) return;
             const itemsHtml = news.map(n => `<span>${n.text}</span>`).join('');
-            track.innerHTML = itemsHtml + itemsHtml; // تكرار عشان الحركة تبقى متصلة من غير قطع
+            track.innerHTML = itemsHtml + itemsHtml;
             wrap.style.display = 'block';
         }
 
@@ -506,17 +503,17 @@
                 track.style.transform = `translateX(${index * step}px)`;
             }
 
-            nextBtn.addEventListener('click', function () {
+            nextBtn.onclick = function () {
                 const max = maxIndex();
-                index = (index >= max) ? 0 : index + 1; // يلف من الأول تاني لما يوصل للنهاية
+                index = (index >= max) ? 0 : index + 1;
                 update();
-            });
+            };
 
-            prevBtn.addEventListener('click', function () {
+            prevBtn.onclick = function () {
                 const max = maxIndex();
-                index = (index <= 0) ? max : index - 1; // يرجع للنهاية لما يكون في الأول
+                index = (index <= 0) ? max : index - 1;
                 update();
-            });
+            };
 
             window.addEventListener('resize', update);
             update();
@@ -542,7 +539,6 @@
 
     <script>
     (function () {
-        // ضع هنا رابط الـ Web App الخاص بشيت إدارة المحتوى
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
         function toLocalPhone(digits) {
@@ -604,7 +600,6 @@
 
     <script>
     (function () {
-        // ضع هنا رابط الـ Web App الخاص بالعدادات (نفس رابط شيت الحجوزات غالباً)
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
         function getVisitorId() {
