@@ -1,79 +1,90 @@
 <!-- قسم معرض الصور والفيديوهات التفاعلي -->
-<section id="gallery-section" class="py-5 bg-light" style="direction: rtl;">
+<section id="gallery-section" class="py-5 bg-light" style="direction: rtl; padding: 70px 0; background: #f8fafc;">
     <div class="container">
-        <h2 class="text-center mb-4" style="color: #1a3a60; font-weight: bold;">معرض الصور والفيديوهات</h2>
-        <div class="row" id="gallery-container">
+        <h2 class="section-title section-title-center">معرض الصور والفيديوهات</h2>
+        <p class="section-subtitle" style="text-align:center; margin-bottom: 35px;">جولة داخل عياداتنا وأحدث الفيديوهات التوضيحية</p>
+        <div class="row" id="gallery-container" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
             <!-- سيتم تحميل المحتوى أوتوماتيكياً من جوجل شيت -->
         </div>
     </div>
 </section>
 
 <!-- نافذة العرض المنبثقة (Lightbox) لتكبير الصور والفيديوهات -->
-<div id="mediaModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center;">
-    <div style="position:relative; max-width:90%; max-height:90%;">
-        <span onclick="closeMediaModal()" style="position:absolute; top:-40px; right:0; color:white; font-size:35px; cursor:pointer; font-weight:bold;">&times;</span>
+<div id="mediaModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; justify-content:center; align-items:center;">
+    <div style="position:relative; max-width:90%; max-height:90%; text-align:center;">
+        <span onclick="closeMediaModal()" style="position:absolute; top:-45px; right:0; color:white; font-size:40px; cursor:pointer; font-weight:bold; z-index:10000;">&times;</span>
         <div id="modalContent"></div>
     </div>
 </div>
 
 <script>
-// دالة لجلب وعرض محتوى المعرض من الـ API
-async function loadGallery() {
-    try {
-        const response = await fetch('رابط_الـ_Web_App_هنا?action=getDynamicContent'); // استبدل الرابط برابط الـ Web App الخاص بك
-        const data = await response.json();
-        if (data && data.gallery) {
-            const container = document.getElementById('gallery-container');
-            container.innerHTML = '';
-            data.gallery.forEach(item => {
-                let col = document.createElement('div');
-                col.className = 'col-md-4 mb-4';
+// دالة لجلب وعرض محتوى المعرض من الجوجل شيت مباشرة باستخدام نفس رابط الـ API
+(function() {
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
+    
+    function loadGallery() {
+        const cbName = '__gallery_cb_' + Date.now();
+        window[cbName] = function (data) {
+            if (data && data.gallery) {
+                const container = document.getElementById('gallery-container');
+                if (!container) return;
+                container.innerHTML = '';
                 
-                let contentHTML = '';
-                if (item.type === 'image') {
-                    contentHTML = `
-                        <div class="card h-100 shadow-sm" style="cursor:pointer;" onclick="openImageModal('${item.url}', '${item.title}')">
-                            <img src="${item.url}" class="card-img-top" alt="${item.title}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body text-center"><h5 class="card-title" style="font-size: 16px;">${item.title}</h5></div>
-                        </div>`;
-                } else {
-                    contentHTML = `
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body text-center d-flex flex-column justify-content-center align-items:center" style="height: 200px; background: #000; cursor:pointer;" onclick="openVideoModal('${item.url}')">
-                                <i class="fas fa-play-circle fa-3x text-white mb-2"></i>
-                                <h5 class="card-title text-white" style="font-size: 16px;">${item.title}</h5>
-                            </div>
-                        </div>`;
-                }
-                col.innerHTML = contentHTML;
-                container.appendChild(col);
-            });
-        }
-    } catch (e) {
-        console.error('خطأ في تحميل المعرض', e);
+                data.gallery.forEach(item => {
+                    let col = document.createElement('div');
+                    col.style.cssText = 'flex: 1 1 300px; max-width: 350px; margin-bottom: 20px;';
+                    
+                    if (item.type === 'image') {
+                        col.innerHTML = `
+                            <div style="background:#fff; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.05); cursor:pointer; border:1px solid #e2e8f0; transition:0.3s;" onclick="openImageModal('${item.url}', '${item.title}')">
+                                <img src="${item.url}" alt="${item.title}" style="width:100%; height:200px; object-fit:cover;">
+                                <div style="padding:15px; text-align:center;"><h5 style="color:#1e3a8a; font-size:1.1rem; font-weight:700; margin:0;">${item.title}</h5></div>
+                            </div>`;
+                    } else {
+                        col.innerHTML = `
+                            <div style="background:#1e3a8a; border-radius:15px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.05); cursor:pointer; text-align:center;" onclick="openVideoModal('${item.url}')">
+                                <div style="height:200px; display:flex; flex-direction:column; justify-content:center; align-items:center; background:linear-gradient(135deg, #1e3a8a, #2563eb); color:#fff;">
+                                    <i class="fas fa-play-circle fa-3x" style="margin-bottom:10px;"></i>
+                                    <h5 style="font-size:1.1rem; font-weight:700; margin:0; padding:0 15px;">${item.title}</h5>
+                                </div>
+                            </div>`;
+                    }
+                    container.appendChild(col);
+                });
+            }
+            delete window[cbName];
+            script.remove();
+        };
+
+        const script = document.createElement('script');
+        script.src = API_URL + '?action=getDynamicContent&callback=' + cbName;
+        document.body.appendChild(script);
     }
-}
 
-function openImageModal(url, title) {
-    const modal = document.getElementById('mediaModal');
-    const content = document.getElementById('modalContent');
-    content.innerHTML = `<img src="${url}" style="max-width:100%; max-height:80vh; border-radius:8px;"><p class="text-white text-center mt-2">${title}</p>`;
-    modal.style.display = 'flex';
-}
+    window.openImageModal = function(url, title) {
+        const modal = document.getElementById('mediaModal');
+        const content = document.getElementById('modalContent');
+        content.innerHTML = `<img src="${url}" style="max-width:100%; max-height:80vh; border-radius:10px;"><p style="color:#fff; margin-top:10px; font-size:1.2rem;">${title}</p>`;
+        modal.style.display = 'flex';
+    };
 
-function openVideoModal(url) {
-    const modal = document.getElementById('mediaModal');
-    const content = document.getElementById('modalContent');
-    // دعم روابط اليوتيوب أو الروابط المباشرة
-    let embedUrl = url.includes('watch?v=') ? url.replace('watch?v=', 'embed/') : url;
-    content.innerHTML = `<iframe width="560" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="max-width:100%;"></iframe>`;
-    modal.style.display = 'flex';
-}
+    window.openVideoModal = function(url) {
+        const modal = document.getElementById('mediaModal');
+        const content = document.getElementById('modalContent');
+        let embedUrl = url.includes('watch?v=') ? url.replace('watch?v=', 'embed/') : url;
+        content.innerHTML = `<iframe width="560" height="315" src="${embedUrl}" frameborder="0" allowfullscreen style="max-width:100%; border-radius:10px;"></iframe>`;
+        modal.style.display = 'flex';
+    };
 
-function closeMediaModal() {
-    document.getElementById('mediaModal').style.display = 'none';
-    document.getElementById('modalContent').innerHTML = '';
-}
+    window.closeMediaModal = function() {
+        document.getElementById('mediaModal').style.display = 'none';
+        document.getElementById('modalContent').innerHTML = '';
+    };
 
-document.addEventListener("DOMContentLoaded", loadGallery);
+    document.addEventListener("DOMContentLoaded", loadGallery);
+    // لو الصفحة متحملة خلاص نشغلها فوري
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        loadGallery();
+    }
+})();
 </script>
