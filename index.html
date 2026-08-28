@@ -839,14 +839,66 @@
                 content.innerHTML =
                     `<iframe src="${embedUrl}" allowfullscreen style="width:100%;height:100%;border:0;border-radius:12px;"></iframe>`;
             } else {
+                // إنشاء قائمة روابط احتياطية للصورة، ولا تظهر رسالة الخطأ
+                // إلا بعد فشل جميع المحاولات فعليًا.
+                const driveId = extractFileIdFromDriveUrl(item.url || '');
+                const imageUrls = [];
+
+                if (driveId) {
+                    imageUrls.push(
+                        'https://drive.google.com/uc?export=view&id=' + driveId,
+                        'https://drive.google.com/thumbnail?id=' + driveId + '&sz=w2000',
+                        'https://lh3.googleusercontent.com/d/' + driveId + '=w2000'
+                    );
+                }
+
+                if (finalUrl && !imageUrls.includes(finalUrl)) {
+                    imageUrls.push(finalUrl);
+                }
+
+                const safeTitle = String(item.title || 'صورة')
+                    .replace(/"/g, '&quot;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+
+                const firstImageUrl = imageUrls[0] || finalUrl;
+
                 content.innerHTML =
-                    `<img src="${finalUrl}" alt="${item.title || 'صورة'}"
+                    `<img src="${firstImageUrl}" alt="${safeTitle}"
                         class="modal-zoom-image"
                         title="اضغط للتكبير"
+                        data-image-index="0"
                         style="max-width:95vw;max-height:90vh;object-fit:contain;cursor:zoom-in;transition:transform .25s ease;transform-origin:center;"
-                        onerror="this.parentElement.innerHTML='<div style="color:#f87171;padding:20px;">⚠️ تعذر تحميل الصورة</div>'" />`;
+                        />`;
 
                 const zoomImage = content.querySelector('.modal-zoom-image');
+
+                if (zoomImage && imageUrls.length > 1) {
+                    zoomImage.addEventListener('error', function () {
+                        const nextIndex = Number(this.dataset.imageIndex || 0) + 1;
+
+                        if (nextIndex < imageUrls.length) {
+                            this.dataset.imageIndex = String(nextIndex);
+                            this.src = imageUrls[nextIndex];
+                        } else {
+                            this.style.display = 'none';
+                            const errorBox = document.createElement('div');
+                            errorBox.style.cssText = 'color:#f87171;padding:20px;text-align:center;';
+                            errorBox.textContent = '⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.';
+                            content.appendChild(errorBox);
+                        }
+                    }, { once: false });
+                } else if (zoomImage) {
+                    zoomImage.addEventListener('error', function () {
+                        this.style.display = 'none';
+                        const errorBox = document.createElement('div');
+                        errorBox.style.cssText = 'color:#f87171;padding:20px;text-align:center;';
+                        errorBox.textContent = '⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.';
+                        content.appendChild(errorBox);
+                    }, { once: true });
+                }
+
+                if (zoomImage) {
                 if (zoomImage) {
                     zoomImage.addEventListener('click', function(e) {
                         e.stopPropagation();
@@ -1071,7 +1123,7 @@
                             onerror="if(this.dataset.driveFallback && this.src !== this.dataset.driveFallback){this.src=this.dataset.driveFallback;}else{this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.</div>'}" />`;
                     } else {
                         content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy"
-                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'></div>'" />`;
+                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
                     }
                 }
 
