@@ -1071,7 +1071,7 @@
                             onerror="if(this.dataset.driveFallback && this.src !== this.dataset.driveFallback){this.src=this.dataset.driveFallback;}else{this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.</div>'}" />`;
                     } else {
                         content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy"
-                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
+                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'></div>'" />`;
                     }
                 }
 
