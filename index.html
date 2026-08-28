@@ -622,36 +622,85 @@
 
         const SERVICE_ICONS_FALLBACK = 'fas fa-notes-medical';
 
-        // ===== دوال تحويل روابط جوجل درايف =====
-        function extractFileIdFromDriveUrl(url) {
+        // ===== دوال ذكية لروابط صور Google Drive =====
+        // يمكنك في Google Sheet وضع:
+        // 1) رابط Google Drive العادي:
+        //    https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+        // 2) أو وضع FILE_ID فقط
+        // 3) أو رابط uc / open / thumbnail
+        // والكود سيستخرج الـ ID ويحوّله تلقائياً لرابط صورة قابل للعرض.
+
+        function cleanDriveValue(value) {
+            if (value === null || value === undefined) return '';
+            let s = String(value).trim();
+
+            // إزالة علامات الاقتباس لو كانت القيمة منقولة بين " "
+            if ((s.startsWith('"') && s.endsWith('"')) ||
+                (s.startsWith("'") && s.endsWith("'"))) {
+                s = s.substring(1, s.length - 1).trim();
+            }
+
+            // دعم بعض صيغ HYPERLINK القادمة من الشيت
+            const hyperlinkMatch = s.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
+            if (hyperlinkMatch) s = hyperlinkMatch[1];
+
+            return s;
+        }
+
+        function extractFileIdFromDriveUrl(value) {
+            const url = cleanDriveValue(value);
             if (!url) return null;
-            // محاولة استخراج File ID من أي رابط جوجل درايف
+
+            // صيغ Google Drive المختلفة
             const patterns = [
-                /\/file\/d\/([^\/]+)/,
-                /[?&]id=([^&]+)/,
-                /\/uc\?id=([^&]+)/,
-                /\/open\?id=([^&]+)/
+                /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i,
+                /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/i,
+                /drive\.google\.com\/uc\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/i,
+                /drive\.google\.com\/thumbnail\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/i,
+                /[?&]id=([a-zA-Z0-9_-]+)/i,
+                /[?&]fileId=([a-zA-Z0-9_-]+)/i
             ];
+
             for (const pattern of patterns) {
                 const match = url.match(pattern);
-                if (match) return match[1];
+                if (match && match[1]) return match[1];
             }
-            // لو الرابط مجرد ID
-            if (/^[a-zA-Z0-9_-]{20,}$/.test(url.trim())) return url.trim();
+
+            // لو القيمة نفسها هي File ID
+            if (/^[a-zA-Z0-9_-]{15,}$/.test(url)) return url;
+
             return null;
         }
 
-        function convertToDirectDriveUrl(url) {
-            const fileId = extractFileIdFromDriveUrl(url);
-            if (fileId) {
-                return 'https://drive.google.com/uc?export=view&id=' + fileId;
-            }
-            // لو مش جوجل درايف، نرجع الرابط كما هو
-            return url;
+        function convertToDirectDriveUrl(value) {
+            const original = cleanDriveValue(value);
+            const fileId = extractFileIdFromDriveUrl(original);
+
+            if (!fileId) return original;
+
+            // thumbnail أكثر اعتمادية لعرض صور Drive داخل <img>
+            return 'https://drive.google.com/thumbnail?id=' +
+                encodeURIComponent(fileId) + '&sz=w1600';
         }
 
-        function isDriveUrl(url) {
-            return url && (url.includes('drive.google.com') || extractFileIdFromDriveUrl(url));
+        function convertToDriveImageUrls(value) {
+            const original = cleanDriveValue(value);
+            const fileId = extractFileIdFromDriveUrl(original);
+
+            if (!fileId) return [original];
+
+            // ترتيب البدائل: thumbnail ثم uc
+            const id = encodeURIComponent(fileId);
+            return [
+                'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600',
+                'https://drive.google.com/uc?export=view&id=' + id
+            ];
+        }
+
+        function isDriveUrl(value) {
+            const url = cleanDriveValue(value);
+            return !!extractFileIdFromDriveUrl(url) ||
+                   /drive\.google\.com/i.test(url);
         }
 
         function isYouTubeUrl(url) {
@@ -690,7 +739,26 @@
             } 
             // لو صورة
             else {
-                content.innerHTML = `<img src="${finalUrl}" alt="${title || 'صورة'}" onerror="this.parentElement.innerHTML='<div style=\\'color:#f87171;padding:20px;\\'>⚠️ تعذر تحميل الصورة. تأكد من أن الملف عام (Anyone with the link can view)</div>'" />`;
+                const imageUrls = isDrive ? convertToDriveImageUrls(url) : [finalUrl];
+                const firstUrl = imageUrls[0] || finalUrl;
+
+                content.innerHTML = `<img id="modalImage" src="${firstUrl}" alt="${title || 'صورة'}" />`;
+
+                const modalImage = document.getElementById('modalImage');
+                if (modalImage && imageUrls.length > 1) {
+                    modalImage.dataset.fallback = imageUrls[1];
+                    modalImage.addEventListener('error', function () {
+                        if (this.dataset.fallback && this.src !== this.dataset.fallback) {
+                            this.src = this.dataset.fallback;
+                            return;
+                        }
+                        this.parentElement.innerHTML = '<div style="color:#f87171;padding:20px;text-align:center;">⚠️ تعذر تحميل الصورة.<br><small>تأكد أن مشاركة الملف في Google Drive هي: أي شخص لديه الرابط ← مشاهد.</small></div>';
+                    });
+                } else if (modalImage) {
+                    modalImage.addEventListener('error', function () {
+                        this.parentElement.innerHTML = '<div style="color:#f87171;padding:20px;text-align:center;">⚠️ تعذر تحميل الصورة.<br><small>تأكد أن رابط الصورة صحيح وأن الملف متاح للعامة.</small></div>';
+                    });
+                }
             }
 
             overlay.classList.add('active');
@@ -847,7 +915,18 @@
                     const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&controls=1` : finalUrl;
                     content = `<iframe src="${embedUrl}" allowfullscreen loading="lazy"></iframe>`;
                 } else {
-                    content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
+                    if (isDrive) {
+                        const driveImageUrls = convertToDriveImageUrls(item.url);
+                        const primary = driveImageUrls[0] || finalUrl;
+                        const fallback = driveImageUrls[1] || '';
+
+                        content = `<img src="${primary}" alt="${item.title || 'صورة'}" loading="lazy"
+                            data-drive-fallback="${fallback}"
+                            onerror="if(this.dataset.driveFallback && this.src !== this.dataset.driveFallback){this.src=this.dataset.driveFallback;}else{this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.</div>'}" />`;
+                    } else {
+                        content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy"
+                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
+                    }
                 }
 
                 slidesHtml += `
