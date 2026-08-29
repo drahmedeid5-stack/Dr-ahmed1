@@ -317,16 +317,6 @@
             max-height: 95vh;
             object-fit: contain;
             display: block;
-            cursor: zoom-in;
-            transition: transform 0.25s ease;
-            transform-origin: center center;
-            user-select: none;
-            -webkit-user-drag: none;
-        }
-
-        .modal-overlay .modal-content img.zoomed {
-            cursor: zoom-out;
-            transform: scale(1.8);
         }
         .modal-overlay .modal-content iframe {
             width: 90vw;
@@ -364,6 +354,89 @@
         .about-branch .branch-item i { color: #2563eb; font-size: 1.3rem; }
         .about-image { flex: 1 1 35%; min-width: 220px; display: flex; justify-content: center; }
         
+
+        /* ===== شريط الأطباء داخل الهيدر الأزرق ===== */
+        .hero-doctors {
+            position: absolute;
+            top: 24px;
+            right: 20px;
+            width: 260px;
+            z-index: 4;
+        }
+        .hero-doctors-title {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .doctors-slider {
+            position: relative;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 16px;
+            padding: 10px 38px;
+            backdrop-filter: blur(5px);
+        }
+        .doctors-viewport { overflow: hidden; border-radius: 10px; }
+        .doctors-track { display:flex; transition:transform .45s ease; direction:ltr; }
+        .doctor-card-mini {
+            min-width:100%;
+            direction:rtl;
+            text-align:center;
+            color:#fff;
+        }
+        .doctor-card-mini img {
+            width:82px; height:82px; object-fit:cover;
+            border-radius:50%;
+            border:3px solid rgba(255,255,255,.9);
+            display:block; margin:0 auto 7px;
+            background:#e2e8f0;
+        }
+        .doctor-card-mini .doctor-mini-name { font-weight:800; font-size:.95rem; line-height:1.4; }
+        .doctor-card-mini .doctor-mini-specialty { color:#dbeafe; font-size:.78rem; line-height:1.5; }
+        .doctor-slider-arrow {
+            position:absolute; top:50%; transform:translateY(-50%);
+            width:28px; height:28px; border-radius:50%;
+            border:0; background:rgba(255,255,255,.9); color:#1e3a8a;
+            cursor:pointer; z-index:3; display:flex; align-items:center; justify-content:center;
+        }
+        .doctor-slider-arrow:hover { transform:translateY(-50%) scale(1.08); }
+        .doctor-slider-arrow.prev { right:6px; }
+        .doctor-slider-arrow.next { left:6px; }
+        .doctor-slider-dots { display:flex; justify-content:center; gap:5px; margin-top:7px; }
+        .doctor-slider-dots button { width:7px; height:7px; padding:0; border:0; border-radius:50%; background:rgba(255,255,255,.45); cursor:pointer; }
+        .doctor-slider-dots button.active { background:#fff; transform:scale(1.2); }
+
+        /* ===== المقالات بين نبذة الطبيب والخدمات ===== */
+        .articles-section { padding:70px 0 60px; background:#fff; }
+        .articles-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:25px; margin-top:32px; }
+        .article-card {
+            background:#fff; border:1px solid #e2e8f0; border-radius:18px;
+            overflow:hidden; box-shadow:0 8px 25px rgba(15,23,42,.06);
+            cursor:pointer; transition:.3s ease;
+        }
+        .article-card:hover { transform:translateY(-6px); box-shadow:0 16px 35px rgba(15,23,42,.1); border-color:#93c5fd; }
+        .article-card img { width:100%; height:190px; object-fit:cover; display:block; background:#e2e8f0; }
+        .article-card-body { padding:18px; }
+        .article-card h3 { color:#1e3a8a; font-size:1.15rem; margin-bottom:7px; }
+        .article-card p { color:#64748b; font-size:.92rem; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .article-read-more { display:inline-block; margin-top:12px; color:#2563eb; font-weight:700; font-size:.9rem; }
+        .article-modal-content {
+            width:min(900px,95vw); max-height:90vh; overflow:auto;
+            background:#fff; color:#1e293b; border-radius:18px; padding:28px;
+            direction:rtl; text-align:right;
+        }
+        .article-modal-content h2 { color:#1e3a8a; margin-bottom:15px; font-size:1.8rem; }
+        .article-modal-text { white-space:pre-wrap; line-height:2; font-size:1.05rem; }
+        .article-modal-images { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
+        .article-modal-images img { width:100%; height:180px; object-fit:cover; border-radius:12px; cursor:pointer; }
+        .articles-empty { text-align:center; color:#64748b; padding:25px; }
+        @media (max-width:850px) {
+            .hero-doctors { position:relative; top:auto; right:auto; width:min(300px,100%); margin:0 auto 15px; }
+            .hero-top { margin-top:0; }
+        }
+
         .services { padding: 70px 0 60px; background: #eff6ff; }
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 30px; margin-top: 35px; }
         .service-card { background: #ffffff; padding: 32px 24px 28px; border-radius: 20px; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.04); transition: 0.4s ease; border: 1px solid rgba(0, 0, 0, 0.03); text-align: center; flex: 0 0 280px; }
@@ -438,78 +511,7 @@
             .services-grid { grid-template-columns: 1fr; }
             .gallery-slider { height: 200px; }
         }
-    
-        /* ===== تنقل الصور والفيديوهات داخل المودال ===== */
-        .modal-media-wrap {
-            position: relative;
-            width: min(96vw, 1200px);
-            height: min(90vh, 850px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-media-wrap .modal-content {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-nav-btn {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 10002;
-            width: 52px;
-            height: 52px;
-            border: 0;
-            border-radius: 50%;
-            background: rgba(0,0,0,.58);
-            color: #fff;
-            font-size: 30px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: .2s ease;
-            box-shadow: 0 4px 18px rgba(0,0,0,.25);
-        }
-
-        .modal-nav-btn:hover {
-            background: rgba(0,0,0,.82);
-            transform: translateY(-50%) scale(1.08);
-        }
-
-        .modal-prev-btn { right: 24px; }
-        .modal-next-btn { left: 24px; }
-
-        .modal-counter {
-            position: fixed;
-            top: 18px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10002;
-            color: #fff;
-            background: rgba(0,0,0,.55);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 14px;
-            direction: rtl;
-        }
-
-        @media (max-width: 600px) {
-            .modal-nav-btn {
-                width: 44px;
-                height: 44px;
-                font-size: 25px;
-            }
-            .modal-prev-btn { right: 10px; }
-            .modal-next-btn { left: 10px; }
-        }
-
-</style>
+    </style>
 </head>
 <body>
     <!-- عداد الزوار -->
@@ -521,6 +523,17 @@
     <!-- الهيدر -->
     <header class="hero">
         <div class="container">
+            <div class="hero-doctors" id="heroDoctors" style="display:none;">
+                <div class="hero-doctors-title"><i class="fas fa-user-md"></i> الأطباء</div>
+                <div class="doctors-slider">
+                    <button class="doctor-slider-arrow prev" id="doctorPrev" aria-label="الطبيب السابق"><i class="fas fa-chevron-right"></i></button>
+                    <div class="doctors-viewport">
+                        <div class="doctors-track" id="doctorsTrack"></div>
+                    </div>
+                    <button class="doctor-slider-arrow next" id="doctorNext" aria-label="الطبيب التالي"><i class="fas fa-chevron-left"></i></button>
+                    <div class="doctor-slider-dots" id="doctorDots"></div>
+                </div>
+            </div>
             <div class="hero-top">
                 <div class="doctor-name">د. <span id="cmDoctorName">أحمد عيد رفاعي</span></div>
                 <div class="doctor-title" id="cmDoctorTitle">استشاري جراحة المسالك البولية</div>
@@ -550,6 +563,7 @@
             <div class="hero-nav">
                 <a href="#about"><i class="fas fa-user-md"></i> عن الطبيب</a>
                 <a href="#services"><i class="fas fa-list-ul"></i> الخدمات</a>
+                        <a href="#articles"><i class="fas fa-newspaper"></i> المقالات</a>
                 <a href="#branches"><i class="fas fa-store"></i> الفروع والحجز</a>
             </div>
         </div>
@@ -583,6 +597,18 @@
                         <div class="slider-dots" id="sliderDots"></div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- قسم المقالات -->
+    <section id="articles" class="articles-section">
+        <div class="container">
+            <h2 class="section-title section-title-center">المقالات</h2>
+            <p class="section-subtitle" style="text-align:center;">مقالات ونصائح طبية مفيدة عن أمراض الكلى والمسالك البولية.</p>
+            <div class="articles-grid" id="articlesGrid">
+                <div class="articles-empty">جاري تحميل المقالات...</div>
             </div>
         </div>
     </section>
@@ -672,6 +698,7 @@
                 <div class="nav-links">
                     <a href="#about">عن الطبيب</a>
                     <a href="#services">الخدمات</a>
+                    <a href="#articles">المقالات</a>
                     <a href="#branches">الفروع والحجز</a>
                 </div>
                 <div class="copy">
@@ -690,12 +717,7 @@
     <!-- مودال -->
     <div class="modal-overlay" id="modalOverlay">
         <button class="modal-close" id="modalClose">&times;</button>
-        <button class="modal-nav-btn modal-prev-btn" id="modalPrevBtn" aria-label="العنصر السابق">&#10095;</button>
-        <button class="modal-nav-btn modal-next-btn" id="modalNextBtn" aria-label="العنصر التالي">&#10094;</button>
-        <div class="modal-counter" id="modalCounter"></div>
-        <div class="modal-media-wrap">
-            <div class="modal-content" id="modalContent"></div>
-        </div>
+        <div class="modal-content" id="modalContent"></div>
     </div>
 
     <!-- ============================================================ -->
@@ -708,85 +730,36 @@
 
         const SERVICE_ICONS_FALLBACK = 'fas fa-notes-medical';
 
-        // ===== دوال ذكية لروابط صور Google Drive =====
-        // يمكنك في Google Sheet وضع:
-        // 1) رابط Google Drive العادي:
-        //    https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-        // 2) أو وضع FILE_ID فقط
-        // 3) أو رابط uc / open / thumbnail
-        // والكود سيستخرج الـ ID ويحوّله تلقائياً لرابط صورة قابل للعرض.
-
-        function cleanDriveValue(value) {
-            if (value === null || value === undefined) return '';
-            let s = String(value).trim();
-
-            // إزالة علامات الاقتباس لو كانت القيمة منقولة بين " "
-            if ((s.startsWith('"') && s.endsWith('"')) ||
-                (s.startsWith("'") && s.endsWith("'"))) {
-                s = s.substring(1, s.length - 1).trim();
-            }
-
-            // دعم بعض صيغ HYPERLINK القادمة من الشيت
-            const hyperlinkMatch = s.match(/HYPERLINK\s*\(\s*["']([^"']+)["']/i);
-            if (hyperlinkMatch) s = hyperlinkMatch[1];
-
-            return s;
-        }
-
-        function extractFileIdFromDriveUrl(value) {
-            const url = cleanDriveValue(value);
+        // ===== دوال تحويل روابط جوجل درايف =====
+        function extractFileIdFromDriveUrl(url) {
             if (!url) return null;
-
-            // صيغ Google Drive المختلفة
+            // محاولة استخراج File ID من أي رابط جوجل درايف
             const patterns = [
-                /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/i,
-                /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/i,
-                /drive\.google\.com\/uc\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/i,
-                /drive\.google\.com\/thumbnail\?(?:[^#]*&)?id=([a-zA-Z0-9_-]+)/i,
-                /[?&]id=([a-zA-Z0-9_-]+)/i,
-                /[?&]fileId=([a-zA-Z0-9_-]+)/i
+                /\/file\/d\/([^\/]+)/,
+                /[?&]id=([^&]+)/,
+                /\/uc\?id=([^&]+)/,
+                /\/open\?id=([^&]+)/
             ];
-
             for (const pattern of patterns) {
                 const match = url.match(pattern);
-                if (match && match[1]) return match[1];
+                if (match) return match[1];
             }
-
-            // لو القيمة نفسها هي File ID
-            if (/^[a-zA-Z0-9_-]{15,}$/.test(url)) return url;
-
+            // لو الرابط مجرد ID
+            if (/^[a-zA-Z0-9_-]{20,}$/.test(url.trim())) return url.trim();
             return null;
         }
 
-        function convertToDirectDriveUrl(value) {
-            const original = cleanDriveValue(value);
-            const fileId = extractFileIdFromDriveUrl(original);
-
-            if (!fileId) return original;
-
-            // thumbnail أكثر اعتمادية لعرض صور Drive داخل <img>
-            return 'https://drive.google.com/thumbnail?id=' +
-                encodeURIComponent(fileId) + '&sz=w1600';
+        function convertToDirectDriveUrl(url) {
+            const fileId = extractFileIdFromDriveUrl(url);
+            if (fileId) {
+                return 'https://drive.google.com/uc?export=view&id=' + fileId;
+            }
+            // لو مش جوجل درايف، نرجع الرابط كما هو
+            return url;
         }
 
-        function convertToDriveImageUrls(value) {
-            const original = cleanDriveValue(value);
-            const fileId = extractFileIdFromDriveUrl(original);
-
-            if (!fileId) return [original];
-
-            // ترتيب البدائل: thumbnail ثم uc
-            const id = encodeURIComponent(fileId);
-            return [
-                'https://drive.google.com/thumbnail?id=' + id + '&sz=w1600',
-                'https://drive.google.com/uc?export=view&id=' + id
-            ];
-        }
-
-        function isDriveUrl(value) {
-            const url = cleanDriveValue(value);
-            return !!extractFileIdFromDriveUrl(url) ||
-                   /drive\.google\.com/i.test(url);
+        function isDriveUrl(url) {
+            return url && (url.includes('drive.google.com') || extractFileIdFromDriveUrl(url));
         }
 
         function isYouTubeUrl(url) {
@@ -794,95 +767,42 @@
         }
 
         // ===== المودال =====
-        // ===== عرض عنصر من المعرض داخل المودال =====
-        let currentGalleryItems = [];
-        let currentGalleryIndex = 0;
-
-        function showGalleryItem(index) {
-            if (!currentGalleryItems.length) return;
-
-            currentGalleryIndex =
-                (index + currentGalleryItems.length) % currentGalleryItems.length;
-
-            const item = currentGalleryItems[currentGalleryIndex];
+        function openModal(url, type, title) {
             const overlay = document.getElementById('modalOverlay');
             const content = document.getElementById('modalContent');
-            const counter = document.getElementById('modalCounter');
-
             content.innerHTML = '';
 
-            let finalUrl = item.url || '';
-            const isDrive = isDriveUrl(finalUrl);
-            const isYT = isYouTubeUrl(finalUrl);
+            let finalUrl = url;
+            let isDrive = isDriveUrl(url);
+            let isYT = isYouTubeUrl(url);
 
-            if (isDrive) finalUrl = convertToDirectDriveUrl(finalUrl);
+            // لو الرابط جوجل درايف، نحوله لمباشر
+            if (isDrive) {
+                finalUrl = convertToDirectDriveUrl(url);
+            }
 
-            const type = item.type || (isYT ? 'video' : 'image');
-
-            if (type === 'video' || isYT) {
+            // لو يوتيوب، ناخد embed
+            if (isYT) {
                 let videoId = '';
                 const patterns = [
                     /youtube\.com\/watch\?v=([^&]+)/,
                     /youtu\.be\/([^?]+)/,
                     /youtube\.com\/embed\/([^?]+)/
                 ];
-
                 for (const pattern of patterns) {
                     const match = finalUrl.match(pattern);
                     if (match) { videoId = match[1]; break; }
                 }
-
-                const embedUrl = videoId
-                    ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&controls=1`
-                    : finalUrl;
-
-                content.innerHTML =
-                    `<iframe src="${embedUrl}" allowfullscreen style="width:100%;height:100%;border:0;border-radius:12px;"></iframe>`;
-            } else {
-                content.innerHTML =
-                    `<img src="${finalUrl}" alt="${item.title || 'صورة'}"
-                        class="modal-zoom-image"
-                        title="اضغط للتكبير"
-                        style="max-width:95vw;max-height:90vh;object-fit:contain;cursor:zoom-in;transition:transform .25s ease;transform-origin:center;"
-                        onerror="this.parentElement.innerHTML='<div style="color:#f87171;padding:20px;">⚠️ تعذر تحميل الصورة</div>'" />`;
-
-                const zoomImage = content.querySelector('.modal-zoom-image');
-                if (zoomImage) {
-                    zoomImage.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        this.classList.toggle('zoomed');
-                        this.style.transform = this.classList.contains('zoomed')
-                            ? 'scale(1.8)'
-                            : 'scale(1)';
-                        this.style.cursor = this.classList.contains('zoomed')
-                            ? 'zoom-out'
-                            : 'zoom-in';
-                    });
-                }
-            }
-
-            if (counter) {
-                counter.textContent =
-                    `${currentGalleryIndex + 1} / ${currentGalleryItems.length}` +
-                    (item.title ? ` — ${item.title}` : '');
+                const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : finalUrl;
+                content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
+            } 
+            // لو صورة
+            else {
+                content.innerHTML = `<img src="${finalUrl}" alt="${title || 'صورة'}" onerror="this.parentElement.innerHTML='<div style=\\'color:#f87171;padding:20px;\\'>⚠️ تعذر تحميل الصورة. تأكد من أن الملف عام (Anyone with the link can view)</div>'" />`;
             }
 
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-        }
-
-        function openModal(url, type, title) {
-            // توافق مع أي استدعاء قديم من الموقع
-            let index = currentGalleryItems.findIndex(item => item.url === url);
-            if (index < 0) {
-                currentGalleryItems = [{ url: url, type: type, title: title }];
-                index = 0;
-            }
-            showGalleryItem(index);
-        }
-
-        function openGalleryFromIndex(index) {
-            showGalleryItem(index);
         }
 
         function closeModal() {
@@ -890,53 +810,121 @@
             const content = document.getElementById('modalContent');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
-
             const iframe = content.querySelector('iframe');
-            if (iframe) iframe.src = '';
-
-            content.innerHTML = '';
+            if (iframe) {
+                const src = iframe.src;
+                iframe.src = '';
+                setTimeout(() => { iframe.src = src; }, 50);
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
             const overlay = document.getElementById('modalOverlay');
             const closeBtn = document.getElementById('modalClose');
             if (closeBtn) closeBtn.addEventListener('click', closeModal);
-
-            const prevBtn = document.getElementById('modalPrevBtn');
-            const nextBtn = document.getElementById('modalNextBtn');
-
-            if (prevBtn) {
-                prevBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    showGalleryItem(currentGalleryIndex - 1);
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    showGalleryItem(currentGalleryIndex + 1);
-                });
-            }
-
             if (overlay) {
                 overlay.addEventListener('click', function(e) {
                     if (e.target === overlay) closeModal();
                 });
             }
             document.addEventListener('keydown', function(e) {
-                const overlay = document.getElementById('modalOverlay');
-                if (!overlay || !overlay.classList.contains('active')) return;
-
-                if (e.key === 'Escape') {
-                    closeModal();
-                } else if (e.key === 'ArrowRight') {
-                    showGalleryItem(currentGalleryIndex - 1);
-                } else if (e.key === 'ArrowLeft') {
-                    showGalleryItem(currentGalleryIndex + 1);
-                }
+                if (e.key === 'Escape') closeModal();
             });
         });
+
+
+        // ===== الأطباء =====
+        function renderDoctors(doctors) {
+            const wrap = document.getElementById('heroDoctors');
+            const track = document.getElementById('doctorsTrack');
+            const dots = document.getElementById('doctorDots');
+            if (!wrap || !track || !dots) return;
+            if (!doctors || !doctors.length) { wrap.style.display='none'; return; }
+
+            const safeDoctors = doctors.filter(d => d && (d.name || d.doctorName));
+            if (!safeDoctors.length) { wrap.style.display='none'; return; }
+
+            track.innerHTML = safeDoctors.map(d => {
+                const name = d.name || d.doctorName || '';
+                const specialty = d.specialty || d.specialisation || d.title || '';
+                const image = d.image || d.photo || d.url || '';
+                const img = image ? convertToDirectDriveUrl(image) : '';
+                return `<div class="doctor-card-mini">
+                    ${img ? `<img src="${img}" alt="${name}" onerror="this.style.visibility='hidden';">` : `<div style="height:82px;"></div>`}
+                    <div class="doctor-mini-name">${name}</div>
+                    <div class="doctor-mini-specialty">${specialty}</div>
+                </div>`;
+            }).join('');
+
+            dots.innerHTML = safeDoctors.map((_,i)=>`<button data-index="${i}" class="${i===0?'active':''}" aria-label="الطبيب ${i+1}"></button>`).join('');
+            wrap.style.display='block';
+
+            let index=0, timer=null;
+            const update=()=> {
+                track.style.transform=`translateX(-${index*100}%)`;
+                [...dots.children].forEach((b,i)=>b.classList.toggle('active',i===index));
+            };
+            const go=(i)=>{ index=(i+safeDoctors.length)%safeDoctors.length; update(); restart(); };
+            const restart=()=>{ if(timer) clearInterval(timer); if(safeDoctors.length>1) timer=setInterval(()=>go(index+1),5000); };
+
+            document.getElementById('doctorNext')?.addEventListener('click',()=>go(index+1));
+            document.getElementById('doctorPrev')?.addEventListener('click',()=>go(index-1));
+            dots.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) go(Number(b.dataset.index));});
+            const slider=wrap.querySelector('.doctors-slider');
+            slider?.addEventListener('mouseenter',()=>timer&&clearInterval(timer));
+            slider?.addEventListener('mouseleave',restart);
+            update(); restart();
+        }
+
+        // ===== المقالات =====
+        function renderArticles(articles) {
+            const grid=document.getElementById('articlesGrid');
+            if(!grid) return;
+            if(!articles || !articles.length) {
+                grid.innerHTML='<div class="articles-empty">لا توجد مقالات مضافة حاليًا.</div>';
+                return;
+            }
+            grid.innerHTML=articles.map((a,i)=>{
+                const title=a.title || a.name || 'مقال';
+                const text=a.text || a.content || '';
+                const first=[a.image1,a.image2,a.image3,a.image4,a.image5,a.image].find(Boolean);
+                const image=first ? convertToDirectDriveUrl(first) : '';
+                const preview=text.replace(/<[^>]*>/g,'').substring(0,180);
+                return `<article class="article-card" data-article-index="${i}">
+                    ${image ? `<img src="${image}" alt="${title}" onerror="this.style.display='none';">` : ''}
+                    <div class="article-card-body">
+                        <h3>${title}</h3>
+                        <p>${preview}</p>
+                        <span class="article-read-more">اقرأ المقال ←</span>
+                    </div>
+                </article>`;
+            }).join('');
+
+            grid.querySelectorAll('.article-card').forEach((card,i)=>card.addEventListener('click',()=>openArticleModal(articles[i])));
+        }
+
+        function openArticleModal(article) {
+            const overlay=document.getElementById('modalOverlay');
+            const content=document.getElementById('modalContent');
+            if(!overlay || !content) return;
+            const title=article.title || article.name || 'المقال';
+            const text=article.text || article.content || '';
+            const imageKeys=['image1','image2','image3','image4','image5','image'];
+            const images=imageKeys.map(k=>article[k]).filter(Boolean).map(convertToDirectDriveUrl);
+            content.innerHTML=`<div class="article-modal-content">
+                <h2>${title}</h2>
+                ${images.length ? `<div class="article-modal-images">${images.map((u,i)=>`<img src="${u}" alt="${title} - صورة ${i+1}" onclick="window.__openArticleImage && window.__openArticleImage('${u.replace(/'/g,"\\\\'")}','${title.replace(/'/g,"\\\\'")}')">`).join('')}</div>` : ''}
+                <div class="article-modal-text">${text}</div>
+            </div>`;
+            overlay.classList.add('active');
+            document.body.style.overflow='hidden';
+        }
+
+        window.__openArticleImage=function(url,title){
+            const content=document.getElementById('modalContent');
+            if(!content) return;
+            content.innerHTML=`<img src="${url}" alt="${title}" style="max-width:95vw;max-height:90vh;object-fit:contain;">`;
+        };
 
         // ===== عرض الأخبار ونبذة الطبيب والخدمات =====
         function renderNews(news) {
@@ -1061,18 +1049,7 @@
                     const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=0&rel=0&controls=1` : finalUrl;
                     content = `<iframe src="${embedUrl}" allowfullscreen loading="lazy"></iframe>`;
                 } else {
-                    if (isDrive) {
-                        const driveImageUrls = convertToDriveImageUrls(item.url);
-                        const primary = driveImageUrls[0] || finalUrl;
-                        const fallback = driveImageUrls[1] || '';
-
-                        content = `<img src="${primary}" alt="${item.title || 'صورة'}" loading="lazy"
-                            data-drive-fallback="${fallback}"
-                            onerror="if(this.dataset.driveFallback && this.src !== this.dataset.driveFallback){this.src=this.dataset.driveFallback;}else{this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة. تأكد من أن ملف Google Drive متاح لأي شخص لديه الرابط.</div>'}" />`;
-                    } else {
-                        content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy"
-                            onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
-                    }
+                    content = `<img src="${finalUrl}" alt="${item.title || 'صورة'}" loading="lazy" onerror="this.style.display='none';this.parentElement.innerHTML+='<div class=\\'error-msg\\'>⚠️ لا يمكن عرض الصورة</div>'" />`;
                 }
 
                 slidesHtml += `
@@ -1093,17 +1070,14 @@
             dotsContainer.innerHTML = dotsHtml;
 
             // ربط حدث النقر على الشريحة
-            // حفظ كل عناصر المعرض (صور + فيديوهات) للتنقل بينها
-            currentGalleryItems = galleryData.map(item => ({
-                url: item.url || '',
-                type: item.type || (isYouTubeUrl(item.url || '') ? 'video' : 'image'),
-                title: item.title || ''
-            }));
-
             document.querySelectorAll('.slider-slide').forEach(slide => {
                 slide.addEventListener('click', function() {
-                    const index = Number(this.dataset.index || 0);
-                    openGalleryFromIndex(index);
+                    const url = this.dataset.url;
+                    const type = this.dataset.type;
+                    const title = this.dataset.title;
+                    if (url) {
+                        openModal(url, type, title);
+                    }
                 });
             });
 
@@ -1170,6 +1144,8 @@
                 renderAboutPoints(data.aboutPoints);
                 renderServices(data.services);
                 renderGallery(data.gallery);
+                renderDoctors(data.doctors);
+                renderArticles(data.articles);
             }
             delete window[cbName];
             script.remove();
