@@ -355,73 +355,94 @@
         .about-image { flex: 1 1 35%; min-width: 220px; display: flex; justify-content: center; }
         
 
-        /* ===== شريط الأطباء داخل الهيدر الأزرق ===== */
+        /* ===== الأطباء داخل المنطقة الزرقاء ===== */
         .hero-doctors {
             position: absolute;
-            top: 24px;
+            top: 18px;
             right: 20px;
-            width: 260px;
-            z-index: 4;
+            width: 330px;
+            z-index: 8;
         }
         .hero-doctors-title {
             color: #ffffff;
-            font-size: 1rem;
-            font-weight: 800;
+            font-size: 1.15rem;
+            font-weight: 900;
             text-align: center;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 7px rgba(0,0,0,.25);
         }
         .doctors-slider {
             position: relative;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.22);
-            border-radius: 16px;
-            padding: 10px 38px;
+            height: 220px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.28);
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,.12);
             backdrop-filter: blur(5px);
         }
-        .doctors-viewport { overflow: hidden; border-radius: 10px; }
-        .doctors-track { display:flex; transition:transform .45s ease; direction:ltr; }
+        .doctors-viewport { width:100%; height:100%; overflow:hidden; }
+        .doctors-track { display:flex; width:100%; height:100%; transition:transform .5s ease; direction:ltr; }
         .doctor-card-mini {
-            min-width:100%;
-            direction:rtl;
-            text-align:center;
-            color:#fff;
+            min-width:100%; height:100%; position:relative; overflow:hidden;
+            direction:rtl; text-align:center; color:#fff;
+            display:flex; flex-direction:column; justify-content:flex-end;
+            background:linear-gradient(135deg,#3b82f6,#1d4ed8);
         }
-        .doctor-card-mini img {
-            width:82px; height:82px; object-fit:cover;
-            border-radius:50%;
-            border:3px solid rgba(255,255,255,.9);
-            display:block; margin:0 auto 7px;
-            background:#e2e8f0;
+        .doctor-card-mini .doctor-photo-full {
+            position:absolute; inset:0; width:100%; height:100%;
+            object-fit:cover; display:block; z-index:0;
+            background:rgba(255,255,255,.08);
         }
-        .doctor-card-mini .doctor-mini-name { font-weight:800; font-size:.95rem; line-height:1.4; }
-        .doctor-card-mini .doctor-mini-specialty { color:#dbeafe; font-size:.78rem; line-height:1.5; }
+        .doctor-card-mini::after {
+            content:''; position:absolute; inset:0; z-index:1;
+            background:linear-gradient(to top,rgba(8,31,82,.92) 0%,rgba(8,31,82,.45) 42%,rgba(8,31,82,.05) 78%);
+        }
+        .doctor-mini-info { position:relative; z-index:2; padding:45px 28px 18px; }
+        .doctor-card-mini .doctor-mini-name { font-weight:900; font-size:1.15rem; line-height:1.35; text-shadow:0 2px 6px rgba(0,0,0,.35); }
+        .doctor-card-mini .doctor-mini-specialty { color:#e0edff; font-size:.9rem; line-height:1.5; font-weight:600; margin-top:3px; text-shadow:0 1px 4px rgba(0,0,0,.35); }
         .doctor-slider-arrow {
             position:absolute; top:50%; transform:translateY(-50%);
-            width:28px; height:28px; border-radius:50%;
-            border:0; background:rgba(255,255,255,.9); color:#1e3a8a;
-            cursor:pointer; z-index:3; display:flex; align-items:center; justify-content:center;
+            width:36px; height:36px; border-radius:50%;
+            border:0; background:rgba(255,255,255,.94); color:#1e3a8a;
+            cursor:pointer; z-index:4; display:flex; align-items:center; justify-content:center;
+            box-shadow:0 4px 12px rgba(0,0,0,.16); font-size:1rem;
         }
         .doctor-slider-arrow:hover { transform:translateY(-50%) scale(1.08); }
-        .doctor-slider-arrow.prev { right:6px; }
-        .doctor-slider-arrow.next { left:6px; }
-        .doctor-slider-dots { display:flex; justify-content:center; gap:5px; margin-top:7px; }
-        .doctor-slider-dots button { width:7px; height:7px; padding:0; border:0; border-radius:50%; background:rgba(255,255,255,.45); cursor:pointer; }
-        .doctor-slider-dots button.active { background:#fff; transform:scale(1.2); }
+        .doctor-slider-arrow.prev { right:9px; }
+        .doctor-slider-arrow.next { left:9px; }
+        .doctor-slider-dots { position:absolute; z-index:4; bottom:7px; left:0; right:0; display:flex; justify-content:center; gap:6px; }
+        .doctor-slider-dots button { width:8px; height:8px; padding:0; border:0; border-radius:50%; background:rgba(255,255,255,.55); cursor:pointer; }
+        .doctor-slider-dots button.active { background:#fff; transform:scale(1.25); }
 
-        /* ===== المقالات بين نبذة الطبيب والخدمات ===== */
-        .articles-section { padding:70px 0 60px; background:#fff; }
-        .articles-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:25px; margin-top:32px; }
-        .article-card {
-            background:#fff; border:1px solid #e2e8f0; border-radius:18px;
-            overflow:hidden; box-shadow:0 8px 25px rgba(15,23,42,.06);
-            cursor:pointer; transition:.3s ease;
+        /* ===== المقالات: عمود رأسي في يسار الصفحة بين النبذة والخدمات ===== */
+        .articles-section { padding:36px 0 42px; background:#fff; }
+        .articles-column {
+            width:min(370px,100%); margin-left:0; margin-right:auto;
         }
-        .article-card:hover { transform:translateY(-6px); box-shadow:0 16px 35px rgba(15,23,42,.1); border-color:#93c5fd; }
-        .article-card img { width:100%; height:190px; object-fit:cover; display:block; background:#e2e8f0; }
-        .article-card-body { padding:18px; }
-        .article-card h3 { color:#1e3a8a; font-size:1.15rem; margin-bottom:7px; }
-        .article-card p { color:#64748b; font-size:.92rem; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
-        .article-read-more { display:inline-block; margin-top:12px; color:#2563eb; font-weight:700; font-size:.9rem; }
+        .articles-column-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+        .articles-column-title { margin:0; color:#1e3a8a; font-size:1.55rem; font-weight:900; display:flex; align-items:center; gap:9px; }
+        .articles-column-title i { color:#2563eb; }
+        .articles-slider { position:relative; padding:0 0 0 0; }
+        .articles-viewport { height:390px; overflow:hidden; border-radius:18px; border:1px solid #dbeafe; background:#f8fbff; box-shadow:0 8px 25px rgba(15,23,42,.07); }
+        .articles-track { display:flex; flex-direction:column; transition:transform .55s ease; }
+        .article-card {
+            flex:0 0 78px; min-height:78px; width:100%; box-sizing:border-box;
+            display:flex; align-items:center; gap:12px; padding:13px 18px;
+            background:#fff; border:0; border-bottom:1px solid #e5e7eb; border-radius:0;
+            cursor:pointer; transition:.25s ease; text-align:right; direction:rtl;
+        }
+        .article-card:first-child { border-radius:17px 17px 0 0; }
+        .article-card:hover { background:#eff6ff; transform:none; box-shadow:none; }
+        .article-card::before { content:'›'; width:30px; height:30px; flex:0 0 30px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#2563eb; color:#fff; font-size:1.25rem; }
+        .article-card-body { padding:0; min-width:0; }
+        .article-card h3 { color:#1e3a8a; font-size:1rem; line-height:1.45; margin:0; font-weight:800; }
+        .article-card p, .article-card img { display:none !important; }
+        .article-read-more { display:block; margin-top:3px; color:#64748b; font-size:.76rem; font-weight:600; }
+        .article-slider-arrow { position:absolute; left:50%; transform:translateX(-50%); width:36px; height:30px; border:1px solid #bfdbfe; border-radius:10px; background:#fff; color:#1e3a8a; z-index:3; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,.10); }
+        .article-slider-arrow:hover { background:#eff6ff; }
+        .article-slider-arrow.up { top:-15px; }
+        .article-slider-arrow.down { bottom:-15px; }
         .article-modal-content {
             width:min(900px,95vw); max-height:90vh; overflow:auto;
             background:#fff; color:#1e293b; border-radius:18px; padding:28px;
@@ -430,11 +451,14 @@
         .article-modal-content h2 { color:#1e3a8a; margin-bottom:15px; font-size:1.8rem; }
         .article-modal-text { white-space:pre-wrap; line-height:2; font-size:1.05rem; }
         .article-modal-images { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:20px; }
-        .article-modal-images img { width:100%; height:180px; object-fit:cover; border-radius:12px; cursor:pointer; }
+        .article-modal-images img { width:100%; height:180px; object-fit:cover; border-radius:12px; cursor:pointer; background:#e2e8f0; }
         .articles-empty { text-align:center; color:#64748b; padding:25px; }
         @media (max-width:850px) {
-            .hero-doctors { position:relative; top:auto; right:auto; width:min(300px,100%); margin:0 auto 15px; }
+            .hero-doctors { position:relative; top:auto; right:auto; width:min(330px,100%); margin:0 auto 18px; }
+            .doctors-slider { height:220px; }
             .hero-top { margin-top:0; }
+            .articles-column { width:100%; }
+            .articles-viewport { height:330px; }
         }
 
         .services { padding: 70px 0 60px; background: #eff6ff; }
@@ -602,13 +626,22 @@
     </section>
 
 
-    <!-- قسم المقالات -->
+    <!-- قسم المقالات: عمود رأسي في يسار الصفحة -->
     <section id="articles" class="articles-section">
         <div class="container">
-            <h2 class="section-title section-title-center">المقالات</h2>
-            <p class="section-subtitle" style="text-align:center;">مقالات ونصائح طبية مفيدة عن أمراض الكلى والمسالك البولية.</p>
-            <div class="articles-grid" id="articlesGrid">
-                <div class="articles-empty">جاري تحميل المقالات...</div>
+            <div class="articles-column">
+                <div class="articles-column-head">
+                    <h2 class="articles-column-title"><i class="fas fa-newspaper"></i> المقالات</h2>
+                </div>
+                <div class="articles-slider">
+                    <button class="article-slider-arrow up" id="articlesUp" aria-label="المقالات السابقة"><i class="fas fa-chevron-up"></i></button>
+                    <div class="articles-viewport">
+                        <div class="articles-track" id="articlesGrid">
+                            <div class="articles-empty">جاري تحميل المقالات...</div>
+                        </div>
+                    </div>
+                    <button class="article-slider-arrow down" id="articlesDown" aria-label="المقالات التالية"><i class="fas fa-chevron-down"></i></button>
+                </div>
             </div>
         </div>
     </section>
@@ -752,10 +785,15 @@
         function convertToDirectDriveUrl(url) {
             const fileId = extractFileIdFromDriveUrl(url);
             if (fileId) {
-                return 'https://drive.google.com/uc?export=view&id=' + fileId;
+                // Google Drive: thumbnail أكثر ثباتًا لعرض الصور داخل المواقع من uc?export=view
+                return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(fileId) + '&sz=w1600';
             }
-            // لو مش جوجل درايف، نرجع الرابط كما هو
             return url;
+        }
+
+        function convertToDrivePreviewUrl(url) {
+            const fileId = extractFileIdFromDriveUrl(url);
+            return fileId ? 'https://drive.google.com/file/d/' + encodeURIComponent(fileId) + '/preview' : url;
         }
 
         function isDriveUrl(url) {
@@ -839,9 +877,7 @@
             const track = document.getElementById('doctorsTrack');
             const dots = document.getElementById('doctorDots');
             if (!wrap || !track || !dots) return;
-            if (!doctors || !doctors.length) { wrap.style.display='none'; return; }
-
-            const safeDoctors = doctors.filter(d => d && (d.name || d.doctorName));
+            const safeDoctors = (doctors || []).filter(d => d && (d.name || d.doctorName));
             if (!safeDoctors.length) { wrap.style.display='none'; return; }
 
             track.innerHTML = safeDoctors.map(d => {
@@ -850,9 +886,11 @@
                 const image = d.image || d.photo || d.url || '';
                 const img = image ? convertToDirectDriveUrl(image) : '';
                 return `<div class="doctor-card-mini">
-                    ${img ? `<img src="${img}" alt="${name}" onerror="this.style.visibility='hidden';">` : `<div style="height:82px;"></div>`}
-                    <div class="doctor-mini-name">${name}</div>
-                    <div class="doctor-mini-specialty">${specialty}</div>
+                    ${img ? `<img class="doctor-photo-full" src="${img}" alt="${name}" loading="lazy" onerror="this.style.display='none';">` : ''}
+                    <div class="doctor-mini-info">
+                        <div class="doctor-mini-name">${name}</div>
+                        <div class="doctor-mini-specialty">${specialty}</div>
+                    </div>
                 </div>`;
             }).join('');
 
@@ -864,43 +902,64 @@
                 track.style.transform=`translateX(-${index*100}%)`;
                 [...dots.children].forEach((b,i)=>b.classList.toggle('active',i===index));
             };
+            const stop=()=>{ if(timer){clearInterval(timer);timer=null;} };
+            const restart=()=>{ stop(); if(safeDoctors.length>1) timer=setInterval(()=>{index=(index+1)%safeDoctors.length;update();},5000); };
             const go=(i)=>{ index=(i+safeDoctors.length)%safeDoctors.length; update(); restart(); };
-            const restart=()=>{ if(timer) clearInterval(timer); if(safeDoctors.length>1) timer=setInterval(()=>go(index+1),5000); };
 
             document.getElementById('doctorNext')?.addEventListener('click',()=>go(index+1));
             document.getElementById('doctorPrev')?.addEventListener('click',()=>go(index-1));
             dots.addEventListener('click',e=>{const b=e.target.closest('button'); if(b) go(Number(b.dataset.index));});
             const slider=wrap.querySelector('.doctors-slider');
-            slider?.addEventListener('mouseenter',()=>timer&&clearInterval(timer));
+            slider?.addEventListener('mouseenter',stop);
             slider?.addEventListener('mouseleave',restart);
             update(); restart();
         }
 
         // ===== المقالات =====
         function renderArticles(articles) {
-            const grid=document.getElementById('articlesGrid');
-            if(!grid) return;
+            const track=document.getElementById('articlesGrid');
+            if(!track) return;
             if(!articles || !articles.length) {
-                grid.innerHTML='<div class="articles-empty">لا توجد مقالات مضافة حاليًا.</div>';
+                track.innerHTML='<div class="articles-empty">لا توجد مقالات مضافة حاليًا.</div>';
                 return;
             }
-            grid.innerHTML=articles.map((a,i)=>{
+            track.innerHTML=articles.map((a,i)=>{
                 const title=a.title || a.name || 'مقال';
                 const text=a.text || a.content || '';
-                const first=[a.image1,a.image2,a.image3,a.image4,a.image5,a.image].find(Boolean);
-                const image=first ? convertToDirectDriveUrl(first) : '';
-                const preview=text.replace(/<[^>]*>/g,'').substring(0,180);
-                return `<article class="article-card" data-article-index="${i}">
-                    ${image ? `<img src="${image}" alt="${title}" onerror="this.style.display='none';">` : ''}
+                const preview=text.replace(/<[^>]*>/g,'').substring(0,100);
+                return `<article class="article-card" data-article-index="${i}" tabindex="0" role="button">
                     <div class="article-card-body">
                         <h3>${title}</h3>
-                        <p>${preview}</p>
-                        <span class="article-read-more">اقرأ المقال ←</span>
+                        <span class="article-read-more">اضغط لقراءة المقال</span>
                     </div>
                 </article>`;
             }).join('');
 
-            grid.querySelectorAll('.article-card').forEach((card,i)=>card.addEventListener('click',()=>openArticleModal(articles[i])));
+            track.querySelectorAll('.article-card').forEach((card,i)=>{
+                card.addEventListener('click',()=>openArticleModal(articles[i]));
+                card.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openArticleModal(articles[i]);}});
+            });
+            initArticlesSlider(articles.length);
+        }
+
+        function initArticlesSlider(total) {
+            const viewport=document.querySelector('.articles-viewport');
+            const track=document.getElementById('articlesGrid');
+            const up=document.getElementById('articlesUp');
+            const down=document.getElementById('articlesDown');
+            if(!viewport||!track||!up||!down||total<1) return;
+            let index=0, timer=null;
+            const visible=Math.max(1,Math.floor(viewport.clientHeight/78));
+            const max=Math.max(0,total-visible);
+            function update(){track.style.transform=`translateY(-${index*78}px)`;}
+            function stop(){if(timer){clearInterval(timer);timer=null;}}
+            function restart(){stop();if(total>visible) timer=setInterval(()=>{index=index>=max?0:index+1;update();},4500);}
+            function go(i){index=Math.max(0,Math.min(max,i));update();restart();}
+            up.onclick=()=>go(index-1<0?max:index-1);
+            down.onclick=()=>go(index+1>max?0:index+1);
+            viewport.onmouseenter=stop;
+            viewport.onmouseleave=restart;
+            update();restart();
         }
 
         function openArticleModal(article) {
@@ -913,7 +972,7 @@
             const images=imageKeys.map(k=>article[k]).filter(Boolean).map(convertToDirectDriveUrl);
             content.innerHTML=`<div class="article-modal-content">
                 <h2>${title}</h2>
-                ${images.length ? `<div class="article-modal-images">${images.map((u,i)=>`<img src="${u}" alt="${title} - صورة ${i+1}" onclick="window.__openArticleImage && window.__openArticleImage('${u.replace(/'/g,"\\\\'")}','${title.replace(/'/g,"\\\\'")}')">`).join('')}</div>` : ''}
+                ${images.length ? `<div class="article-modal-images">${images.map((u,i)=>`<img src="${u}" alt="${title} - صورة ${i+1}" loading="lazy" onclick="window.__openArticleImage && window.__openArticleImage('${u.replace(/'/g,"\\'")}','${title.replace(/'/g,"\\'")}')" onerror="this.style.display='none'">`).join('')}</div>` : ''}
                 <div class="article-modal-text">${text}</div>
             </div>`;
             overlay.classList.add('active');
@@ -923,7 +982,7 @@
         window.__openArticleImage=function(url,title){
             const content=document.getElementById('modalContent');
             if(!content) return;
-            content.innerHTML=`<img src="${url}" alt="${title}" style="max-width:95vw;max-height:90vh;object-fit:contain;">`;
+            content.innerHTML=`<img src="${url}" alt="${title}" style="max-width:95vw;max-height:90vh;object-fit:contain;border-radius:12px;" onerror="this.outerHTML='<div style=\'color:#fff;text-align:center;padding:30px\'>لا يمكن عرض الصورة</div>'">`;
         };
 
         // ===== عرض الأخبار ونبذة الطبيب والخدمات =====
@@ -1026,14 +1085,14 @@
                 let finalUrl = item.url;
                 let isDrive = isDriveUrl(finalUrl);
                 let isYT = isYouTubeUrl(finalUrl);
+                const type = item.type || (isYT ? 'video' : 'image');
 
-                // تحويل جوجل درايف لمباشر
+                // الصور من Drive تستخدم thumbnail، وفيديوهات Drive تستخدم preview
                 if (isDrive) {
-                    finalUrl = convertToDirectDriveUrl(finalUrl);
+                    finalUrl = (type === 'video') ? convertToDrivePreviewUrl(finalUrl) : convertToDirectDriveUrl(finalUrl);
                 }
 
                 let content = '';
-                const type = item.type || (isYT ? 'video' : 'image');
 
                 if (type === 'video' || isYT) {
                     let videoId = '';
