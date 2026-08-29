@@ -103,6 +103,7 @@
             transform: translateY(-3px);
             box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5);
         }
+        .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         .btn-submit i { margin-left: 12px; }
         .back-link { display: block; text-align: center; margin-top: 20px; color: #5a6a7a; font-weight: 600; }
         .back-link a { color: #2a4a7a; text-decoration: none; }
@@ -117,6 +118,16 @@
             margin-bottom: 20px;
         }
         .note-msg i { color: #c99a2b; margin-left: 8px; }
+        .full-day-msg {
+            background: #fdeaea;
+            border-right: 4px solid #d32f2f;
+            color: #b32424;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-top: 8px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +166,9 @@
                 <select id="bookingDate" required disabled>
                     <option value="">-- اختر يوم العمل أولاً --</option>
                 </select>
+                <div id="fullDayMsg" class="full-day-msg">
+                    <i class="fas fa-exclamation-circle"></i> عذرًا، هذا اليوم مكتمل الحجز بالكامل. من فضلك اختر يومًا آخر.
+                </div>
             </div>
 
             <!-- الوقت -->
@@ -189,7 +203,7 @@
                 <textarea id="notes" placeholder="أي تفاصيل إضافية تريد إخبارنا بها"></textarea>
             </div>
 
-            <button type="submit" class="btn-submit">
+            <button type="submit" id="submitBtn" class="btn-submit">
                 <i class="fab fa-whatsapp"></i> تأكيد الحجز 
             </button>
         </form>
@@ -199,6 +213,7 @@
     </div>
 
     <script>
+        // رابط الـ Web App الخاص بك المعتمد
         const SITE_API_URL = 'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
         let branchDays = {};      
@@ -209,37 +224,47 @@
                 const response = await fetch(SITE_API_URL + '?action=getSchedule');
                 const result = await response.json();
 
-                const scheduleData = Array.isArray(result) ? result : (result.data || result.schedule || []);
-
-                if (scheduleData.length > 0) {
+                if (result && result.status === "OK" && result.data && result.data.length > 0) {
                     const dayOrder = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
                     
                     branchDays = {};
                     branchTimes = {};
 
-                    scheduleData.forEach(item => {
-                        const branch = String(item.branch || item.الفرع || '').trim();
-                        const day = String(item.day || item.اليوم || '').trim();
-                        const time = String(item.time || item.الموعد || item.الساعة || '').trim();
+                    result.data.forEach(item => {
+                        const branch = item.branch;
+                        const day = item.day;
+                        const time = item.time;
 
-                        if (branch && day) {
-                            if (!branchDays[branch]) branchDays[branch] = [];
-                            if (!branchDays[branch].includes(day)) branchDays[branch].push(day);
+                        if (!branchDays[branch]) branchDays[branch] = [];
+                        if (!branchDays[branch].includes(day)) branchDays[branch].push(day);
 
-                            if (!branchTimes[branch]) branchTimes[branch] = {};
-                            branchTimes[branch][day] = time;
-                        }
+                        if (!branchTimes[branch]) branchTimes[branch] = {};
+                        branchTimes[branch][day] = time;
                     });
 
                     for (let branch in branchDays) {
                         branchDays[branch].sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
                     }
+                } else {
+                    setupDefaultData();
                 }
                 document.getElementById('branch').disabled = false;
             } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل من الشيت:', error);
+                console.error('خطأ في جلب مواعيد العمل، تم تفعيل البيانات الافتراضية:', error);
+                setupDefaultData();
                 document.getElementById('branch').disabled = false;
             }
+        }
+
+        function setupDefaultData() {
+            branchDays = {
+                "أكتوبر": ["السبت", "الإثنين", "الثلاثاء", "الخميس"],
+                "فيصل": ["السبت", "الإثنين", "الثلاثاء", "الخميس"]
+            };
+            branchTimes = {
+                "أكتوبر": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" },
+                "فيصل": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" }
+            };
         }
 
         function timeStrToMinutes(raw) {
@@ -297,11 +322,23 @@
                 if (currentDate.getDay() === targetDayIndex) {
                     const formatted = currentDate.toISOString().split('T')[0];
                     const displayFormatted = `${dayName} (${formatted})`;
-                    dates.push({ value: formatted, text: displayFormatted });
+                    dates.push({ value: displayFormatted, text: displayFormatted });
                 }
                 currentDate.setDate(currentDate.getDate() + 1);
             }
             return dates;
+        }
+
+        // بيجيب المواعيد المحجوزة فعلاً لفرع وتاريخ معينين من الشيت
+        async function fetchBookedSlots(branch, date) {
+            try {
+                const res = await fetch(SITE_API_URL + '?action=getBookedSlots&branch=' + encodeURIComponent(branch) + '&date=' + encodeURIComponent(date));
+                const result = await res.json();
+                return (result && result.times) ? result.times : [];
+            } catch (err) {
+                console.error('تعذر جلب المواعيد المحجوزة:', err);
+                return [];
+            }
         }
 
         document.getElementById('branch').addEventListener('change', function() {
@@ -327,6 +364,7 @@
             dateSelect.disabled = true;
             timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
             timeSelect.disabled = true;
+            document.getElementById('fullDayMsg').style.display = 'none';
 
             if (!branch || !branchDays[branch]) return;
 
@@ -352,6 +390,7 @@
             dateSelect.disabled = true;
             timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
             timeSelect.disabled = true;
+            document.getElementById('fullDayMsg').style.display = 'none';
 
             if (!day) return;
 
@@ -365,40 +404,35 @@
             });
         });
 
-        // هنا السحر الحقيقي: جلب الأوقات المحجوزة من الشيت واستبعادها فوراً
         document.getElementById('bookingDate').addEventListener('change', async function() {
             const branch = document.getElementById('branch').value;
             const day = document.getElementById('day').value;
-            const dateVal = this.value; 
+            const date = this.value;
             const timeSelect = document.getElementById('time');
+            const fullDayMsg = document.getElementById('fullDayMsg');
+            const submitBtn = document.getElementById('submitBtn');
 
-            timeSelect.innerHTML = '<option value="">-- جاري التحقق من المواعيد المتاحة --</option>';
+            timeSelect.innerHTML = '<option value="">-- جاري التحقق من المواعيد المتاحة... --</option>';
             timeSelect.disabled = true;
+            fullDayMsg.style.display = 'none';
+            submitBtn.disabled = false;
 
-            if (!branch || !day || !dateVal || !branchTimes[branch] || !branchTimes[branch][day]) return;
-
-            let bookedTimes = [];
-            try {
-                const res = await fetch(`${SITE_API_URL}?action=getBookings&branch=${encodeURIComponent(branch)}&date=${encodeURIComponent(dateVal)}`);
-                const data = await res.json();
-                if (data && data.status === "OK" && Array.isArray(data.bookedTimes)) {
-                    bookedTimes = data.bookedTimes.map(t => t.trim());
-                }
-            } catch (err) {
-                console.error("خطأ في جلب الحجوزات السابقة:", err);
+            if (!branch || !day || !date || !branchTimes[branch] || !branchTimes[branch][day]) {
+                timeSelect.innerHTML = '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
+                return;
             }
 
             const timeStr = branchTimes[branch][day];
             const allSlots = generateTimeSlots(timeStr, 20);
-            
-            // استبعاد المحجوز بجد
+
+            const bookedTimes = await fetchBookedSlots(branch, date);
             const availableSlots = allSlots.filter(slot => !bookedTimes.includes(slot));
 
             if (availableSlots.length === 0) {
-                alert('عذراً، هذا اليوم مكتمل الحجز، يرجى اختيار يوم آخر.');
-                timeSelect.innerHTML = '<option value="">-- اليوم مكتمل الحجز --</option>';
+                fullDayMsg.style.display = 'block';
+                timeSelect.innerHTML = '<option value="">-- هذا اليوم مكتمل الحجز --</option>';
                 timeSelect.disabled = true;
-                this.value = ""; 
+                submitBtn.disabled = true;
                 return;
             }
 
@@ -426,7 +460,15 @@
             const notes = document.getElementById('notes').value.trim();
 
             if (!branchName || !bookingDate || !timeStr || !name || !age || !phone) {
-                alert('يرجى ملء جميع الحقول المطلوبة.');
+                alert('يرجى ملء جميع الحقول المطلوبة بما في ذلك السن.');
+                return;
+            }
+
+            // تحقق أخير قبل الإرسال إن الميعاد لسه متاح (تحسبًا لحد سبقك بثواني)
+            const stillAvailable = await fetchBookedSlots(branchName, bookingDate);
+            if (stillAvailable.includes(timeStr)) {
+                alert('عذرًا، تم حجز هذا الميعاد للتو من شخص آخر. من فضلك اختر ميعادًا آخر.');
+                document.getElementById('bookingDate').dispatchEvent(new Event('change'));
                 return;
             }
 
@@ -470,12 +512,28 @@
             document.getElementById('bookingDate').disabled = true;
             document.getElementById('time').disabled = true;
             document.getElementById('branchPhoneDisplay').style.display = 'none';
+            document.getElementById('fullDayMsg').style.display = 'none';
         }
 
         window.onload = function() {
             document.getElementById('branch').disabled = true;
             loadWorkingHours();
         };
+    </script>
+
+    <!-- عداد الزوار -->
+    <script>
+    (function () {
+      function updateCounter(data) {
+        var el = document.getElementById('siteVisitorCounter');
+        if (el) { el.textContent = data.count.toLocaleString('ar-EG') + ' زائر'; }
+      }
+      window.__visitorCounterCallback = updateCounter;
+      var pageId = window.location.pathname.replace(/\//g, '_') || 'home';
+      var s = document.createElement('script');
+      s.src = SITE_API_URL + '?action=trackVisit&page=' + encodeURIComponent(pageId) + '&callback=__visitorCounterCallback';
+      document.body.appendChild(s);
+    })();
     </script>
 </body>
 </html>
