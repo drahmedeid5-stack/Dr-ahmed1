@@ -38,23 +38,25 @@
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
 
         .hero {
-            background: 
-                radial-gradient(circle at 15% 50%, rgba(255,255,255,0.1) 0%, transparent 50%),
+            background:
+                radial-gradient(circle at 15% 50%, rgba(255,255,255,0.10) 0%, transparent 50%),
                 radial-gradient(circle at 85% 30%, rgba(255,255,255,0.08) 0%, transparent 40%),
                 linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #2563eb 100%);
-            padding: 40px 0 30px;
+            padding: 28px 0 24px;
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        .hero::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            height: 4px;
-            background: rgba(255,255,255,0.3);
-        }
-        .hero .container { position: relative; z-index: 2; }
+        .hero::after { content:''; position:absolute; bottom:0; left:0; right:0; height:4px; background:rgba(255,255,255,0.3); }
+        .hero .container { position:relative; z-index:2; }
+        .hero-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(430px,48%); gap:34px; align-items:center; direction:ltr; }
+        .hero-main { direction:rtl; min-width:0; }
+        .hero-top { display:flex; flex-direction:column; align-items:center; text-align:center; }
+        .hero-top .doctor-name { font-size:2.8rem; font-weight:900; color:#fff; line-height:1.2; text-shadow:0 2px 8px rgba(0,0,0,.4); }
+        .hero-top .doctor-title { font-size:1.3rem; font-weight:600; color:#e0eaff; margin-bottom:12px; }
+        .hero-center { text-align:center; margin:20px 0; }
+        .hero-center .best-care { font-size:2rem; font-weight:900; color:#fff; letter-spacing:1px; text-shadow:0 2px 8px rgba(0,0,0,.3); }
+        .hero-center .desc { font-size:1.1rem; color:#dbeafe; max-width:800px; margin:10px auto 0; line-height:1.9; }
 
         .hero-top { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .hero-top .doctor-name { font-size: 2.8rem; font-weight: 900; color: #ffffff; line-height: 1.2; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
@@ -325,6 +327,12 @@
             max-height: 90vh;
             border: none;
         }
+        .modal-gallery-nav { position:absolute; top:50%; transform:translateY(-50%); width:48px; height:48px; border:0; border-radius:50%; background:rgba(255,255,255,.94); color:#1e3a8a; cursor:pointer; z-index:10003; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 16px rgba(0,0,0,.25); font-size:1.2rem; }
+        .modal-gallery-nav:hover { transform:translateY(-50%) scale(1.08); }
+        .modal-gallery-nav.prev { right:14px; }
+        .modal-gallery-nav.next { left:14px; }
+        .modal-gallery-title { position:absolute; bottom:10px; left:70px; right:70px; color:#fff; text-align:center; z-index:10003; font-weight:700; text-shadow:0 2px 6px rgba(0,0,0,.7); pointer-events:none; }
+
         @media (max-width: 700px) {
             .modal-overlay .modal-content iframe {
                 width: 95vw;
@@ -355,67 +363,51 @@
         .about-image { flex: 1 1 35%; min-width: 220px; display: flex; justify-content: center; }
         
 
-        /* ===== الأطباء داخل المنطقة الزرقاء ===== */
-        .hero-doctors {
-            position: absolute;
-            top: 18px;
-            right: 20px;
-            width: 330px;
-            z-index: 8;
-        }
-        .hero-doctors-title {
-            color: #ffffff;
-            font-size: 1.15rem;
-            font-weight: 900;
-            text-align: center;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 7px rgba(0,0,0,.25);
-        }
-        .doctors-slider {
-            position: relative;
-            height: 220px;
-            background: rgba(255,255,255,.10);
-            border: 1px solid rgba(255,255,255,.28);
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 12px 30px rgba(0,0,0,.12);
-            backdrop-filter: blur(5px);
-        }
+        /* ===== الأطباء: مساحة كبيرة في يمين المنطقة الزرقاء ===== */
+        .hero-doctors { position:relative; width:100%; z-index:8; direction:rtl; }
+        .hero-doctors-title { color:#fff; font-size:1.35rem; font-weight:900; text-align:center; margin-bottom:10px; text-shadow:0 2px 7px rgba(0,0,0,.25); }
+        .doctors-slider { position:relative; height:390px; width:100%; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.30); border-radius:24px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.16); backdrop-filter:blur(5px); }
         .doctors-viewport { width:100%; height:100%; overflow:hidden; }
-        .doctors-track { display:flex; width:100%; height:100%; transition:transform .5s ease; direction:ltr; }
-        .doctor-card-mini {
-            min-width:100%; height:100%; position:relative; overflow:hidden;
-            direction:rtl; text-align:center; color:#fff;
-            display:flex; flex-direction:column; justify-content:flex-end;
-            background:linear-gradient(135deg,#3b82f6,#1d4ed8);
-        }
-        .doctor-card-mini .doctor-photo-full {
-            position:absolute; inset:0; width:100%; height:100%;
-            object-fit:cover; display:block; z-index:0;
-            background:rgba(255,255,255,.08);
-        }
-        .doctor-card-mini::after {
-            content:''; position:absolute; inset:0; z-index:1;
-            background:linear-gradient(to top,rgba(8,31,82,.92) 0%,rgba(8,31,82,.45) 42%,rgba(8,31,82,.05) 78%);
-        }
-        .doctor-mini-info { position:relative; z-index:2; padding:45px 28px 18px; }
-        .doctor-card-mini .doctor-mini-name { font-weight:900; font-size:1.15rem; line-height:1.35; text-shadow:0 2px 6px rgba(0,0,0,.35); }
-        .doctor-card-mini .doctor-mini-specialty { color:#e0edff; font-size:.9rem; line-height:1.5; font-weight:600; margin-top:3px; text-shadow:0 1px 4px rgba(0,0,0,.35); }
-        .doctor-slider-arrow {
-            position:absolute; top:50%; transform:translateY(-50%);
-            width:36px; height:36px; border-radius:50%;
-            border:0; background:rgba(255,255,255,.94); color:#1e3a8a;
-            cursor:pointer; z-index:4; display:flex; align-items:center; justify-content:center;
-            box-shadow:0 4px 12px rgba(0,0,0,.16); font-size:1rem;
-        }
+        .doctors-track { display:flex; width:100%; height:100%; transition:transform .55s ease; direction:ltr; }
+        .doctor-card-mini { min-width:100%; height:100%; position:relative; overflow:hidden; direction:rtl; text-align:center; color:#fff; display:flex; flex-direction:column; justify-content:flex-end; background:linear-gradient(135deg,#3b82f6,#1d4ed8); }
+        .doctor-card-mini .doctor-photo-full { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; z-index:0; background:rgba(255,255,255,.08); }
+        .doctor-card-mini::after { content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(to top,rgba(8,31,82,.94) 0%,rgba(8,31,82,.48) 38%,rgba(8,31,82,.05) 75%); }
+        .doctor-mini-info { position:relative; z-index:2; padding:90px 30px 30px; }
+        .doctor-card-mini .doctor-mini-name { font-weight:900; font-size:1.65rem; line-height:1.35; text-shadow:0 2px 6px rgba(0,0,0,.35); }
+        .doctor-card-mini .doctor-mini-specialty { color:#e0edff; font-size:1.05rem; line-height:1.5; font-weight:600; margin-top:5px; text-shadow:0 1px 4px rgba(0,0,0,.35); }
+        .doctor-slider-arrow { position:absolute; top:50%; transform:translateY(-50%); width:46px; height:46px; border-radius:50%; border:0; background:rgba(255,255,255,.95); color:#1e3a8a; cursor:pointer; z-index:4; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(0,0,0,.16); font-size:1.15rem; }
         .doctor-slider-arrow:hover { transform:translateY(-50%) scale(1.08); }
-        .doctor-slider-arrow.prev { right:9px; }
-        .doctor-slider-arrow.next { left:9px; }
-        .doctor-slider-dots { position:absolute; z-index:4; bottom:7px; left:0; right:0; display:flex; justify-content:center; gap:6px; }
-        .doctor-slider-dots button { width:8px; height:8px; padding:0; border:0; border-radius:50%; background:rgba(255,255,255,.55); cursor:pointer; }
-        .doctor-slider-dots button.active { background:#fff; transform:scale(1.25); }
+        .doctor-slider-arrow.prev { right:14px; }
+        .doctor-slider-arrow.next { left:14px; }
+        .doctor-slider-dots { position:absolute; z-index:4; bottom:12px; left:0; right:0; display:flex; justify-content:center; gap:7px; }
+        .doctor-slider-dots button { width:9px; height:9px; padding:0; border:0; border-radius:50%; background:rgba(255,255,255,.55); cursor:pointer; }
+        .doctor-slider-dots button.active { background:#fff; transform:scale(1.3); }
 
-        /* ===== المقالات: عمود رأسي في يسار الصفحة بين النبذة والخدمات ===== */
+        /* ===== العمود الجانبي للمقالات ===== */
+        .articles-column { width:100%; margin:0; direction:rtl; }
+        .articles-column-head { display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+        .articles-column-title { margin:0; color:#1e3a8a; font-size:1.55rem; font-weight:900; display:flex; align-items:center; gap:9px; }
+        .articles-column-title i { color:#2563eb; }
+        .articles-slider { position:relative; }
+        .articles-viewport { height:390px; overflow-y:auto; overflow-x:hidden; border-radius:18px; border:1px solid #e2d2bb; background:#fff; box-shadow:0 8px 25px rgba(15,23,42,.07); scrollbar-width:auto; scrollbar-color:#b8b8b8 #f4f4f4; }
+        .articles-viewport::-webkit-scrollbar { width:12px; }
+        .articles-viewport::-webkit-scrollbar-track { background:#f3f3f3; border-radius:10px; }
+        .articles-viewport::-webkit-scrollbar-thumb { background:#aaa; border-radius:10px; border:2px solid #f3f3f3; }
+        .articles-track { display:flex; flex-direction:column; gap:8px; padding:10px; }
+        .article-card { flex:0 0 auto; min-height:70px; width:100%; box-sizing:border-box; display:flex; align-items:center; gap:12px; padding:12px 15px; background:#fbf8f2; border:1px solid #dfcdb5; border-radius:12px; cursor:pointer; transition:.25s ease; text-align:right; direction:rtl; }
+        .article-card:hover { background:#f6efe5; transform:translateY(-1px); box-shadow:0 4px 10px rgba(15,23,42,.06); }
+        .article-card::before { content:'🔗'; width:25px; flex:0 0 25px; color:#23734f; font-size:.95rem; text-align:center; }
+        .article-card-body { padding:0; min-width:0; flex:1; }
+        .article-card h3 { color:#23734f; font-size:1rem; line-height:1.5; margin:0; font-weight:700; }
+        .article-card p, .article-card img { display:none !important; }
+        .article-read-more { display:none; }
+        .article-slider-arrow { display:none !important; }
+        .articles-empty { text-align:center; color:#64748b; padding:25px; }
+        @media (max-width:850px) {
+            .hero-layout { grid-template-columns:1fr; gap:18px; }
+            .hero-doctors { width:min(520px,100%); margin:0 auto; }
+            .doctors-slider { height:330px; }
+        }
         .articles-section { padding:36px 0 42px; background:#fff; }
         .articles-column {
             width:min(370px,100%); margin-left:0; margin-right:auto;
@@ -454,12 +446,25 @@
         .article-modal-images img { width:100%; height:180px; object-fit:cover; border-radius:12px; cursor:pointer; background:#e2e8f0; }
         .articles-empty { text-align:center; color:#64748b; padding:25px; }
         @media (max-width:850px) {
-            .hero-doctors { position:relative; top:auto; right:auto; width:min(330px,100%); margin:0 auto 18px; }
-            .doctors-slider { height:220px; }
-            .hero-top { margin-top:0; }
-            .articles-column { width:100%; }
+            .hero-doctors { width:min(520px,100%); margin:0 auto; }
+            .doctors-slider { height:330px; }
             .articles-viewport { height:330px; }
         }
+
+        /* ===== تخطيط المعرض + النبذة + المقالات ===== */
+        .content-showcase { padding:55px 0 50px; background:#f4f8ff; }
+        .content-showcase-grid { display:grid; grid-template-columns:1.05fr 1.75fr 1.05fr; gap:28px; align-items:stretch; direction:ltr; }
+        .showcase-about, .showcase-gallery, .showcase-articles { direction:rtl; min-width:0; }
+        .showcase-about { order:3; background:#fff; border:1px solid #e5e7eb; border-radius:18px; padding:22px 18px; box-shadow:0 8px 24px rgba(15,23,42,.06); }
+        .showcase-gallery { order:2; }
+        .showcase-articles { order:1; background:#fff; border:1px solid #e5e7eb; border-radius:18px; padding:20px 16px; box-shadow:0 8px 24px rgba(15,23,42,.06); }
+        .showcase-gallery .section-title { font-size:1.55rem; margin-bottom:12px; }
+        .showcase-about .section-title { font-size:1.55rem; margin-bottom:18px; }
+        .showcase-about .about-points { gap:12px; }
+        .showcase-about .about-points li { background:#fff; border:1px solid #e5e7eb; border-radius:15px; padding:18px 14px; box-shadow:0 4px 14px rgba(15,23,42,.04); }
+        .gallery-slider-large { max-width:none; width:100%; height:390px; }
+        @media (max-width:1050px) { .content-showcase-grid { grid-template-columns:1fr 1.5fr; } .showcase-about { order:1; grid-column:1 / -1; } .showcase-gallery { order:2; } .showcase-articles { order:3; } }
+        @media (max-width:700px) { .content-showcase-grid { grid-template-columns:1fr; } .showcase-about,.showcase-gallery,.showcase-articles { order:initial; grid-column:auto; } .gallery-slider-large,.articles-viewport { height:300px; } }
 
         .services { padding: 70px 0 60px; background: #eff6ff; }
         .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 30px; margin-top: 35px; }
@@ -547,100 +552,79 @@
     <!-- الهيدر -->
     <header class="hero">
         <div class="container">
-            <div class="hero-doctors" id="heroDoctors" style="display:none;">
-                <div class="hero-doctors-title"><i class="fas fa-user-md"></i> الأطباء</div>
-                <div class="doctors-slider">
-                    <button class="doctor-slider-arrow prev" id="doctorPrev" aria-label="الطبيب السابق"><i class="fas fa-chevron-right"></i></button>
-                    <div class="doctors-viewport">
-                        <div class="doctors-track" id="doctorsTrack"></div>
+            <div class="hero-layout">
+                <div class="hero-main">
+                    <div class="hero-top">
+                        <div class="doctor-name">د. <span id="cmDoctorName">أحمد عيد رفاعي</span></div>
+                        <div class="doctor-title" id="cmDoctorTitle">استشاري جراحة المسالك البولية</div>
                     </div>
-                    <button class="doctor-slider-arrow next" id="doctorNext" aria-label="الطبيب التالي"><i class="fas fa-chevron-left"></i></button>
-                    <div class="doctor-slider-dots" id="doctorDots"></div>
-                </div>
-            </div>
-            <div class="hero-top">
-                <div class="doctor-name">د. <span id="cmDoctorName">أحمد عيد رفاعي</span></div>
-                <div class="doctor-title" id="cmDoctorTitle">استشاري جراحة المسالك البولية</div>
-            </div>
-            <div class="hero-center">
-                <div class="best-care" id="cmHeroTagline">أفضل رعاية طبية متخصصة</div>
-                <div class="desc" id="cmHeroDesc">
-                    تشخيص دقيق وعلاج فعال لأمراض الكلى، المسالك البولية، ومشاكل البروستاتا بأحدث التقنيات والمناظر الجراحية.
-                </div>
-            </div>
-            
-            <div class="news-ticker" id="newsTicker" style="display:none;">
-                <div class="news-ticker-track" id="newsTickerTrack"></div>
-            </div>
-
-            <div class="hero-buttons">
-                <a href="booking.html" class="hero-book-btn" style="margin-bottom:0;">
-                    <i class="fas fa-calendar-check"></i> احجز الآن
-                </a>
-                <a href="https://wa.me/201061119615" id="cmWhatsappOctober" target="_blank" class="btn-whatsapp">
-                    <i class="fab fa-whatsapp"></i> تواصل واتساب
-                </a>
-                <a href="https://wa.me/201032444727" id="cmWhatsappFaisal" target="_blank" class="btn-call">
-                    <i class="fas fa-phone-alt"></i> اتصل للحجز (أكتوبر)
-                </a>
-            </div>
-            <div class="hero-nav">
-                <a href="#about"><i class="fas fa-user-md"></i> عن الطبيب</a>
-                <a href="#services"><i class="fas fa-list-ul"></i> الخدمات</a>
+                    <div class="hero-center">
+                        <div class="best-care" id="cmHeroTagline">أفضل رعاية طبية متخصصة</div>
+                        <div class="desc" id="cmHeroDesc">تشخيص دقيق وعلاج فعال لأمراض الكلى، المسالك البولية، ومشاكل البروستاتا بأحدث التقنيات والمناظير الجراحية.</div>
+                    </div>
+                    <div class="news-ticker" id="newsTicker" style="display:none;"><div class="news-ticker-track" id="newsTickerTrack"></div></div>
+                    <div class="hero-buttons">
+                        <a href="booking.html" class="hero-book-btn" style="margin-bottom:0;"><i class="fas fa-calendar-check"></i> احجز الآن</a>
+                        <a href="https://wa.me/201061119615" id="cmWhatsappOctober" target="_blank" class="btn-whatsapp"><i class="fab fa-whatsapp"></i> تواصل واتساب</a>
+                        <a href="https://wa.me/201032444727" id="cmWhatsappFaisal" target="_blank" class="btn-call"><i class="fas fa-phone-alt"></i> اتصل للحجز (أكتوبر)</a>
+                    </div>
+                    <div class="hero-nav">
+                        <a href="#about"><i class="fas fa-user-md"></i> عن الطبيب</a>
+                        <a href="#services"><i class="fas fa-list-ul"></i> الخدمات</a>
                         <a href="#articles"><i class="fas fa-newspaper"></i> المقالات</a>
-                <a href="#branches"><i class="fas fa-store"></i> الفروع والحجز</a>
+                        <a href="#gallery"><i class="fas fa-images"></i> المعرض</a>
+                        <a href="#branches"><i class="fas fa-store"></i> الفروع والحجز</a>
+                    </div>
+                </div>
+                <div class="hero-doctors" id="heroDoctors" style="display:none;">
+                    <div class="hero-doctors-title"><i class="fas fa-user-md"></i> الأطباء</div>
+                    <div class="doctors-slider">
+                        <button class="doctor-slider-arrow prev" id="doctorPrev" aria-label="الطبيب السابق"><i class="fas fa-chevron-right"></i></button>
+                        <div class="doctors-viewport"><div class="doctors-track" id="doctorsTrack"></div></div>
+                        <button class="doctor-slider-arrow next" id="doctorNext" aria-label="الطبيب التالي"><i class="fas fa-chevron-left"></i></button>
+                        <div class="doctor-slider-dots" id="doctorDots"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- قسم عن الطبيب -->
-    <section id="about" class="about">
+    <!-- قسم المحتوى: المقالات يسار + المعرض وسط + نبذة الطبيب يمين -->
+    <section id="about" class="content-showcase">
         <div class="container">
-            <h2 class="section-title">نبذة عن الطبيب</h2>
-            <div class="about-grid">
-                <div class="about-text">
-                    <div class="doctor-name-lg">دكتور <span>أحمد عيد رفاعي</span></div>
-                    <div class="doctor-sub"><i class="fas fa-stethoscope"></i> استشاري جراحة المسالك البولية</div>
-                    <ul class="about-points" id="aboutPointsList">
+            <div class="content-showcase-grid">
+                <div class="showcase-about">
+                    <h2 class="section-title section-title-center">نبذة عن الطبيب</h2>
+                    <div class="about-points" id="aboutPointsList">
                         <li><i class="fas fa-check-circle"></i><span><strong>خبرة واسعة</strong> في تشخيص وعلاج أدق وأعقد الحالات الجراحية.</span></li>
                         <li><i class="fas fa-check-circle"></i><span><strong>مدرس بكلية الطب</strong> – جامعة الأزهر، مواكبة دائمة لأحدث الأدوات والتقنيات الطبية.</span></li>
                         <li><i class="fas fa-check-circle"></i><span><strong>استشاري جراحات المناظير والكلى</strong>، متخصص في العمليات بأقل تدخل جراحي.</span></li>
-                    </ul>
-                    <div class="about-branch">
-                        <div class="branch-item"><i class="fas fa-map-pin"></i> فرع فيصل <span style="font-weight:400;color:#475569;">| أجاز موعد الأثناء</span></div>
-                        <div class="branch-item"><i class="fas fa-clock"></i><span style="font-weight:400;color:#475569;">مواعيد مرنة</span></div>
                     </div>
                 </div>
-                <div class="about-image">
-                    <div class="gallery-slider" id="gallerySlider">
-                        <div class="slider-container" id="sliderContainer">
-                            <!-- المحتوى هيتضاف بالجافاسكريبت -->
-                        </div>
-                        <button class="slider-arrow prev" id="sliderPrev"><i class="fas fa-chevron-right"></i></button>
-                        <button class="slider-arrow next" id="sliderNext"><i class="fas fa-chevron-left"></i></button>
+
+                <div class="showcase-gallery" id="gallery">
+                    <h2 class="section-title section-title-center">معرض الصور والفيديوهات</h2>
+                    <div class="gallery-slider gallery-slider-large" id="gallerySlider">
+                        <div class="slider-container" id="sliderContainer"></div>
+                        <button class="slider-arrow prev" id="sliderPrev" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>
+                        <button class="slider-arrow next" id="sliderNext" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>
                         <div class="slider-dots" id="sliderDots"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
 
-
-    <!-- قسم المقالات: عمود رأسي في يسار الصفحة -->
-    <section id="articles" class="articles-section">
-        <div class="container">
-            <div class="articles-column">
-                <div class="articles-column-head">
-                    <h2 class="articles-column-title"><i class="fas fa-newspaper"></i> المقالات</h2>
-                </div>
-                <div class="articles-slider">
-                    <button class="article-slider-arrow up" id="articlesUp" aria-label="المقالات السابقة"><i class="fas fa-chevron-up"></i></button>
-                    <div class="articles-viewport">
-                        <div class="articles-track" id="articlesGrid">
-                            <div class="articles-empty">جاري تحميل المقالات...</div>
+                <div class="showcase-articles" id="articles">
+                    <div class="articles-column">
+                        <div class="articles-column-head">
+                            <h2 class="articles-column-title"><i class="fas fa-newspaper"></i> المقالات</h2>
+                        </div>
+                        <div class="articles-slider">
+                            <div class="articles-viewport" id="articlesViewport">
+                                <div class="articles-track" id="articlesGrid">
+                                    <div class="articles-empty">جاري تحميل المقالات...</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <button class="article-slider-arrow down" id="articlesDown" aria-label="المقالات التالية"><i class="fas fa-chevron-down"></i></button>
                 </div>
             </div>
         </div>
@@ -786,7 +770,7 @@
             const fileId = extractFileIdFromDriveUrl(url);
             if (fileId) {
                 // Google Drive: thumbnail أكثر ثباتًا لعرض الصور داخل المواقع من uc?export=view
-                return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(fileId) + '&sz=w1600';
+                return 'https://drive.google.com/thumbnail?id=' + encodeURIComponent(fileId) + '&sz=w2000';
             }
             return url;
         }
@@ -804,43 +788,64 @@
             return url && (url.includes('youtube.com') || url.includes('youtu.be'));
         }
 
-        // ===== المودال =====
-        function openModal(url, type, title) {
+        // ===== المودال ومعرض الصور والفيديوهات داخل التكبير =====
+        let currentGalleryItems = [];
+        let currentGalleryIndex = 0;
+
+        function openModal(url, type, title, index, items) {
             const overlay = document.getElementById('modalOverlay');
             const content = document.getElementById('modalContent');
-            content.innerHTML = '';
-
-            let finalUrl = url;
-            let isDrive = isDriveUrl(url);
-            let isYT = isYouTubeUrl(url);
-
-            // لو الرابط جوجل درايف، نحوله لمباشر
-            if (isDrive) {
-                finalUrl = convertToDirectDriveUrl(url);
-            }
-
-            // لو يوتيوب، ناخد embed
-            if (isYT) {
-                let videoId = '';
-                const patterns = [
-                    /youtube\.com\/watch\?v=([^&]+)/,
-                    /youtu\.be\/([^?]+)/,
-                    /youtube\.com\/embed\/([^?]+)/
-                ];
-                for (const pattern of patterns) {
-                    const match = finalUrl.match(pattern);
-                    if (match) { videoId = match[1]; break; }
-                }
-                const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0` : finalUrl;
-                content.innerHTML = `<iframe src="${embedUrl}" allowfullscreen></iframe>`;
-            } 
-            // لو صورة
-            else {
-                content.innerHTML = `<img src="${finalUrl}" alt="${title || 'صورة'}" onerror="this.parentElement.innerHTML='<div style=\\'color:#f87171;padding:20px;\\'>⚠️ تعذر تحميل الصورة. تأكد من أن الملف عام (Anyone with the link can view)</div>'" />`;
-            }
-
+            if (!overlay || !content) return;
+            currentGalleryItems = items || [];
+            currentGalleryIndex = Number.isInteger(index) ? index : 0;
+            renderGalleryModal();
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        function renderGalleryModal() {
+            const content = document.getElementById('modalContent');
+            if (!content || !currentGalleryItems.length) return;
+            const item = currentGalleryItems[currentGalleryIndex];
+            let url = item.url || '';
+            const type = String(item.type || (isYouTubeUrl(url) ? 'video' : 'image')).toLowerCase();
+            const title = item.title || '';
+            const isYT = isYouTubeUrl(url);
+            if (isDriveUrl(url)) url = type === 'video' ? convertToDrivePreviewUrl(url) : convertToDirectDriveUrl(url);
+
+            let media = '';
+            if (type === 'video' || isYT) {
+                let videoId = '';
+                const patterns = [/youtube\.com\/watch\?v=([^&]+)/, /youtu\.be\/([^?]+)/, /youtube\.com\/embed\/([^?]+)/];
+                for (const pattern of patterns) { const m = url.match(pattern); if (m) { videoId=m[1]; break; } }
+                const embed = videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&controls=1` : url;
+                media = `<iframe src="${embed}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+            } else {
+                media = `<img src="${url}" alt="${title || 'صورة'}" onerror="this.outerHTML='<div style=\'color:#fff;padding:30px;text-align:center;font-size:1rem\'>لا يمكن عرض الصورة</div>'">`;
+            }
+            const hasMany = currentGalleryItems.length > 1;
+            content.innerHTML = `
+                ${hasMany ? `<button class="modal-gallery-nav prev" id="modalGalleryPrev" aria-label="السابق"><i class="fas fa-chevron-right"></i></button>` : ''}
+                ${media}
+                ${hasMany ? `<button class="modal-gallery-nav next" id="modalGalleryNext" aria-label="التالي"><i class="fas fa-chevron-left"></i></button>` : ''}
+                ${title ? `<div class="modal-gallery-title">${title}</div>` : ''}`;
+            document.getElementById('modalGalleryPrev')?.addEventListener('click', e => { e.stopPropagation(); changeGalleryModal(-1); });
+            document.getElementById('modalGalleryNext')?.addEventListener('click', e => { e.stopPropagation(); changeGalleryModal(1); });
+        }
+
+        function changeGalleryModal(step) {
+            if (!currentGalleryItems.length) return;
+            currentGalleryIndex = (currentGalleryIndex + step + currentGalleryItems.length) % currentGalleryItems.length;
+            renderGalleryModal();
+        }
+
+        function openArticleImage(url, title) {
+            currentGalleryItems = [{url:url, type:'image', title:title || ''}];
+            currentGalleryIndex = 0;
+            const overlay=document.getElementById('modalOverlay');
+            renderGalleryModal();
+            overlay?.classList.add('active');
+            document.body.style.overflow='hidden';
         }
 
         function closeModal() {
@@ -943,23 +948,10 @@
         }
 
         function initArticlesSlider(total) {
-            const viewport=document.querySelector('.articles-viewport');
-            const track=document.getElementById('articlesGrid');
-            const up=document.getElementById('articlesUp');
-            const down=document.getElementById('articlesDown');
-            if(!viewport||!track||!up||!down||total<1) return;
-            let index=0, timer=null;
-            const visible=Math.max(1,Math.floor(viewport.clientHeight/78));
-            const max=Math.max(0,total-visible);
-            function update(){track.style.transform=`translateY(-${index*78}px)`;}
-            function stop(){if(timer){clearInterval(timer);timer=null;}}
-            function restart(){stop();if(total>visible) timer=setInterval(()=>{index=index>=max?0:index+1;update();},4500);}
-            function go(i){index=Math.max(0,Math.min(max,i));update();restart();}
-            up.onclick=()=>go(index-1<0?max:index-1);
-            down.onclick=()=>go(index+1>max?0:index+1);
-            viewport.onmouseenter=stop;
-            viewport.onmouseleave=restart;
-            update();restart();
+            const viewport = document.getElementById('articlesViewport');
+            if (!viewport || !total) return;
+            // التمرير يتم طبيعيًا ببكرة الماوس/التاتش باد، بدون أسهم.
+            viewport.scrollTop = 0;
         }
 
         function openArticleModal(article) {
@@ -979,11 +971,7 @@
             document.body.style.overflow='hidden';
         }
 
-        window.__openArticleImage=function(url,title){
-            const content=document.getElementById('modalContent');
-            if(!content) return;
-            content.innerHTML=`<img src="${url}" alt="${title}" style="max-width:95vw;max-height:90vh;object-fit:contain;border-radius:12px;" onerror="this.outerHTML='<div style=\'color:#fff;text-align:center;padding:30px\'>لا يمكن عرض الصورة</div>'">`;
-        };
+        window.__openArticleImage = openArticleImage;
 
         // ===== عرض الأخبار ونبذة الطبيب والخدمات =====
         function renderNews(news) {
@@ -1135,7 +1123,7 @@
                     const type = this.dataset.type;
                     const title = this.dataset.title;
                     if (url) {
-                        openModal(url, type, title);
+                        openModal(url, type, title, Number(this.dataset.index), galleryData);
                     }
                 });
             });
