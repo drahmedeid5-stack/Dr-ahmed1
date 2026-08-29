@@ -230,26 +230,12 @@
                     for (let branch in branchDays) {
                         branchDays[branch].sort((a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b));
                     }
-                } else {
-                    setupDefaultData();
                 }
                 document.getElementById('branch').disabled = false;
             } catch (error) {
-                console.error('خطأ في جلب مواعيد العمل، تم تفعيل البيانات الافتراضية:', error);
-                setupDefaultData();
+                console.error('خطأ في جلب مواعيد العمل من الشيت:', error);
                 document.getElementById('branch').disabled = false;
             }
-        }
-
-        function setupDefaultData() {
-            branchDays = {
-                "أكتوبر": ["السبت", "الإثنين", "الثلاثاء", "الخميس"],
-                "فيصل": ["السبت", "الإثنين", "الثلاثاء", "الخميس"]
-            };
-            branchTimes = {
-                "أكتوبر": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" },
-                "فيصل": { "السبت": "6:00 م - 8:30 م", "الإثنين": "6:00 م - 8:30 م", "الثلاثاء": "7:00 م - 9:00 م", "الخميس": "6:00 م - 8:30 م" }
-            };
         }
 
         function timeStrToMinutes(raw) {
@@ -307,7 +293,7 @@
                 if (currentDate.getDay() === targetDayIndex) {
                     const formatted = currentDate.toISOString().split('T')[0];
                     const displayFormatted = `${dayName} (${formatted})`;
-                    dates.push({ value: formatted, text: displayFormatted, rawDate: formatted });
+                    dates.push({ value: formatted, text: displayFormatted });
                 }
                 currentDate.setDate(currentDate.getDate() + 1);
             }
@@ -375,11 +361,11 @@
             });
         });
 
-        // عند اختيار التاريخ، جلب المواعيد المحجوزة وتحديث المتاحة
+        // عند اختيار التاريخ، جلب المواعيد المحجوزة من الشيت وفلترتها
         document.getElementById('bookingDate').addEventListener('change', async function() {
             const branch = document.getElementById('branch').value;
             const day = document.getElementById('day').value;
-            const dateVal = this.value; // مثل "2026-08-29"
+            const dateVal = this.value; 
             const timeSelect = document.getElementById('time');
 
             timeSelect.innerHTML = '<option value="">-- جاري التحقق من المواعيد المتاحة --</option>';
@@ -401,14 +387,14 @@
             const timeStr = branchTimes[branch][day];
             const allSlots = generateTimeSlots(timeStr, 20);
             
-            // فلترة الأوقات المتاحة بإزالة المحجوزة
+            // استبعاد الأوقات المحجوزة مسبقاً
             const availableSlots = allSlots.filter(slot => !bookedTimes.includes(slot));
 
             if (availableSlots.length === 0) {
                 alert('عذراً، هذا اليوم مكتمل الحجز، ولا يوجد حجز في ذلك اليوم، يختار يوم آخر.');
                 timeSelect.innerHTML = '<option value="">-- اليوم مكتمل الحجز --</option>';
                 timeSelect.disabled = true;
-                this.value = ""; // إعادة تعيين التاريخ
+                this.value = ""; 
                 return;
             }
 
