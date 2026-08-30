@@ -1,359 +1,194 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>حجز موعد - عيادة دكتور أحمد عيد رفاعي</title>
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    >
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Cairo', sans-serif;
-            background: #f5f6f8;
-            color: #1e2a3a;
-            line-height: 1.8;
-            direction: rtl;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .booking-card {
-            background: #ffffff;
-            max-width: 650px;
-            width: 100%;
-
-            padding: 40px 35px;
-
-            border-radius: 24px;
-
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
-
-            border: 1px solid rgba(201, 154, 43, 0.15);
-        }
-
-        .booking-card h1 {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #1a3a60;
-
-            text-align: center;
-
-            margin-bottom: 6px;
-        }
-
-        .booking-card h1 i {
-            color: #c99a2b;
-            margin-left: 10px;
-        }
-
-        .booking-card .sub {
-            text-align: center;
-            color: #5a6a7a;
-
-            font-size: 1rem;
-
-            margin-bottom: 30px;
-        }
-
-        .form-group {
-            margin-bottom: 22px;
-        }
-
-        .form-group label {
-            display: block;
-
-            font-weight: 700;
-
-            color: #1a3a60;
-
-            margin-bottom: 6px;
-
-            font-size: 1rem;
-        }
-
-        .form-group label i {
-            color: #c99a2b;
-
-            margin-left: 8px;
-
-            width: 20px;
-        }
-
-        .form-group select,
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-
-            padding: 12px 16px;
-
-            border: 2px solid #e0e4e8;
-
-            border-radius: 12px;
-
-            font-family: 'Cairo', sans-serif;
-
-            font-size: 1rem;
-
-            background: #f5f6f8;
-
-            transition: 0.3s ease;
-        }
-
-        .form-group select:focus,
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #c99a2b;
-
-            outline: none;
-
-            background: #fff;
-
-            box-shadow: 0 0 0 4px rgba(201, 154, 43, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .branch-phone-display {
-            background: #f5f6f8;
-
-            padding: 10px 16px;
-
-            border-radius: 12px;
-
-            margin-top: 6px;
-
-            font-weight: 600;
-
-            color: #1a3a60;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-
-            border-right: 4px solid #c99a2b;
-        }
-
-        .branch-phone-display i {
-            color: #25d366;
-            font-size: 1.2rem;
-        }
-
-        .btn-submit {
-            display: block;
-
-            width: 100%;
-
-            background: #c99a2b;
-
-            color: #fff;
-
-            padding: 16px;
-
-            border: none;
-
-            border-radius: 50px;
-
-            font-weight: 700;
-
-            font-size: 1.2rem;
-
-            cursor: pointer;
-
-            transition: 0.3s ease;
-
-            box-shadow: 0 6px 20px rgba(201, 154, 43, 0.35);
-
-            margin-top: 10px;
-        }
-
-        .btn-submit:hover {
-            background: #b0861f;
-
-            transform: translateY(-3px);
-
-            box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.65;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-submit i {
-            margin-left: 12px;
-        }
-
-        .back-link {
-            display: block;
-
-            text-align: center;
-
-            margin-top: 20px;
-
-            color: #5a6a7a;
-
-            font-weight: 600;
-        }
-
-        .back-link a {
-            color: #2a4a7a;
-
-            text-decoration: none;
-        }
-
-        .back-link a:hover {
-            color: #c99a2b;
-        }
-
-        .note-msg {
-            background: #fff9e6;
-
-            padding: 12px 18px;
-
-            border-radius: 12px;
-
-            border-right: 4px solid #c99a2b;
-
-            font-size: 0.9rem;
-
-            color: #5a6a7a;
-
-            margin-bottom: 20px;
-        }
-
-        .note-msg i {
-            color: #c99a2b;
-
-            margin-left: 8px;
-        }
-
-        /* رسالة تحميل المواعيد */
-        .loading-msg {
-            margin-top: 8px;
-
-            padding: 10px 14px;
-
-            background: #eef5fb;
-
-            border-right: 4px solid #1a3a60;
-
-            border-radius: 10px;
-
-            color: #1a3a60;
-
-            font-size: 0.9rem;
-
-            display: none;
-        }
-
-        .loading-msg i {
-            margin-left: 6px;
-        }
-
-        /* رسالة اكتمال اليوم */
-        .full-day-msg {
-            margin-top: 8px;
-
-            padding: 12px 16px;
-
-            background: #fff0f0;
-
-            border-right: 4px solid #d9534f;
-
-            border-radius: 10px;
-
-            color: #a52a2a;
-
-            font-weight: 700;
-
-            font-size: 0.92rem;
-
-            display: none;
-        }
-
-        .full-day-msg i {
-            margin-left: 7px;
-        }
-
-        /* رسالة عدم وجود مواعيد */
-        .empty-day-msg {
-            margin-top: 8px;
-
-            padding: 12px 16px;
-
-            background: #f5f6f8;
-
-            border-right: 4px solid #777;
-
-            border-radius: 10px;
-
-            color: #555;
-
-            font-weight: 600;
-
-            font-size: 0.92rem;
-
-            display: none;
-        }
-
-        .empty-day-msg i {
-            margin-left: 7px;
-        }
-
-        /* إخفاء العناصر المعطلة */
-        select:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-
-        /* على الموبايل */
-        @media (max-width: 600px) {
-
-            body {
-                padding: 12px;
-            }
-
-            .booking-card {
-                padding: 28px 20px;
-                border-radius: 18px;
-            }
-
-            .booking-card h1 {
-                font-size: 1.6rem;
-            }
-
-            .booking-card .sub {
-                font-size: 0.9rem;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>حجز موعد - عيادة دكتور أحمد عيد رفاعي</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: #f5f6f8;
+    color: #1e2a3a;
+    line-height: 1.8;
+    direction: rtl;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.booking-card {
+    background: #ffffff;
+    max-width: 650px;
+    width: 100%;
+    padding: 40px 35px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(201, 154, 43, 0.15);
+}
+
+.booking-card h1 {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #1a3a60;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.booking-card h1 i {
+    color: #c99a2b;
+    margin-left: 10px;
+}
+
+.booking-card .sub {
+    text-align: center;
+    color: #5a6a7a;
+    font-size: 1rem;
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    color: #1a3a60;
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+.form-group label i {
+    color: #c99a2b;
+    margin-left: 8px;
+    width: 20px;
+}
+
+.form-group select,
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e4e8;
+    border-radius: 12px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 1rem;
+    background: #f5f6f8;
+    transition: 0.3s ease;
+}
+
+.form-group select:focus,
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #c99a2b;
+    outline: none;
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(201, 154, 43, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.branch-phone-display {
+    background: #f5f6f8;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-top: 6px;
+    font-weight: 600;
+    color: #1a3a60;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-right: 4px solid #c99a2b;
+}
+
+.branch-phone-display i {
+    color: #25d366;
+    font-size: 1.2rem;
+}
+
+.btn-submit {
+    display: block;
+    width: 100%;
+    background: #c99a2b;
+    color: #fff;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+    box-shadow: 0 6px 20px rgba(201, 154, 43, 0.35);
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background: #b0861f;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(201, 154, 43, 0.5);
+}
+
+.btn-submit i {
+    margin-left: 12px;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #5a6a7a;
+    font-weight: 600;
+}
+
+.back-link a {
+    color: #2a4a7a;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    color: #c99a2b;
+}
+
+.note-msg {
+    background: #fff9e6;
+    padding: 12px 18px;
+    border-radius: 12px;
+    border-right: 4px solid #c99a2b;
+    font-size: 0.9rem;
+    color: #5a6a7a;
+    margin-bottom: 20px;
+}
+
+.note-msg i {
+    color: #c99a2b;
+    margin-left: 8px;
+}
+
+/* رسالة تحميل المواعيد */
+.loading-time {
+    color: #777;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+}
+</style>
 </head>
 
 <body>
@@ -376,41 +211,30 @@
 
     <form id="bookingForm" onsubmit="submitBooking(event)">
 
-        <!-- الفرع -->
+        <!-- اختيار الفرع -->
         <div class="form-group">
-
             <label>
                 <i class="fas fa-store"></i>
                 اختر الفرع
             </label>
 
             <select id="branch" required>
+                <option value="">-- اختر الفرع --</option>
 
-                <option value="">
-                    -- اختر الفرع --
-                </option>
-
-                <option
-                    value="أكتوبر"
-                    data-phone="201061119615"
-                >
+                <option value="أكتوبر"
+                        data-phone="201061119615">
                     فرع أكتوبر
                 </option>
 
-                <option
-                    value="فيصل"
-                    data-phone="201032444727"
-                >
+                <option value="فيصل"
+                        data-phone="201032444727">
                     فرع فيصل
                 </option>
-
             </select>
 
-            <div
-                id="branchPhoneDisplay"
-                class="branch-phone-display"
-                style="display:none;"
-            >
+            <div id="branchPhoneDisplay"
+                 class="branch-phone-display"
+                 style="display:none;">
 
                 <i class="fas fa-phone"></i>
 
@@ -420,7 +244,6 @@
                 </span>
 
             </div>
-
         </div>
 
 
@@ -432,14 +255,12 @@
                 يوم العمل بالعيادة
             </label>
 
-            <select
-                id="day"
-                required
-                disabled
-            >
+            <select id="day" required disabled>
+
                 <option value="">
                     -- اختر الفرع أولاً --
                 </option>
+
             </select>
 
         </div>
@@ -453,23 +274,13 @@
                 تاريخ الحجز
             </label>
 
-            <select
-                id="bookingDate"
-                required
-                disabled
-            >
+            <select id="bookingDate" required disabled>
+
                 <option value="">
                     -- اختر يوم العمل أولاً --
                 </option>
-            </select>
 
-            <div
-                id="dateLoading"
-                class="loading-msg"
-            >
-                <i class="fas fa-spinner fa-spin"></i>
-                جاري فحص المواعيد المتاحة...
-            </div>
+            </select>
 
         </div>
 
@@ -482,31 +293,13 @@
                 الوقت
             </label>
 
-            <select
-                id="time"
-                required
-                disabled
-            >
+            <select id="time" required disabled>
+
                 <option value="">
                     -- اختر تاريخ الحجز أولاً --
                 </option>
+
             </select>
-
-            <div
-                id="fullDayMessage"
-                class="full-day-msg"
-            >
-                <i class="fas fa-calendar-xmark"></i>
-                عذرًا، هذا اليوم مكتمل الحجز ولا توجد مواعيد متاحة.
-            </div>
-
-            <div
-                id="emptyDayMessage"
-                class="empty-day-msg"
-            >
-                <i class="fas fa-calendar-minus"></i>
-                لا توجد مواعيد متاحة لهذا اليوم.
-            </div>
 
         </div>
 
@@ -549,7 +342,7 @@
         </div>
 
 
-        <!-- الهاتف -->
+        <!-- رقم الهاتف -->
         <div class="form-group">
 
             <label>
@@ -567,7 +360,7 @@
         </div>
 
 
-        <!-- الملاحظات -->
+        <!-- ملاحظات -->
         <div class="form-group">
 
             <label>
@@ -577,18 +370,13 @@
 
             <textarea
                 id="notes"
-                placeholder="أي تفاصيل إضافية تريد إخبارنا بها"
-            ></textarea>
+                placeholder="أي تفاصيل إضافية تريد إخبارنا بها">
+            </textarea>
 
         </div>
 
 
-        <!-- زر الحجز -->
-        <button
-            type="submit"
-            class="btn-submit"
-            id="submitButton"
-        >
+        <button type="submit" class="btn-submit">
 
             <i class="fab fa-whatsapp"></i>
 
@@ -616,1673 +404,1215 @@
 
 <script>
 
-    /*
-     * ============================================================
-     * رابط Google Apps Script
-     * ============================================================
-     */
+// ============================================================
+// رابط Google Apps Script
+// ============================================================
 
-    const SITE_API_URL =
-        'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
+const SITE_API_URL =
+'https://script.google.com/macros/s/AKfycbyzGUHN905ITGjsrKA6_CWJR23Xq3ste9bYW3iiY1LmtA3eU1kBSdgPK_tFuQb9DhU/exec';
 
 
-    /*
-     * ============================================================
-     * المتغيرات
-     * ============================================================
-     */
+// ============================================================
+// بيانات المواعيد
+// ============================================================
 
-    let branchDays = {};
-
-    let branchTimes = {};
-
-    // المواعيد المحجوزة حاليًا
-    let currentBookedSlots = [];
-
-    // المواعيد المتاحة حاليًا
-    let currentAvailableSlots = [];
+let branchDays = {};
+let branchTimes = {};
 
 
-    /*
-     * ============================================================
-     * جلب مواعيد العمل من Google Sheet
-     * ============================================================
-     */
+// ============================================================
+// تحميل مواعيد العمل من Google Sheet
+// ============================================================
 
-    async function loadWorkingHours() {
+async function loadWorkingHours() {
 
-        try {
+    try {
 
-            const response = await fetch(
-                SITE_API_URL + '?action=getSchedule'
-            );
+        const response =
+            await fetch(SITE_API_URL + '?action=getSchedule');
 
-            const result = await response.json();
+        const result =
+            await response.json();
 
 
-            if (
-                result &&
-                result.status === "OK" &&
-                result.data &&
-                result.data.length > 0
-            ) {
+        if (
+            result &&
+            result.status === "OK" &&
+            result.data &&
+            result.data.length > 0
+        ) {
 
-                const dayOrder = [
-                    'السبت',
-                    'الأحد',
-                    'الإثنين',
-                    'الثلاثاء',
-                    'الأربعاء',
-                    'الخميس',
-                    'الجمعة'
-                ];
-
-
-                branchDays = {};
-
-                branchTimes = {};
+            const dayOrder = [
+                'السبت',
+                'الأحد',
+                'الإثنين',
+                'الثلاثاء',
+                'الأربعاء',
+                'الخميس',
+                'الجمعة'
+            ];
 
 
-                result.data.forEach(item => {
-
-                    const branch = item.branch;
-
-                    const day = item.day;
-
-                    const time = item.time;
+            branchDays = {};
+            branchTimes = {};
 
 
-                    if (!branchDays[branch]) {
-                        branchDays[branch] = [];
-                    }
+            result.data.forEach(item => {
+
+                const branch = item.branch;
+                const day = item.day;
+                const time = item.time;
 
 
-                    if (!branchDays[branch].includes(day)) {
-
-                        branchDays[branch].push(day);
-
-                    }
-
-
-                    if (!branchTimes[branch]) {
-
-                        branchTimes[branch] = {};
-
-                    }
-
-
-                    branchTimes[branch][day] = time;
-
-                });
-
-
-                for (let branch in branchDays) {
-
-                    branchDays[branch].sort(
-                        (a, b) =>
-                            dayOrder.indexOf(a) -
-                            dayOrder.indexOf(b)
-                    );
-
+                if (!branchDays[branch]) {
+                    branchDays[branch] = [];
                 }
 
-            } else {
 
-                setupDefaultData();
+                if (!branchDays[branch].includes(day)) {
+                    branchDays[branch].push(day);
+                }
+
+
+                if (!branchTimes[branch]) {
+                    branchTimes[branch] = {};
+                }
+
+
+                branchTimes[branch][day] = time;
+
+            });
+
+
+            for (let branch in branchDays) {
+
+                branchDays[branch].sort(
+                    (a, b) =>
+                        dayOrder.indexOf(a) -
+                        dayOrder.indexOf(b)
+                );
 
             }
 
-
-            document.getElementById('branch').disabled = false;
-
-
-        } catch (error) {
-
-            console.error(
-                'خطأ في جلب مواعيد العمل:',
-                error
-            );
+        } else {
 
             setupDefaultData();
 
-            document.getElementById('branch').disabled = false;
+        }
+
+
+        document.getElementById('branch').disabled = false;
+
+
+    } catch (error) {
+
+        console.error(
+            'خطأ في جلب مواعيد العمل:',
+            error
+        );
+
+        setupDefaultData();
+
+        document.getElementById('branch').disabled = false;
+
+    }
+
+}
+
+
+// ============================================================
+// بيانات افتراضية
+// ============================================================
+
+function setupDefaultData() {
+
+    branchDays = {
+
+        "أكتوبر": [
+            "السبت",
+            "الإثنين",
+            "الثلاثاء",
+            "الخميس"
+        ],
+
+        "فيصل": [
+            "السبت",
+            "الإثنين",
+            "الثلاثاء",
+            "الخميس"
+        ]
+
+    };
+
+
+    branchTimes = {
+
+        "أكتوبر": {
+
+            "السبت":
+                "6:00 م - 8:30 م",
+
+            "الإثنين":
+                "6:00 م - 8:30 م",
+
+            "الثلاثاء":
+                "7:00 م - 9:00 م",
+
+            "الخميس":
+                "6:00 م - 8:30 م"
+
+        },
+
+
+        "فيصل": {
+
+            "السبت":
+                "6:00 م - 8:30 م",
+
+            "الإثنين":
+                "6:00 م - 8:30 م",
+
+            "الثلاثاء":
+                "7:00 م - 9:00 م",
+
+            "الخميس":
+                "6:00 م - 8:30 م"
 
         }
+
+    };
+
+}
+
+
+// ============================================================
+// تحويل الوقت إلى دقائق
+// ============================================================
+
+function timeStrToMinutes(raw) {
+
+    const s = raw.trim();
+
+    const isPM =
+        s.includes('م') &&
+        !s.includes('ص');
+
+    const isAM =
+        s.includes('ص');
+
+
+    const numsPart =
+        s.replace(/[صم]/g, '').trim();
+
+
+    let [h, m] =
+        numsPart
+            .split(':')
+            .map(v => parseInt(v, 10));
+
+
+    if (isNaN(m)) {
+        m = 0;
+    }
+
+
+    if (isNaN(h)) {
+        return null;
+    }
+
+
+    if (isPM && h !== 12) {
+        h += 12;
+    }
+
+
+    if (isAM && h === 12) {
+        h = 0;
+    }
+
+
+    return h * 60 + m;
+
+}
+
+
+// ============================================================
+// تحويل الدقائق إلى وقت عربي
+// ============================================================
+
+function minutesToTimeStr(totalMinutes) {
+
+    let h =
+        Math.floor(totalMinutes / 60) % 24;
+
+    const m =
+        totalMinutes % 60;
+
+
+    const period =
+        h >= 12 ? 'م' : 'ص';
+
+
+    let h12 =
+        h % 12;
+
+
+    if (h12 === 0) {
+        h12 = 12;
+    }
+
+
+    const mm =
+        String(m).padStart(2, '0');
+
+
+    return `${h12}:${mm} ${period}`;
+
+}
+
+
+// ============================================================
+// إنشاء المواعيد
+// كل موعد كل 20 دقيقة
+// ============================================================
+
+function generateTimeSlots(rangeStr, stepMinutes) {
+
+    if (!rangeStr) {
+        return [];
+    }
+
+
+    const parts =
+        rangeStr
+            .split(/-|–|إلى/)
+            .map(p => p.trim())
+            .filter(Boolean);
+
+
+    if (parts.length < 2) {
+        return [rangeStr];
+    }
+
+
+    const startMin =
+        timeStrToMinutes(parts[0]);
+
+
+    const endMin =
+        timeStrToMinutes(parts[1]);
+
+
+    if (
+        startMin === null ||
+        endMin === null
+    ) {
+        return [rangeStr];
+    }
+
+
+    const slots = [];
+
+
+    for (
+        let t = startMin;
+        t <= endMin;
+        t += stepMinutes
+    ) {
+
+        slots.push(
+            minutesToTimeStr(t)
+        );
 
     }
 
 
-    /*
-     * ============================================================
-     * البيانات الافتراضية
-     * ============================================================
-     */
+    return slots.length
+        ? slots
+        : [rangeStr];
 
-    function setupDefaultData() {
-
-        branchDays = {
-
-            "أكتوبر": [
-                "السبت",
-                "الإثنين",
-                "الثلاثاء",
-                "الخميس"
-            ],
-
-            "فيصل": [
-                "السبت",
-                "الإثنين",
-                "الثلاثاء",
-                "الخميس"
-            ]
-
-        };
+}
 
 
-        branchTimes = {
+// ============================================================
+// رقم اليوم
+// ============================================================
 
-            "أكتوبر": {
+function getDayIndex(dayName) {
 
-                "السبت": "6:00 م - 8:30 م",
+    const map = {
 
-                "الإثنين": "6:00 م - 8:30 م",
+        'الأحد': 0,
+        'الإثنين': 1,
+        'الثلاثاء': 2,
+        'الأربعاء': 3,
+        'الخميس': 4,
+        'الجمعة': 5,
+        'السبت': 6
 
-                "الثلاثاء": "7:00 م - 9:00 م",
-
-                "الخميس": "6:00 م - 8:30 م"
-
-            },
+    };
 
 
-            "فيصل": {
+    return map[dayName];
 
-                "السبت": "6:00 م - 8:30 م",
+}
 
-                "الإثنين": "6:00 م - 8:30 م",
 
-                "الثلاثاء": "7:00 م - 9:00 م",
+// ============================================================
+// إنشاء التواريخ القادمة
+// ============================================================
 
-                "الخميس": "6:00 م - 8:30 م"
+function generateUpcomingDates(dayName) {
 
-            }
+    const dates = [];
 
-        };
+
+    const targetDayIndex =
+        getDayIndex(dayName);
+
+
+    let currentDate =
+        new Date();
+
+
+    for (let i = 0; i < 60; i++) {
+
+        if (
+            currentDate.getDay() ===
+            targetDayIndex
+        ) {
+
+            const formatted =
+                currentDate
+                    .toISOString()
+                    .split('T')[0];
+
+
+            const displayFormatted =
+                `${dayName} (${formatted})`;
+
+
+            dates.push({
+
+                value: displayFormatted,
+
+                text: displayFormatted
+
+            });
+
+        }
+
+
+        currentDate.setDate(
+            currentDate.getDate() + 1
+        );
 
     }
 
 
-    /*
-     * ============================================================
-     * تحويل الوقت إلى دقائق
-     * ============================================================
-     */
+    return dates;
 
-    function timeStrToMinutes(raw) {
-
-        const s = String(raw).trim();
-
-        const isPM =
-            s.includes('م') &&
-            !s.includes('ص');
-
-        const isAM =
-            s.includes('ص');
+}
 
 
-        const numsPart =
-            s
-                .replace(/[صم]/g, '')
-                .trim();
+// ============================================================
+// جلب المواعيد المحجوزة من Google Sheet
+// ============================================================
+
+async function getBookedSlots(branch, date) {
+
+    try {
+
+        const url =
+            SITE_API_URL +
+            '?action=getBookedSlots' +
+            '&branch=' +
+            encodeURIComponent(branch) +
+            '&date=' +
+            encodeURIComponent(date);
 
 
-        let [h, m] =
-            numsPart
-                .split(':')
-                .map(v => parseInt(v, 10));
+        const response =
+            await fetch(url);
 
 
-        if (isNaN(m)) {
-            m = 0;
-        }
-
-
-        if (isNaN(h)) {
-            return null;
-        }
-
-
-        if (isPM && h !== 12) {
-            h += 12;
-        }
-
-
-        if (isAM && h === 12) {
-            h = 0;
-        }
-
-
-        return h * 60 + m;
-
-    }
-
-
-    /*
-     * ============================================================
-     * تحويل الدقائق إلى وقت عربي
-     * ============================================================
-     */
-
-    function minutesToTimeStr(totalMinutes) {
-
-        let h =
-            Math.floor(totalMinutes / 60) % 24;
-
-        const m =
-            totalMinutes % 60;
-
-
-        const period =
-            h >= 12 ? 'م' : 'ص';
-
-
-        let h12 =
-            h % 12;
-
-
-        if (h12 === 0) {
-            h12 = 12;
-        }
-
-
-        const mm =
-            String(m).padStart(2, '0');
-
-
-        return `${h12}:${mm} ${period}`;
-
-    }
-
-
-    /*
-     * ============================================================
-     * إنشاء مواعيد كل 20 دقيقة
-     * ============================================================
-     */
-
-    function generateTimeSlots(rangeStr, stepMinutes) {
-
-        if (!rangeStr) {
-            return [];
-        }
-
-
-        const parts =
-            String(rangeStr)
-                .split(/-|–|إلى/)
-                .map(p => p.trim())
-                .filter(Boolean);
-
-
-        if (parts.length < 2) {
-            return [rangeStr];
-        }
-
-
-        const startMin =
-            timeStrToMinutes(parts[0]);
-
-
-        const endMin =
-            timeStrToMinutes(parts[1]);
+        const result =
+            await response.json();
 
 
         if (
-            startMin === null ||
-            endMin === null
+            result &&
+            Array.isArray(result.times)
         ) {
 
-            return [rangeStr];
+            return result.times;
 
         }
 
 
-        const slots = [];
+        return [];
 
 
-        for (
-            let t = startMin;
-            t < endMin;
-            t += stepMinutes
-        ) {
+    } catch (error) {
 
-            slots.push(
-                minutesToTimeStr(t)
-            );
+        console.error(
+            'خطأ في جلب المواعيد المحجوزة:',
+            error
+        );
 
-        }
-
-
-        return slots;
+        return [];
 
     }
 
-
-    /*
-     * ============================================================
-     * ترتيب الأيام
-     * ============================================================
-     */
-
-    function getDayIndex(dayName) {
-
-        const map = {
-
-            'الأحد': 0,
-            'الإثنين': 1,
-            'الثلاثاء': 2,
-            'الأربعاء': 3,
-            'الخميس': 4,
-            'الجمعة': 5,
-            'السبت': 6
-
-        };
+}
 
 
-        return map[dayName];
+// ============================================================
+// توحيد شكل الوقت للمقارنة
+// ============================================================
 
+function normalizeTime(time) {
+
+    if (!time) {
+        return '';
     }
 
 
-    /*
-     * ============================================================
-     * تحويل التاريخ إلى YYYY-MM-DD
-     * ============================================================
-     */
+    return String(time)
+        .trim()
+        .replace(/\s+/g, ' ');
 
-    function localDateToISO(date) {
-
-        const year =
-            date.getFullYear();
+}
 
 
-        const month =
-            String(
-                date.getMonth() + 1
-            ).padStart(2, '0');
+// ============================================================
+// عند اختيار الفرع
+// ============================================================
+
+document
+.getElementById('branch')
+.addEventListener('change', function() {
+
+    const branch = this.value;
 
 
-        const day =
-            String(
-                date.getDate()
-            ).padStart(2, '0');
+    const daySelect =
+        document.getElementById('day');
 
 
-        return `${year}-${month}-${day}`;
-
-    }
-
-
-    /*
-     * ============================================================
-     * إنشاء التواريخ القادمة
-     * ============================================================
-     */
-
-    function generateUpcomingDates(dayName) {
-
-        const dates = [];
+    const dateSelect =
+        document.getElementById('bookingDate');
 
 
-        const targetDayIndex =
-            getDayIndex(dayName);
+    const timeSelect =
+        document.getElementById('time');
 
 
-        const currentDate =
-            new Date();
-
-
-        currentDate.setHours(
-            0,
-            0,
-            0,
-            0
+    const phoneDisplay =
+        document.getElementById(
+            'branchPhoneDisplay'
         );
 
 
-        for (
-            let i = 0;
-            i < 60;
-            i++
-        ) {
-
-            if (
-                currentDate.getDay() ===
-                targetDayIndex
-            ) {
-
-                const formatted =
-                    localDateToISO(currentDate);
+    const phoneSpan =
+        document.getElementById(
+            'phoneNumberDisplay'
+        );
 
 
-                const displayFormatted =
-                    `${dayName} (${formatted})`;
+    const selected =
+        this.options[this.selectedIndex];
 
 
-                dates.push({
-
-                    value: displayFormatted,
-
-                    text: displayFormatted
-
-                });
-
-            }
+    const phone =
+        selected.getAttribute(
+            'data-phone'
+        );
 
 
-            currentDate.setDate(
-                currentDate.getDate() + 1
-            );
+    if (phone) {
 
-        }
+        phoneSpan.textContent =
+            phone;
 
+        phoneDisplay.style.display =
+            'flex';
 
-        return dates;
+    } else {
+
+        phoneDisplay.style.display =
+            'none';
 
     }
 
 
-    /*
-     * ============================================================
-     * استخراج YYYY-MM-DD من اختيار التاريخ
-     * ============================================================
-     */
+    daySelect.innerHTML =
+        '<option value="">-- اختر اليوم أولاً --</option>';
 
-    function extractDateOnly(value) {
-
-        const match =
-            String(value || '')
-                .match(/\d{4}-\d{2}-\d{2}/);
+    daySelect.disabled = true;
 
 
-        return match
-            ? match[0]
-            : '';
+    dateSelect.innerHTML =
+        '<option value="">-- اختر يوم العمل أولاً --</option>';
 
+    dateSelect.disabled = true;
+
+
+    timeSelect.innerHTML =
+        '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
+
+    timeSelect.disabled = true;
+
+
+    if (
+        !branch ||
+        !branchDays[branch]
+    ) {
+        return;
     }
 
 
-    /*
-     * ============================================================
-     * إظهار/إخفاء رسائل حالة اليوم
-     * ============================================================
-     */
-
-    function resetAvailabilityMessages() {
-
-        document.getElementById(
-            'fullDayMessage'
-        ).style.display = 'none';
+    const days =
+        branchDays[branch];
 
 
-        document.getElementById(
-            'emptyDayMessage'
-        ).style.display = 'none';
-
-
-        document.getElementById(
-            'dateLoading'
-        ).style.display = 'none';
-
+    if (days.length === 0) {
+        return;
     }
 
 
-    /*
-     * ============================================================
-     * جلب المواعيد المحجوزة من Google Sheet
-     * ============================================================
-     */
+    daySelect.disabled = false;
 
-    async function getBookedSlotsFromServer(
-        branch,
-        date
+
+    daySelect.innerHTML =
+        '<option value="">-- اختر اليوم --</option>';
+
+
+    days.forEach(day => {
+
+        const option =
+            document.createElement('option');
+
+
+        option.value = day;
+        option.textContent = day;
+
+
+        daySelect.appendChild(option);
+
+    });
+
+});
+
+
+// ============================================================
+// عند اختيار اليوم
+// ============================================================
+
+document
+.getElementById('day')
+.addEventListener('change', function() {
+
+    const day = this.value;
+
+
+    const dateSelect =
+        document.getElementById(
+            'bookingDate'
+        );
+
+
+    const timeSelect =
+        document.getElementById(
+            'time'
+        );
+
+
+    dateSelect.innerHTML =
+        '<option value="">-- اختر تاريخ الحجز --</option>';
+
+    dateSelect.disabled = true;
+
+
+    timeSelect.innerHTML =
+        '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
+
+    timeSelect.disabled = true;
+
+
+    if (!day) {
+        return;
+    }
+
+
+    const upcomingDates =
+        generateUpcomingDates(day);
+
+
+    dateSelect.disabled = false;
+
+
+    upcomingDates.forEach(d => {
+
+        const option =
+            document.createElement('option');
+
+
+        option.value =
+            d.value;
+
+
+        option.textContent =
+            d.text;
+
+
+        dateSelect.appendChild(option);
+
+    });
+
+});
+
+
+// ============================================================
+// عند اختيار تاريخ الحجز
+// ============================================================
+
+document
+.getElementById('bookingDate')
+.addEventListener('change', async function() {
+
+    const branch =
+        document.getElementById(
+            'branch'
+        ).value;
+
+
+    const day =
+        document.getElementById(
+            'day'
+        ).value;
+
+
+    const bookingDate =
+        this.value;
+
+
+    const timeSelect =
+        document.getElementById(
+            'time'
+        );
+
+
+    timeSelect.innerHTML =
+        '<option value="">جاري تحميل المواعيد...</option>';
+
+
+    timeSelect.disabled = true;
+
+
+    if (
+        !branch ||
+        !day ||
+        !bookingDate ||
+        !branchTimes[branch] ||
+        !branchTimes[branch][day]
     ) {
 
-        try {
+        timeSelect.innerHTML =
+            '<option value="">-- لا توجد مواعيد --</option>';
 
-            const url =
-                SITE_API_URL +
-                '?action=getBookedSlots' +
-                '&branch=' +
-                encodeURIComponent(branch) +
-                '&date=' +
-                encodeURIComponent(date);
-
-
-            const response =
-                await fetch(url);
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    'فشل الاتصال بالخادم'
-                );
-
-            }
-
-
-            const result =
-                await response.json();
-
-
-            if (
-                result &&
-                Array.isArray(result.times)
-            ) {
-
-                return result.times
-                    .map(t =>
-                        String(t).trim()
-                    );
-
-            }
-
-
-            return [];
-
-
-        } catch (error) {
-
-            console.error(
-                'خطأ في جلب المواعيد المحجوزة:',
-                error
-            );
-
-            throw error;
-
-        }
+        return;
 
     }
 
 
-    /*
-     * ============================================================
-     * فلترة المواعيد المحجوزة
-     * ============================================================
-     */
+    // --------------------------------------------------------
+    // إنشاء المواعيد كل 20 دقيقة
+    // --------------------------------------------------------
 
-    function filterAvailableSlots(
-        allSlots,
+    const timeStr =
+        branchTimes[branch][day];
+
+
+    const allSlots =
+        generateTimeSlots(
+            timeStr,
+            20
+        );
+
+
+    // --------------------------------------------------------
+    // جلب المواعيد المحجوزة من Google Sheet
+    // --------------------------------------------------------
+
+    const bookedSlots =
+        await getBookedSlots(
+            branch,
+            bookingDate
+        );
+
+
+    console.log(
+        'المواعيد الأصلية:',
+        allSlots
+    );
+
+
+    console.log(
+        'المواعيد المحجوزة:',
         bookedSlots
-    ) {
+    );
 
-        const bookedSet =
-            new Set(
-                bookedSlots.map(
-                    normalizeTimeString
+
+    // --------------------------------------------------------
+    // حذف المواعيد المحجوزة فقط
+    // الـ20 دقيقة تظل كما هي
+    // --------------------------------------------------------
+
+    const bookedSet =
+        new Set(
+            bookedSlots.map(
+                normalizeTime
+            )
+        );
+
+
+    const availableSlots =
+        allSlots.filter(
+            slot =>
+                !bookedSet.has(
+                    normalizeTime(slot)
                 )
+        );
+
+
+    // --------------------------------------------------------
+    // عرض المواعيد المتاحة
+    // --------------------------------------------------------
+
+    timeSelect.innerHTML =
+        '<option value="">-- اختر الميعاد --</option>';
+
+
+    if (availableSlots.length === 0) {
+
+        const option =
+            document.createElement(
+                'option'
+            );
+
+        option.value = '';
+
+        option.textContent =
+            'لا توجد مواعيد متاحة في هذا اليوم';
+
+        timeSelect.appendChild(
+            option
+        );
+
+        timeSelect.disabled = true;
+
+        return;
+    }
+
+
+    availableSlots.forEach(slot => {
+
+        const option =
+            document.createElement(
+                'option'
             );
 
 
-        return allSlots.filter(slot => {
+        option.value = slot;
 
-            const normalized =
-                normalizeTimeString(slot);
+        option.textContent = slot;
 
-            return !bookedSet.has(normalized);
 
-        });
+        timeSelect.appendChild(
+            option
+        );
 
-    }
+    });
 
 
-    /*
-     * ============================================================
-     * توحيد شكل الوقت للمقارنة
-     * ============================================================
-     */
+    timeSelect.disabled = false;
 
-    function normalizeTimeString(value) {
+});
 
-        return String(value || '')
-            .replace(/\s+/g, ' ')
-            .trim();
 
-    }
+// ============================================================
+// إرسال الحجز
+// ============================================================
 
+async function submitBooking(e) {
 
-    /*
-     * ============================================================
-     * عند اختيار الفرع
-     * ============================================================
-     */
+    e.preventDefault();
 
-    document
-        .getElementById('branch')
-        .addEventListener(
-            'change',
-            function () {
 
-                const branch =
-                    this.value;
-
-
-                const daySelect =
-                    document.getElementById(
-                        'day'
-                    );
-
-
-                const dateSelect =
-                    document.getElementById(
-                        'bookingDate'
-                    );
-
-
-                const timeSelect =
-                    document.getElementById(
-                        'time'
-                    );
-
-
-                const phoneDisplay =
-                    document.getElementById(
-                        'branchPhoneDisplay'
-                    );
-
-
-                const phoneSpan =
-                    document.getElementById(
-                        'phoneNumberDisplay'
-                    );
-
-
-                const selected =
-                    this.options[
-                        this.selectedIndex
-                    ];
-
-
-                const phone =
-                    selected.getAttribute(
-                        'data-phone'
-                    );
-
-
-                if (phone) {
-
-                    phoneSpan.textContent =
-                        phone;
-
-
-                    phoneDisplay.style.display =
-                        'flex';
-
-                } else {
-
-                    phoneDisplay.style.display =
-                        'none';
-
-                }
-
-
-                daySelect.innerHTML =
-                    '<option value="">-- اختر اليوم --</option>';
-
-                daySelect.disabled =
-                    true;
-
-
-                dateSelect.innerHTML =
-                    '<option value="">-- اختر يوم العمل أولاً --</option>';
-
-                dateSelect.disabled =
-                    true;
-
-
-                timeSelect.innerHTML =
-                    '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
-
-                timeSelect.disabled =
-                    true;
-
-
-                currentBookedSlots = [];
-
-                currentAvailableSlots = [];
-
-
-                resetAvailabilityMessages();
-
-
-                if (
-                    !branch ||
-                    !branchDays[branch]
-                ) {
-
-                    return;
-
-                }
-
-
-                const days =
-                    branchDays[branch];
-
-
-                if (days.length === 0) {
-
-                    return;
-
-                }
-
-
-                daySelect.disabled =
-                    false;
-
-
-                daySelect.innerHTML =
-                    '<option value="">-- اختر اليوم --</option>';
-
-
-                days.forEach(day => {
-
-                    const option =
-                        document.createElement(
-                            'option'
-                        );
-
-
-                    option.value =
-                        day;
-
-
-                    option.textContent =
-                        day;
-
-
-                    daySelect.appendChild(
-                        option
-                    );
-
-                });
-
-            }
+    const branch =
+        document.getElementById(
+            'branch'
         );
 
 
-    /*
-     * ============================================================
-     * عند اختيار اليوم
-     * ============================================================
-     */
-
-    document
-        .getElementById('day')
-        .addEventListener(
-            'change',
-            function () {
-
-                const day =
-                    this.value;
+    const branchName =
+        branch.value;
 
 
-                const dateSelect =
-                    document.getElementById(
-                        'bookingDate'
-                    );
-
-
-                const timeSelect =
-                    document.getElementById(
-                        'time'
-                    );
-
-
-                dateSelect.innerHTML =
-                    '<option value="">-- اختر تاريخ الحجز --</option>';
-
-                dateSelect.disabled =
-                    true;
-
-
-                timeSelect.innerHTML =
-                    '<option value="">-- اختر تاريخ الحجز أولاً --</option>';
-
-                timeSelect.disabled =
-                    true;
-
-
-                currentBookedSlots = [];
-
-                currentAvailableSlots = [];
-
-
-                resetAvailabilityMessages();
-
-
-                if (!day) {
-                    return;
-                }
-
-
-                const upcomingDates =
-                    generateUpcomingDates(day);
-
-
-                if (
-                    upcomingDates.length === 0
-                ) {
-
-                    return;
-
-                }
-
-
-                dateSelect.disabled =
-                    false;
-
-
-                upcomingDates.forEach(d => {
-
-                    const option =
-                        document.createElement(
-                            'option'
-                        );
-
-
-                    option.value =
-                        d.value;
-
-
-                    option.textContent =
-                        d.text;
-
-
-                    dateSelect.appendChild(
-                        option
-                    );
-
-                });
-
-            }
+    const branchPhone =
+        branch.options[
+            branch.selectedIndex
+        ].getAttribute(
+            'data-phone'
         );
 
 
-    /*
-     * ============================================================
-     * عند اختيار التاريخ
-     * ============================================================
-     */
+    const bookingDate =
+        document.getElementById(
+            'bookingDate'
+        ).value;
 
-    document
-        .getElementById('bookingDate')
-        .addEventListener(
-            'change',
-            async function () {
 
-                const branch =
-                    document.getElementById(
-                        'branch'
-                    ).value;
+    const timeStr =
+        document.getElementById(
+            'time'
+        ).value;
 
 
-                const day =
-                    document.getElementById(
-                        'day'
-                    ).value;
+    const name =
+        document.getElementById(
+            'name'
+        ).value.trim();
 
 
-                const selectedDate =
-                    this.value;
+    const age =
+        document.getElementById(
+            'age'
+        ).value.trim();
 
 
-                const timeSelect =
-                    document.getElementById(
-                        'time'
-                    );
+    const phone =
+        document.getElementById(
+            'phone'
+        ).value.trim();
 
 
-                const loading =
-                    document.getElementById(
-                        'dateLoading'
-                    );
+    const notes =
+        document.getElementById(
+            'notes'
+        ).value.trim();
 
 
-                const fullDay =
-                    document.getElementById(
-                        'fullDayMessage'
-                    );
-
-
-                const emptyDay =
-                    document.getElementById(
-                        'emptyDayMessage'
-                    );
-
-
-                timeSelect.innerHTML =
-                    '<option value="">-- جاري فحص المواعيد --</option>';
-
-                timeSelect.disabled =
-                    true;
-
-
-                fullDay.style.display =
-                    'none';
-
-
-                emptyDay.style.display =
-                    'none';
-
-
-                currentBookedSlots = [];
-
-                currentAvailableSlots = [];
-
-
-                if (
-                    !branch ||
-                    !day ||
-                    !selectedDate
-                ) {
-
-                    return;
-
-                }
-
-
-                const dateOnly =
-                    extractDateOnly(
-                        selectedDate
-                    );
-
-
-                if (!dateOnly) {
-
-                    emptyDay.style.display =
-                        'block';
-
-                    emptyDay.innerHTML =
-                        '<i class="fas fa-calendar-minus"></i> تعذر قراءة تاريخ الحجز.';
-
-                    return;
-
-                }
-
-
-                const rangeStr =
-                    branchTimes?.[branch]?.[day];
-
-
-                if (!rangeStr) {
-
-                    emptyDay.style.display =
-                        'block';
-
-                    emptyDay.innerHTML =
-                        '<i class="fas fa-calendar-minus"></i> لا توجد مواعيد عمل مسجلة لهذا اليوم.';
-
-                    return;
-
-                }
-
-
-                /*
-                 * إنشاء كل المواعيد كل 20 دقيقة
-                 */
-
-                const allSlots =
-                    generateTimeSlots(
-                        rangeStr,
-                        20
-                    );
-
-
-                if (
-                    allSlots.length === 0
-                ) {
-
-                    emptyDay.style.display =
-                        'block';
-
-                    emptyDay.innerHTML =
-                        '<i class="fas fa-calendar-minus"></i> لا توجد مواعيد متاحة لهذا اليوم.';
-
-                    return;
-
-                }
-
-
-                /*
-                 * إظهار التحميل
-                 */
-
-                loading.style.display =
-                    'block';
-
-
-                try {
-
-                    /*
-                     * جلب المواعيد المحجوزة
-                     */
-
-                    const bookedSlots =
-                        await getBookedSlotsFromServer(
-                            branch,
-                            dateOnly
-                        );
-
-
-                    currentBookedSlots =
-                        bookedSlots;
-
-
-                    /*
-                     * إزالة المواعيد المحجوزة
-                     */
-
-                    const availableSlots =
-                        filterAvailableSlots(
-                            allSlots,
-                            bookedSlots
-                        );
-
-
-                    currentAvailableSlots =
-                        availableSlots;
-
-
-                    loading.style.display =
-                        'none';
-
-
-                    /*
-                     * لو كل المواعيد محجوزة
-                     */
-
-                    if (
-                        availableSlots.length === 0
-                    ) {
-
-                        timeSelect.innerHTML =
-                            '<option value="">-- اليوم مكتمل الحجز --</option>';
-
-                        timeSelect.disabled =
-                            true;
-
-
-                        fullDay.style.display =
-                            'block';
-
-
-                        return;
-
-                    }
-
-
-                    /*
-                     * يوجد مواعيد متاحة
-                     */
-
-                    timeSelect.innerHTML =
-                        '<option value="">-- اختر الميعاد --</option>';
-
-
-                    availableSlots.forEach(slot => {
-
-                        const option =
-                            document.createElement(
-                                'option'
-                            );
-
-
-                        option.value =
-                            slot;
-
-
-                        option.textContent =
-                            slot;
-
-
-                        timeSelect.appendChild(
-                            option
-                        );
-
-                    });
-
-
-                    timeSelect.disabled =
-                        false;
-
-
-                } catch (error) {
-
-                    loading.style.display =
-                        'none';
-
-
-                    timeSelect.innerHTML =
-                        '<option value="">-- تعذر تحميل المواعيد --</option>';
-
-
-                    timeSelect.disabled =
-                        true;
-
-
-                    emptyDay.style.display =
-                        'block';
-
-
-                    emptyDay.innerHTML =
-                        '<i class="fas fa-triangle-exclamation"></i> تعذر الاتصال بنظام الحجز. حاول مرة أخرى.';
-
-
-                    console.error(error);
-
-                }
-
-            }
-        );
-
-
-    /*
-     * ============================================================
-     * التأكد مرة ثانية أن الموعد ما زال متاحًا
-     * ============================================================
-     */
-
-    async function isSlotStillAvailable(
-        branch,
-        date,
-        time
+    if (
+        !branchName ||
+        !bookingDate ||
+        !timeStr ||
+        !name ||
+        !age ||
+        !phone
     ) {
+
+        alert(
+            'يرجى ملء جميع الحقول المطلوبة بما في ذلك السن.'
+        );
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------------
+    // فحص أخير قبل إرسال الحجز
+    // للتأكد أن الموعد لم يتم حجزه أثناء وجود العميل بالصفحة
+    // --------------------------------------------------------
+
+    try {
 
         const bookedSlots =
-            await getBookedSlotsFromServer(
-                branch,
-                date
-            );
-
-
-        const bookedSet =
-            new Set(
-                bookedSlots.map(
-                    normalizeTimeString
-                )
-            );
-
-
-        return !bookedSet.has(
-            normalizeTimeString(time)
-        );
-
-    }
-
-
-    /*
-     * ============================================================
-     * إرسال الحجز
-     * ============================================================
-     */
-
-    async function submitBooking(e) {
-
-        e.preventDefault();
-
-
-        const submitButton =
-            document.getElementById(
-                'submitButton'
-            );
-
-
-        const branch =
-            document.getElementById(
-                'branch'
-            );
-
-
-        const branchName =
-            branch.value;
-
-
-        const branchPhone =
-            branch
-                .options[
-                    branch.selectedIndex
-                ]
-                .getAttribute(
-                    'data-phone'
-                );
-
-
-        const bookingDate =
-            document.getElementById(
-                'bookingDate'
-            ).value;
-
-
-        const timeStr =
-            document.getElementById(
-                'time'
-            ).value;
-
-
-        const name =
-            document.getElementById(
-                'name'
-            ).value.trim();
-
-
-        const age =
-            document.getElementById(
-                'age'
-            ).value.trim();
-
-
-        const phone =
-            document.getElementById(
-                'phone'
-            ).value.trim();
-
-
-        const notes =
-            document.getElementById(
-                'notes'
-            ).value.trim();
-
-
-        /*
-         * التحقق من البيانات
-         */
-
-        if (
-            !branchName ||
-            !bookingDate ||
-            !timeStr ||
-            !name ||
-            !age ||
-            !phone
-        ) {
-
-            alert(
-                'يرجى ملء جميع الحقول المطلوبة بما في ذلك السن.'
-            );
-
-            return;
-
-        }
-
-
-        /*
-         * استخراج التاريخ فقط
-         */
-
-        const dateOnly =
-            extractDateOnly(
+            await getBookedSlots(
+                branchName,
                 bookingDate
             );
 
 
-        if (!dateOnly) {
+        const alreadyBooked =
+            bookedSlots.some(
+                booked =>
+                    normalizeTime(booked) ===
+                    normalizeTime(timeStr)
+            );
+
+
+        if (alreadyBooked) {
 
             alert(
-                'تعذر قراءة تاريخ الحجز.'
+                '⚠️ عذرًا، هذا الموعد تم حجزه بالفعل.\n\nيرجى اختيار موعد آخر.'
             );
+
+
+            // إعادة تحميل المواعيد
+            document
+                .getElementById(
+                    'bookingDate'
+                )
+                .dispatchEvent(
+                    new Event('change')
+                );
+
 
             return;
 
         }
 
-
-        /*
-         * منع الضغط أكثر من مرة
-         */
-
-        submitButton.disabled =
-            true;
-
-
-        submitButton.innerHTML =
-            '<i class="fas fa-spinner fa-spin"></i> جاري التحقق من الموعد...';
-
-
-        try {
-
-            /*
-             * ====================================================
-             * أهم خطوة:
-             * إعادة فحص الموعد قبل تسجيل الحجز
-             * ====================================================
-             */
-
-            const stillAvailable =
-                await isSlotStillAvailable(
-                    branchName,
-                    dateOnly,
-                    timeStr
-                );
-
-
-            if (!stillAvailable) {
-
-                alert(
-                    '⚠️ عذرًا، هذا الموعد تم حجزه للتو من شخص آخر. يرجى اختيار موعد آخر.'
-                );
-
-
-                /*
-                 * إعادة تحميل المواعيد
-                 */
-
-                document
-                    .getElementById(
-                        'bookingDate'
-                    )
-                    .dispatchEvent(
-                        new Event('change')
-                    );
-
-
-                submitButton.disabled =
-                    false;
-
-
-                submitButton.innerHTML =
-                    '<i class="fab fa-whatsapp"></i> تأكيد الحجز';
-
-
-                return;
-
-            }
-
-
-            /*
-             * ====================================================
-             * بيانات الحجز
-             * ====================================================
-             */
-
-            const bookingData = {
-
-                branch: branchName,
-
-                date: bookingDate,
-
-                time: timeStr,
-
-                name: name,
-
-                age: age,
-
-                phone: phone,
-
-                notes: notes
-
-            };
-
-
-            /*
-             * ====================================================
-             * إرسال الحجز إلى Google Sheet
-             * ====================================================
-             */
-
-            submitButton.innerHTML =
-                '<i class="fas fa-spinner fa-spin"></i> جاري تسجيل الحجز...';
-
-
-            await fetch(
-                SITE_API_URL,
-                {
-
-                    method: 'POST',
-
-                    mode: 'no-cors',
-
-                    headers: {
-                        'Content-Type':
-                            'application/json'
-                    },
-
-                    body:
-                        JSON.stringify(
-                            bookingData
-                        )
-
-                }
-            );
-
-
-            /*
-             * ====================================================
-             * إنشاء رسالة واتساب
-             * ====================================================
-             */
-
-            let message =
-                `مرحباً، أريد تسجيل حجز موعد في فرع ${branchName}:\n`;
-
-
-            message +=
-                `📅 التاريخ: ${bookingDate}\n`;
-
-
-            message +=
-                `⏰ الوقت: ${timeStr}\n`;
-
-
-            message +=
-                `👤 الاسم: ${name}\n`;
-
-
-            message +=
-                `🎂 السن: ${age} سنة\n`;
-
-
-            message +=
-                `📞 رقم الهاتف: ${phone}\n`;
-
-
-            if (notes) {
-
-                message +=
-                    `📝 ملاحظات: ${notes}\n`;
-
-            }
-
-
-            message +=
-                `\nأرجو تأكيد الحجز برقم الحجز الخاص بي، شكراً!`;
-
-
-            /*
-             * ====================================================
-             * فتح واتساب
-             * ====================================================
-             */
-
-            const encodedMessage =
-                encodeURIComponent(
-                    message
-                );
-
-
-            const whatsappUrl =
-                `https://wa.me/${branchPhone}?text=${encodedMessage}`;
-
-
-            window.open(
-                whatsappUrl,
-                '_blank'
-            );
-
-
-            /*
-             * ====================================================
-             * رسالة نجاح
-             * ====================================================
-             */
-
-            alert(
-                '✅ تم تسجيل الحجز بنجاح وتحويلك إلى واتساب لتأكيد الموعد.'
-            );
-
-
-            /*
-             * ====================================================
-             * إعادة ضبط النموذج
-             * ====================================================
-             */
-
-            document
-                .getElementById(
-                    'bookingForm'
-                )
-                .reset();
-
-
-            document
-                .getElementById(
-                    'day'
-                )
-                .disabled = true;
-
-
-            document
-                .getElementById(
-                    'bookingDate'
-                )
-                .disabled = true;
-
-
-            document
-                .getElementById(
-                    'time'
-                )
-                .disabled = true;
-
-
-            document
-                .getElementById(
-                    'branchPhoneDisplay'
-                )
-                .style.display = 'none';
-
-
-            currentBookedSlots = [];
-
-            currentAvailableSlots = [];
-
-
-            resetAvailabilityMessages();
-
-
-        } catch (error) {
-
-            console.error(
-                'خطأ أثناء تسجيل الحجز:',
-                error
-            );
-
-
-            alert(
-                'حدث خطأ أثناء تسجيل الحجز. يرجى المحاولة مرة أخرى.'
-            );
-
-        }
-
-
-        /*
-         * إعادة الزر لحالته الطبيعية
-         */
-
-        submitButton.disabled =
-            false;
-
-
-        submitButton.innerHTML =
-            '<i class="fab fa-whatsapp"></i> تأكيد الحجز';
+    } catch (error) {
+
+        console.error(
+            'خطأ في التحقق من الموعد:',
+            error
+        );
 
     }
 
 
-    /*
-     * ============================================================
-     * عداد الزوار
-     * ============================================================
-     */
+    // --------------------------------------------------------
+    // بيانات الحجز
+    // --------------------------------------------------------
 
-    (function () {
+    const bookingData = {
 
-        function updateCounter(data) {
+        branch:
+            branchName,
 
-            var el =
-                document.getElementById(
-                    'siteVisitorCounter'
-                );
+        date:
+            bookingDate,
+
+        time:
+            timeStr,
+
+        name:
+            name,
+
+        age:
+            age,
+
+        phone:
+            phone,
+
+        notes:
+            notes
+
+    };
 
 
-            if (el) {
+    // --------------------------------------------------------
+    // إرسال البيانات إلى Google Sheet
+    // --------------------------------------------------------
 
-                el.textContent =
-                    data.count.toLocaleString(
-                        'ar-EG'
-                    ) +
-                    ' زائر';
+    try {
 
+        await fetch(
+            SITE_API_URL,
+            {
+                method: 'POST',
+
+                mode: 'no-cors',
+
+                headers: {
+                    'Content-Type':
+                        'application/json'
+                },
+
+                body:
+                    JSON.stringify(
+                        bookingData
+                    )
             }
+        );
 
-        }
+    } catch (error) {
 
+        console.error(
+            'خطأ أثناء إرسال البيانات:',
+            error
+        );
 
-        window.__visitorCounterCallback =
-            updateCounter;
-
-
-        var pageId =
-            window.location.pathname
-                .replace(/\//g, '_') ||
-            'home';
+    }
 
 
-        var s =
-            document.createElement(
-                'script'
+    // --------------------------------------------------------
+    // رسالة واتساب
+    // --------------------------------------------------------
+
+    let message =
+        `مرحباً، أريد تسجيل حجز موعد في فرع ${branchName}:\n`;
+
+
+    message +=
+        `📅 التاريخ: ${bookingDate}\n`;
+
+
+    message +=
+        `⏰ الوقت: ${timeStr}\n`;
+
+
+    message +=
+        `👤 الاسم: ${name}\n`;
+
+
+    message +=
+        `🎂 السن: ${age} سنة\n`;
+
+
+    message +=
+        `📞 رقم الهاتف: ${phone}\n`;
+
+
+    if (notes) {
+
+        message +=
+            `📝 ملاحظات: ${notes}\n`;
+
+    }
+
+
+    message +=
+        `\nأرجو تأكيد الحجز برقم الحجز الخاص بي، شكراً!`;
+
+
+    const encodedMessage =
+        encodeURIComponent(
+            message
+        );
+
+
+    const whatsappUrl =
+        `https://wa.me/${branchPhone}?text=${encodedMessage}`;
+
+
+    window.open(
+        whatsappUrl,
+        '_blank'
+    );
+
+
+    alert(
+        '✅ تم تحويلك للواتساب وإرسال بيانات حجزك بنجاح.'
+    );
+
+
+    // --------------------------------------------------------
+    // إعادة ضبط النموذج
+    // --------------------------------------------------------
+
+    document
+        .getElementById(
+            'bookingForm'
+        )
+        .reset();
+
+
+    document
+        .getElementById(
+            'day'
+        )
+        .disabled = true;
+
+
+    document
+        .getElementById(
+            'bookingDate'
+        )
+        .disabled = true;
+
+
+    document
+        .getElementById(
+            'time'
+        )
+        .disabled = true;
+
+
+    document
+        .getElementById(
+            'branchPhoneDisplay'
+        )
+        .style.display = 'none';
+
+}
+
+
+// ============================================================
+// تشغيل الصفحة
+// ============================================================
+
+window.onload = function() {
+
+    document
+        .getElementById(
+            'branch'
+        )
+        .disabled = true;
+
+
+    loadWorkingHours();
+
+};
+
+
+// ============================================================
+// عداد الزوار
+// ============================================================
+
+(function () {
+
+    function updateCounter(data) {
+
+        var el =
+            document.getElementById(
+                'siteVisitorCounter'
             );
 
 
-        s.src =
-            SITE_API_URL +
-            '?action=trackVisit&page=' +
-            encodeURIComponent(pageId) +
-            '&callback=__visitorCounterCallback';
+        if (el) {
+
+            el.textContent =
+                data.count.toLocaleString(
+                    'ar-EG'
+                ) +
+                ' زائر';
+
+        }
+
+    }
 
 
-        document.body.appendChild(s);
-
-    })();
-
-
-    /*
-     * ============================================================
-     * تشغيل الصفحة
-     * ============================================================
-     */
-
-    window.onload = function () {
-
-        document
-            .getElementById(
-                'branch'
-            )
-            .disabled = true;
+    window.__visitorCounterCallback =
+        updateCounter;
 
 
-        loadWorkingHours();
+    var pageId =
+        window.location.pathname
+            .replace(/\//g, '_') ||
+        'home';
 
-    };
+
+    var s =
+        document.createElement(
+            'script'
+        );
+
+
+    s.src =
+        SITE_API_URL +
+        '?action=trackVisit&page=' +
+        encodeURIComponent(pageId) +
+        '&callback=__visitorCounterCallback';
+
+
+    document.body.appendChild(s);
+
+})();
 
 </script>
 
