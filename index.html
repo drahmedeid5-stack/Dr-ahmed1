@@ -363,7 +363,7 @@
         .about-image { flex: 1 1 35%; min-width: 220px; display: flex; justify-content: center; }
         
 
-        /* ===== الأطباء: مساحة كبيرة في يمين المنطقة الزرقاء ===== */
+        /* ===== الطبيب: مساحة كبيرة في يمين المنطقة الزرقاء ===== */
         .hero-doctors { position:relative; width:100%; z-index:8; direction:rtl; }
         .hero-doctors-title { color:#fff; font-size:1.35rem; font-weight:900; text-align:center; margin-bottom:10px; text-shadow:0 2px 7px rgba(0,0,0,.25); }
         .doctors-slider { position:relative; height:390px; width:100%; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.30); border-radius:24px; overflow:hidden; box-shadow:0 16px 40px rgba(0,0,0,.16); backdrop-filter:blur(5px); }
@@ -577,7 +577,7 @@
                     </div>
                 </div>
                 <div class="hero-doctors" id="heroDoctors" style="display:none;">
-                    <div class="hero-doctors-title"><i class="fas fa-user-md"></i> الأطباء</div>
+                    <div class="hero-doctors-title"><i class="fas fa-user-md"></i> الطبيب</div>
                     <div class="doctors-slider">
                         <button class="doctor-slider-arrow prev" id="doctorPrev" aria-label="الطبيب السابق"><i class="fas fa-chevron-right"></i></button>
                         <div class="doctors-viewport"><div class="doctors-track" id="doctorsTrack"></div></div>
@@ -876,7 +876,7 @@
         });
 
 
-        // ===== الأطباء =====
+        // ===== الطبيب =====
         function renderDoctors(doctors) {
             const wrap = document.getElementById('heroDoctors');
             const track = document.getElementById('doctorsTrack');
